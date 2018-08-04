@@ -156,12 +156,6 @@ public class MainActivity extends FragmentActivity {
         bindService(new Intent(this, MyService.class), mServiceConnection, BIND_AUTO_CREATE);
     }
 
-    public void exeLogin(View view) {
-        if (myService != null) {
-            myService.exeLogin();
-        }
-    }
-
     @Override
     protected void onDestroy() {
         isBind = false;

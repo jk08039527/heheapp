@@ -18,7 +18,6 @@
         android:id="@+id/btn2"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:onClick="exeLogin"
         android:text="Login"
         android:visibility="gone"
         app:layout_constraintLeft_toRightOf="@+id/btn"

@@ -65,19 +65,27 @@ public class MyService extends Service {
             }
             Log.d(TAG, "handleMessage: " + win);
             // 当前是否可玩儿
+            // 3个连续则投递。最后10个中3个孤岛放弃
             if (length > 0) {
                 int wanIndex = 0;
                 int wan = Math.min(length, 10);
+                boolean keep = true;
+                int temp = ints[length - 1];
                 for (int i = length - 1; i > length - wan; i--) {
                     if (i == length - 1) {
                         if (length > 1 && ints[i] != ints[i - 1]) {
                             wanIndex++;
                         }
-                    } else if (ints[i] != ints[i - 1] && ints[i] != ints[i + 1]) {
-                        wanIndex++;
+                    } else {
+                        if (ints[i] != ints[i - 1] && ints[i] != ints[i + 1]) {
+                            wanIndex++;
+                        }
+                        if (keep && i > length - wan - 3 && ints[i] != temp) {
+                            keep = false;
+                        }
                     }
                 }
-                if ((double) wanIndex / wan >= 0.3) {
+                if (!keep && (double) wanIndex / wan >= 0.3) {
                     Toast.makeText(MyService.this, "much lonely!", Toast.LENGTH_SHORT).show();
                     return false;
                 }
@@ -191,28 +199,5 @@ public class MyService extends Service {
             }
         }.start();
         Toast.makeText(this, (valueCode == GBData.VALUE_LONG ? "long" : "feng") + money, Toast.LENGTH_SHORT).show();
-    }
-
-    public void exeLogin() {
-
-        execShellCmd("input tap 180 1345");//w
-        execShellCmd("input tap 230 1650");//z
-        execShellCmd("input tap 980 1500");//l
-        execShellCmd("input tap 200 1850");//123
-        execShellCmd("input tap 800 1700");//9
-        execShellCmd("input tap 500 1350");//2
-        execShellCmd("input tap 500 1850");//0
-        execShellCmd("input tap 500 1700");//8
-        execShellCmd("input tap 500 1850");//0
-        execShellCmd("input tap 800 1350");//8
-
-
-        execShellCmd("input tap 750 960");
-        mWeakHandler.postDelayed(() -> {
-            execShellCmd("input tap 360 760");
-            mWeakHandler.postDelayed(() -> {
-                execShellCmd("input tap 180 1345");
-            }, 100);
-        }, 1000);
     }
 }
