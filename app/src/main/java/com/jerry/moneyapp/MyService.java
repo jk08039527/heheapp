@@ -86,13 +86,13 @@ public class MyService extends Service {
                     }
                 }
                 if (!keep && (double) wanIndex / wan >= 0.3) {
-                    Toast.makeText(MyService.this, "much lonely!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MyService.this, "孤岛太多!", Toast.LENGTH_SHORT).show();
                     return false;
                 }
             }
 
             if (length > 2 && ints[length - 1] != ints[length - 2] && ints[length - 3] != ints[length - 2]) {
-                Toast.makeText(MyService.this, "give up!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MyService.this, "本局放弃!", Toast.LENGTH_SHORT).show();
                 return false;
             } else {
                 if (length == 0) {
@@ -160,7 +160,6 @@ public class MyService extends Service {
             dataOutputStream.flush();
         } catch (IOException e) {
             e.printStackTrace();
-            Toast.makeText(this, "execShellCmd Error" + money, Toast.LENGTH_SHORT).show();
         } finally {
             try {
                 if (dataOutputStream != null) {
@@ -171,7 +170,6 @@ public class MyService extends Service {
                 }
             } catch (IOException e) {
                 e.printStackTrace();
-                Toast.makeText(this, "close Error" + money, Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -198,6 +196,6 @@ public class MyService extends Service {
                 execShellCmd("input tap " + ASSIABLEX + " " + ASSIABLEY);
             }
         }.start();
-        Toast.makeText(this, (valueCode == GBData.VALUE_LONG ? "long" : "feng") + money, Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, (valueCode == GBData.VALUE_LONG ? "龙" : "凤") + money, Toast.LENGTH_SHORT).show();
     }
 }
