@@ -35,7 +35,7 @@ public class MyService extends Service {
     private int[] pointsX = new int[18];
     private int[] pointsY = new int[6];
     private LinkedList<Integer> data = new LinkedList<>();
-    private int length;
+    private volatile int length;
     private int money;
     private int count;
 
@@ -69,7 +69,7 @@ public class MyService extends Service {
             if (length > 0) {
                 int wanIndex = 0;
                 int wan = Math.min(length, 10);
-                boolean keep = true;
+//                boolean keep = true;
                 int temp = ints[length - 1];
                 for (int i = length - 1; i > length - wan; i--) {
                     if (i == length - 1) {
@@ -80,12 +80,12 @@ public class MyService extends Service {
                         if (ints[i] != ints[i - 1] && ints[i] != ints[i + 1]) {
                             wanIndex++;
                         }
-                        if (keep && i > length - wan - 3 && ints[i] != temp) {
-                            keep = false;
-                        }
+//                        if (keep && i > length - wan - 3 && ints[i] != temp) {
+//                            keep = false;
+//                        }
                     }
                 }
-                if (!keep && (double) wanIndex / wan >= 0.3) {
+                if (/*!keep &&*/ (double) wanIndex / wan >= 0.3) {
                     Toast.makeText(MyService.this, "孤岛太多!", Toast.LENGTH_SHORT).show();
                     return false;
                 }
@@ -97,7 +97,7 @@ public class MyService extends Service {
             } else {
                 if (length == 0) {
                     money = 10;
-                    last = GBData.VALUE_LONG;
+                    Toast.makeText(MyService.this, "请自选!", Toast.LENGTH_SHORT).show();
                 } else {
                     money = 10;
                     if (length > 1 && ints[length - 1] != ints[length - 2]) {

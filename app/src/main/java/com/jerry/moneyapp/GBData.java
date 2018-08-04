@@ -9,14 +9,12 @@ import android.media.Image;
 import android.media.ImageReader;
 import android.util.Log;
 
-import static com.jerry.moneyapp.MyService.ASSIABLEX;
-import static com.jerry.moneyapp.MyService.ASSIABLEY;
-
 public class GBData {
 
     private static final String TAG = "GBData";
     private static final int VALUE_MAX = 240;//阈值
-    private static final int VALUE_MIN = 80;//阈值
+    private static final int MIN1 = 55;//阈值1
+    private static final int MIN2 = 65;//阈值2
     public static final int VALUE_FENG = 1;
     public static final int VALUE_LONG = 2;
     private static int peaceCount;
@@ -49,7 +47,7 @@ public class GBData {
         Bitmap bitmap = Bitmap.createBitmap(width + rowPadding / pixelStride, height, Bitmap.Config.ARGB_8888);
         bitmap.copyPixelsFromBuffer(buffer);
         image.close();
-        int assiableColor = bitmap.getPixel((ASSIABLEX + (int) (Math.random() * 10)), ASSIABLEY);
+        int assiableColor = bitmap.getPixel((MyService.ASSIABLEX + (int) (Math.random() * 10)), MyService.ASSIABLEY);
         int r = Color.red(assiableColor);
         int g = Color.green(assiableColor);
         int b = Color.blue(assiableColor);
@@ -66,9 +64,9 @@ public class GBData {
                     int red = Color.red(color);
                     int green = Color.green(color);
                     int blue = Color.blue(color);
-                    if (blue > VALUE_MAX && red < VALUE_MIN) {
+                    if (blue > VALUE_MAX && red > MIN1 && red < MIN2) {
                         list.add(VALUE_LONG);
-                    } else if (red > VALUE_MAX && blue < VALUE_MIN) {
+                    } else if (red > VALUE_MAX && blue > MIN1 && blue < MIN2) {
                         list.add(VALUE_FENG);
                     } else if (red + blue < 70 && green > 140) {
                         peaceCount++;
@@ -92,9 +90,9 @@ public class GBData {
         int red = Color.red(color);
         int green = Color.green(color);
         int blue = Color.blue(color);
-        if (blue > VALUE_MAX && red < VALUE_MIN) {
+        if (blue > VALUE_MAX && red > MIN1 && red < MIN2) {
             list.add(VALUE_LONG);
-        } else if (red > VALUE_MAX && blue < VALUE_MIN) {
+        } else if (red > VALUE_MAX && blue > MIN1 && blue < MIN2) {
             list.add(VALUE_FENG);
         } else if (red + blue < 70 && green > 140) {
             peaceCount++;
