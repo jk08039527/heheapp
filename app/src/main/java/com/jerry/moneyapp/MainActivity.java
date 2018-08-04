@@ -9,7 +9,6 @@ import android.content.ServiceConnection;
 import android.graphics.PixelFormat;
 import android.graphics.Point;
 import android.hardware.display.DisplayManager;
-import android.hardware.display.VirtualDisplay;
 import android.media.ImageReader;
 import android.media.projection.MediaProjection;
 import android.media.projection.MediaProjectionManager;
@@ -33,7 +32,6 @@ public class MainActivity extends FragmentActivity {
     private static final int REQUEST_MEDIA_PROJECTION = 1;
     private MediaProjectionManager mMediaProjectionManager;
     private MediaProjection mMediaProjection;
-    private VirtualDisplay mVirtualDisplay;
     private WebView mWebView;
     private boolean isBind;
     private MyService myService;
@@ -135,7 +133,7 @@ public class MainActivity extends FragmentActivity {
         defaultDisplay.getMetrics(metrics);
 
         final ImageReader imageReader = ImageReader.newInstance(size.x, size.y, PixelFormat.RGBA_8888, 1);
-        mVirtualDisplay = mMediaProjection.createVirtualDisplay("ScreenCapture",
+        mMediaProjection.createVirtualDisplay("ScreenCapture",
                 size.x, size.y, metrics.densityDpi,
                 DisplayManager.VIRTUAL_DISPLAY_FLAG_AUTO_MIRROR,
                 imageReader.getSurface(), null, null);

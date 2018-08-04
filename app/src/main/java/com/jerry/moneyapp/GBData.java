@@ -21,64 +21,7 @@ public class GBData {
     public static final int VALUE_LONG = 2;
     public static ImageReader reader;
 
-    public static Bitmap getBitmap() {
-        if (reader == null) {
-            Log.w(TAG, "getColor: reader is null");
-            return null;
-        }
-
-        Image image = reader.acquireLatestImage();
-
-        if (image == null) {
-            Log.w(TAG, "getColor: image is null");
-            return null;
-        }
-        int width = image.getWidth();
-        int height = image.getHeight();
-        final Image.Plane[] planes = image.getPlanes();
-        final ByteBuffer buffer = planes[0].getBuffer();
-        int pixelStride = planes[0].getPixelStride();
-        int rowStride = planes[0].getRowStride();
-        int rowPadding = rowStride - pixelStride * width;
-        Bitmap bitmap = Bitmap.createBitmap(width + rowPadding / pixelStride, height, Bitmap.Config.ARGB_8888);
-        bitmap.copyPixelsFromBuffer(buffer);
-        image.close();
-        return bitmap;
-    }
-
-    public static int[] getColor(int x, int y) {
-        if (reader == null) {
-            Log.w(TAG, "getColor: reader is null");
-            return null;
-        }
-
-        Image image = reader.acquireLatestImage();
-
-        if (image == null) {
-            Log.w(TAG, "getColor: image is null");
-            return null;
-        }
-        int width = image.getWidth();
-        int height = image.getHeight();
-        final Image.Plane[] planes = image.getPlanes();
-        final ByteBuffer buffer = planes[0].getBuffer();
-        int pixelStride = planes[0].getPixelStride();
-        int rowStride = planes[0].getRowStride();
-        int rowPadding = rowStride - pixelStride * width;
-        Bitmap bitmap = Bitmap.createBitmap(width + rowPadding / pixelStride, height, Bitmap.Config.ARGB_8888);
-        bitmap.copyPixelsFromBuffer(buffer);
-        image.close();
-        int color = bitmap.getPixel(x, y);
-        int[] rgb = new int[3];
-        rgb[0] = Color.red(color);
-        rgb[1] = Color.green(color);
-        rgb[2] = Color.blue(color);
-        return rgb;
-    }
-
     /**
-     * 凤1,龙2
-     *
      * @param x
      * @param y
      * @return

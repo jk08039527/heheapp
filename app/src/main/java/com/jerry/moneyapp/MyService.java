@@ -12,27 +12,28 @@ import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.util.Log;
 import android.widget.Toast;
 
 public class MyService extends Service {
 
     private static final String TAG = "MyService";
     private static int win;//净胜
-    private static final int LEFT = 9;
-    private static final int RIGHT = 1071;
-    private static final int TOP = 460;
-    private static final int BOTTOM = 800;
+    private static final int LEFT = 9;//17
+    private static final int RIGHT = 1071;//144
+    private static final int TOP = 460;//610
+    private static final int BOTTOM = 800;//1080
+    public static final int ASSIABLEX = 1000;//1320
+    public static final int ASSIABLEY = 870;//1180
 
     private static int width;
-    private static final int CLICKY = 1700;
+    private static int height;
+    private static int last = GBData.VALUE_LONG;
 
     private int[] pointsX = new int[18];
     private int[] pointsY = new int[6];
-    private int tempSize;
+    private int length;
     private int money;
-    private static int last = GBData.VALUE_LONG;
-    public static final int ASSIABLEX = 1000;
-    public static final int ASSIABLEY = 870;
     private int count;
 
     protected WeakHandler mWeakHandler = new WeakHandler(new Handler.Callback() {
@@ -43,33 +44,49 @@ public class MyService extends Service {
                 return false;
             }
             mWeakHandler.sendEmptyMessageDelayed(0, 9000);
-            int[] data = GBData.getCurrentData(pointsX, pointsY, tempSize);
+            int[] data = GBData.getCurrentData(pointsX, pointsY, length);
             if (data == null) {
                 return false;
             }
-            tempSize = data.length;
-            if (last == data[tempSize - 1]) {
-                win = win + money;
-            } else {
-                win = win - money;
+            length = data.length;
+            if (length > 0) {
+                if (last == data[length - 1]) {
+                    win = win + money;
+                } else {
+                    win = win - money;
+                }
             }
-            if (win < -200) {
-                stopSelf();
-                mWeakHandler.sendEmptyMessage(-1);
+            Log.d(TAG, "handleMessage: " + win);
+            if (length > 0) {
+                int wanIndex = 0;
+                int wan = Math.min(length, 10);
+                for (int i = length - 1; i > length - wan; i--) {
+                    if (i == length - 1) {
+                        if (length > 1 && data[i] != data[i - 1]) {
+                            wanIndex++;
+                        }
+                    } else if (data[i] != data[i - 1] && data[i] != data[i + 1]) {
+                        wanIndex++;
+                    }
+                }
+                if ((double) wanIndex / wan >= 0.3) {
+                    Toast.makeText(MyService.this, "much lonely!", Toast.LENGTH_SHORT).show();
+                    return false;
+                }
             }
-            int length = data.length;
+
             if (length > 2 && data[length - 1] != data[length - 2] && data[length - 3] != data[length - 2]) {
                 Toast.makeText(MyService.this, "give up!", Toast.LENGTH_SHORT).show();
                 return false;
             } else {
-                if (data.length == 0) {
+                if (length == 0) {
                     money = 10;
                     last = GBData.VALUE_LONG;
                 } else {
                     money = 10;
-                    if (data.length > 1 && data[length - 1] != data[length - 2]) {
+                    if (length > 1 && data[length - 1] != data[length - 2]) {
                         money *= 2;
-                        if (data.length > 2 && data[length - 2] != data[length - 3]) {
+                        if (length > 2 && data[length - 2] != data[length - 3]) {
                             money *= 2;
                         }
                     }
@@ -85,6 +102,7 @@ public class MyService extends Service {
     public void onCreate() {
         super.onCreate();
         width = Resources.getSystem().getDisplayMetrics().widthPixels;
+        height = Resources.getSystem().getDisplayMetrics().heightPixels;
         double eachX = (RIGHT - LEFT) / 18;
         double eachY = (BOTTOM - TOP) / 6;
         double initX = LEFT + eachX * 0.875;
@@ -145,6 +163,7 @@ public class MyService extends Service {
     private void exeCall(int valueCode) {
         count++;
         int clickX;
+        int clickY = (int) (height * 0.9);
         if (valueCode == GBData.VALUE_LONG) {
             clickX = (int) (width * 0.25);
         } else {
@@ -155,7 +174,7 @@ public class MyService extends Service {
 
             @Override
             public void onTick(final long millisUntilFinished) {
-                execShellCmd("input tap " + clickX + " " + CLICKY);
+                execShellCmd("input tap " + clickX + " " + clickY);
             }
 
             @Override
