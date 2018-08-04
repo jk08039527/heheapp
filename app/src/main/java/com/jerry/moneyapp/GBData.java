@@ -1,8 +1,7 @@
 package com.jerry.moneyapp;
 
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.Random;
+import java.util.LinkedList;
 
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -17,8 +16,10 @@ public class GBData {
 
     private static final String TAG = "GBData";
     private static final int VALUE_MAX = 240;//阈值
+    private static final int VALUE_MIN = 80;//阈值
     public static final int VALUE_FENG = 1;
     public static final int VALUE_LONG = 2;
+    private static int peaceCount;
     public static ImageReader reader;
 
     /**
@@ -26,17 +27,17 @@ public class GBData {
      * @param y
      * @return
      */
-    public static int[] getCurrentData(int[] x, int[] y, int tempSize) {
+    public static void getCurrentData(int[] x, int[] y, LinkedList<Integer> list) {
         if (reader == null) {
             Log.w(TAG, "getColor: reader is null");
-            return null;
+            return;
         }
 
         Image image = reader.acquireLatestImage();
 
         if (image == null) {
             Log.w(TAG, "getColor: image is null");
-            return null;
+            return;
         }
         int width = image.getWidth();
         int height = image.getHeight();
@@ -48,45 +49,63 @@ public class GBData {
         Bitmap bitmap = Bitmap.createBitmap(width + rowPadding / pixelStride, height, Bitmap.Config.ARGB_8888);
         bitmap.copyPixelsFromBuffer(buffer);
         image.close();
-        Random random = new Random();
-        int a = random.nextInt();
         int assiableColor = bitmap.getPixel((ASSIABLEX + (int) (Math.random() * 10)), ASSIABLEY);
         int r = Color.red(assiableColor);
         int g = Color.green(assiableColor);
         int b = Color.blue(assiableColor);
         if (r + g + b < 150) {//46+49+52
             Log.w(TAG, "not assiable!");
-            return null;
+            return;
         }
 
-        ArrayList<Integer> intValues = new ArrayList<>();
-        for (int aX : x) {
-            for (int aY : y) {
-                int color = bitmap.getPixel(aX, aY);
-                int red = Color.red(color);
-                int green = Color.green(color);
-                int blue = Color.blue(color);
-                if (blue > VALUE_MAX) {
-                    intValues.add(VALUE_LONG);
-                    continue;
-                } else if (red > VALUE_MAX) {
-                    intValues.add(VALUE_FENG);
-                    continue;
-                } else if (red + blue < 70 && green > 140) {
-                    continue;
-                } else if (red > 215 && red < 220 && blue > 215 && blue < 220) {
-                    break;
+        int currentSize = list.size() + peaceCount;
+        if (currentSize == 0) {
+            for (int aX : x) {
+                for (int aY : y) {
+                    int color = bitmap.getPixel(aX, aY);
+                    int red = Color.red(color);
+                    int green = Color.green(color);
+                    int blue = Color.blue(color);
+                    if (blue > VALUE_MAX && red < VALUE_MIN) {
+                        list.add(VALUE_LONG);
+                    } else if (red > VALUE_MAX && blue < VALUE_MIN) {
+                        list.add(VALUE_FENG);
+                    } else if (red + blue < 70 && green > 140) {
+                        peaceCount++;
+                    } else if (red > 215 && red < 220 && blue > 215 && blue < 220) {
+                        return;
+                    } else {
+                        peaceCount = 0;
+                        list.clear();
+                        return;
+                    }
                 }
-                return null;
+            }
+            return;
+        }
+
+
+        int cXIndex = currentSize / MyService.COUNTY;
+        int cYIndex = currentSize % MyService.COUNTY;
+
+        int color = bitmap.getPixel(x[cXIndex], y[cYIndex]);
+        int red = Color.red(color);
+        int green = Color.green(color);
+        int blue = Color.blue(color);
+        if (blue > VALUE_MAX && red < VALUE_MIN) {
+            list.add(VALUE_LONG);
+        } else if (red > VALUE_MAX && blue < VALUE_MIN) {
+            list.add(VALUE_FENG);
+        } else if (red + blue < 70 && green > 140) {
+            peaceCount++;
+        } else if (red > 215 && red < 220 && blue > 215 && blue < 220) {
+            int color1 = bitmap.getPixel(x[0], y[0]);
+            int red1 = Color.red(color1);
+            int blue1 = Color.blue(color1);
+            if (red1 > 215 && red1 < 220 && blue1 > 215 && blue1 < 220) {
+                peaceCount = 0;
+                list.clear();
             }
         }
-        if (tempSize != intValues.size()) {
-            int[] ints = new int[intValues.size()];
-            for (int i = 0; i < intValues.size(); i++) {
-                ints[i] = intValues.get(i);
-            }
-            return ints;
-        }
-        return null;
     }
 }

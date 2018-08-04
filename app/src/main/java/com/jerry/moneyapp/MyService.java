@@ -3,6 +3,7 @@ package com.jerry.moneyapp;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.LinkedList;
 
 import android.app.Service;
 import android.content.Intent;
@@ -25,6 +26,7 @@ public class MyService extends Service {
     private static final int BOTTOM = 800;//1080
     public static final int ASSIABLEX = 1000;//1320
     public static final int ASSIABLEY = 870;//1180
+    public static final int COUNTY = 6;
 
     private static int width;
     private static int height;
@@ -32,6 +34,7 @@ public class MyService extends Service {
 
     private int[] pointsX = new int[18];
     private int[] pointsY = new int[6];
+    private LinkedList<Integer> data = new LinkedList<>();
     private int length;
     private int money;
     private int count;
@@ -44,28 +47,33 @@ public class MyService extends Service {
                 return false;
             }
             mWeakHandler.sendEmptyMessageDelayed(0, 9000);
-            int[] data = GBData.getCurrentData(pointsX, pointsY, length);
-            if (data == null) {
+            GBData.getCurrentData(pointsX, pointsY, data);
+            if (data.size() == length) {
                 return false;
             }
-            length = data.length;
+            length = data.size();
+            int[] ints = new int[length];
+            for (int i = 0; i < length; i++) {
+                ints[i] = data.get(i);
+            }
             if (length > 0) {
-                if (last == data[length - 1]) {
+                if (last == ints[length - 1]) {
                     win = win + money;
                 } else {
                     win = win - money;
                 }
             }
             Log.d(TAG, "handleMessage: " + win);
+            // 当前是否可玩儿
             if (length > 0) {
                 int wanIndex = 0;
                 int wan = Math.min(length, 10);
                 for (int i = length - 1; i > length - wan; i--) {
                     if (i == length - 1) {
-                        if (length > 1 && data[i] != data[i - 1]) {
+                        if (length > 1 && ints[i] != ints[i - 1]) {
                             wanIndex++;
                         }
-                    } else if (data[i] != data[i - 1] && data[i] != data[i + 1]) {
+                    } else if (ints[i] != ints[i - 1] && ints[i] != ints[i + 1]) {
                         wanIndex++;
                     }
                 }
@@ -75,7 +83,7 @@ public class MyService extends Service {
                 }
             }
 
-            if (length > 2 && data[length - 1] != data[length - 2] && data[length - 3] != data[length - 2]) {
+            if (length > 2 && ints[length - 1] != ints[length - 2] && ints[length - 3] != ints[length - 2]) {
                 Toast.makeText(MyService.this, "give up!", Toast.LENGTH_SHORT).show();
                 return false;
             } else {
@@ -84,13 +92,13 @@ public class MyService extends Service {
                     last = GBData.VALUE_LONG;
                 } else {
                     money = 10;
-                    if (length > 1 && data[length - 1] != data[length - 2]) {
+                    if (length > 1 && ints[length - 1] != ints[length - 2]) {
                         money *= 2;
-                        if (length > 2 && data[length - 2] != data[length - 3]) {
+                        if (length > 2 && ints[length - 2] != ints[length - 3]) {
                             money *= 2;
                         }
                     }
-                    last = data[length - 1];
+                    last = ints[length - 1];
                 }
                 exeCall(last);
             }
@@ -182,7 +190,7 @@ public class MyService extends Service {
                 execShellCmd("input tap " + ASSIABLEX + " " + ASSIABLEY);
             }
         }.start();
-        Toast.makeText(this, valueCode == GBData.VALUE_LONG ? "long" : "feng" + money, Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, (valueCode == GBData.VALUE_LONG ? "long" : "feng") + money, Toast.LENGTH_SHORT).show();
     }
 
     public void exeLogin() {
