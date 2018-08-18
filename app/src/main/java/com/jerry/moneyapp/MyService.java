@@ -27,6 +27,7 @@ public class MyService extends Service {
     public static final int ASSIABLEX = 1000;//1320
     public static final int ASSIABLEY = 870;//1180
     public static final int COUNTY = 6;
+    private static final int GUDAO = 4;
 
     private static int width;
     private static int height;
@@ -65,27 +66,15 @@ public class MyService extends Service {
             }
             Log.d(TAG, "handleMessage: " + win);
             // 当前是否可玩儿
-            // 3个连续则投递。最后10个中3个孤岛放弃
-            if (length > 0) {
+            // 3个连续则投递。最后5个中2个孤岛放弃
+            if (length > GUDAO) {
                 int wanIndex = 0;
-                int wan = Math.min(length, 10);
-//                boolean keep = true;
-                int temp = ints[length - 1];
-                for (int i = length - 1; i > length - wan; i--) {
-                    if (i == length - 1) {
-                        if (length > 1 && ints[i] != ints[i - 1]) {
-                            wanIndex++;
-                        }
-                    } else {
-                        if (ints[i] != ints[i - 1] && ints[i] != ints[i + 1]) {
-                            wanIndex++;
-                        }
-//                        if (keep && i > length - wan - 3 && ints[i] != temp) {
-//                            keep = false;
-//                        }
+                for (int i = length - 2; i > length - 1 - GUDAO; i--) {
+                    if (ints[i] != ints[i - 1] && ints[i] != ints[i + 1]) {
+                        wanIndex++;
                     }
                 }
-                if (/*!keep &&*/ (double) wanIndex / wan >= 0.3) {
+                if ((double) wanIndex / GUDAO >= 0.4) {
                     Toast.makeText(MyService.this, "孤岛太多!", Toast.LENGTH_SHORT).show();
                     return false;
                 }
@@ -102,9 +91,6 @@ public class MyService extends Service {
                     money = 10;
                     if (length > 1 && ints[length - 1] != ints[length - 2]) {
                         money *= 2;
-                        if (length > 2 && ints[length - 2] != ints[length - 3]) {
-                            money *= 2;
-                        }
                     }
                     last = ints[length - 1];
                 }
