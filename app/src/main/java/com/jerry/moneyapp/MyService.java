@@ -28,6 +28,7 @@ public class MyService extends Service {
     public static final int ASSIABLEY = 870;//1180
     public static final int COUNTY = 6;
     private static final int GUDAO = 4;
+    private static final int NOTPLAYCOUNT = 10;
 
     private static int width;
     private static int height;
@@ -39,6 +40,7 @@ public class MyService extends Service {
     private volatile int length;
     private int money;
     private int count;
+    private int notPlay;
 
     protected WeakHandler mWeakHandler = new WeakHandler(new Handler.Callback() {
 
@@ -47,11 +49,12 @@ public class MyService extends Service {
             if (msg.what == -1) {
                 return false;
             }
-            mWeakHandler.sendEmptyMessageDelayed(0, 9000);
+            mWeakHandler.sendEmptyMessageDelayed(0, 15000);
             GBData.getCurrentData(pointsX, pointsY, data);
             if (data.size() == length) {
                 return false;
             }
+            execShellCmd("input tap " + 400 + " " + 400);//点击一下空白处
             length = data.size();
             int[] ints = new int[length];
             for (int i = 0; i < length; i++) {
@@ -74,19 +77,23 @@ public class MyService extends Service {
                         wanIndex++;
                     }
                 }
-                if ((double) wanIndex / GUDAO >= 0.4) {
+                Log.d(TAG, "gudao: " + wanIndex);
+                if (wanIndex >= 2 && notPlay < NOTPLAYCOUNT) {
                     Toast.makeText(MyService.this, "孤岛太多!", Toast.LENGTH_SHORT).show();
+                    notPlay++;
                     return false;
                 }
             }
 
-            if (length > 2 && ints[length - 1] != ints[length - 2] && ints[length - 3] != ints[length - 2]) {
+            if (length > 2 && ints[length - 1] != ints[length - 2] && ints[length - 3] != ints[length - 2] && notPlay < NOTPLAYCOUNT) {
                 Toast.makeText(MyService.this, "本局放弃!", Toast.LENGTH_SHORT).show();
+                notPlay++;
                 return false;
             } else {
                 if (length == 0) {
                     money = 10;
                     Toast.makeText(MyService.this, "请自选!", Toast.LENGTH_SHORT).show();
+                    notPlay++;
                 } else {
                     money = 10;
                     if (length > 1 && ints[length - 1] != ints[length - 2]) {
@@ -182,6 +189,7 @@ public class MyService extends Service {
                 execShellCmd("input tap " + ASSIABLEX + " " + ASSIABLEY);
             }
         }.start();
+        notPlay = 0;
         Toast.makeText(this, (valueCode == GBData.VALUE_LONG ? "龙" : "凤") + money, Toast.LENGTH_SHORT).show();
     }
 }
