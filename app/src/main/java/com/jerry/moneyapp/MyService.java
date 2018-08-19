@@ -68,7 +68,7 @@ public class MyService extends Service {
                     win = win - money;
                 }
             }
-            Toast.makeText(MyService.this, "净胜：win", Toast.LENGTH_SHORT).show();
+            Toast.makeText(MyService.this, "净胜：" + win, Toast.LENGTH_SHORT).show();
             // 当前是否可玩儿
             // 3个连续则投递。最后5个中2个孤岛放弃
             if (length > GUDAO) {
