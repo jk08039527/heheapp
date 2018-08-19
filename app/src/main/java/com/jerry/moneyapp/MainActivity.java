@@ -26,7 +26,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Toast;
 
-public class MainActivity extends FragmentActivity {
+public class MainActivity extends FragmentActivity implements View.OnClickListener {
 
     private static final String TAG = "MainActivity";
     private static final int REQUEST_MEDIA_PROJECTION = 1;
@@ -56,9 +56,12 @@ public class MainActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mMediaProjectionManager = (MediaProjectionManager) getSystemService(Context.MEDIA_PROJECTION_SERVICE);
-        assert mMediaProjectionManager != null;
-        startActivityForResult(mMediaProjectionManager.createScreenCaptureIntent(), REQUEST_MEDIA_PROJECTION);
-
+        if (mMediaProjectionManager != null) {
+            startActivityForResult(mMediaProjectionManager.createScreenCaptureIntent(), REQUEST_MEDIA_PROJECTION);
+        }
+        findViewById(R.id.btn).setOnClickListener(this);
+        findViewById(R.id.btn2).setOnClickListener(this);
+        findViewById(R.id.btn3).setOnClickListener(this);
         mWebView = findViewById(R.id.webview);
         mWebView.removeJavascriptInterface("searchBoxJavaBridge_");
         mWebView.removeJavascriptInterface("accessibilityTraversal");
@@ -141,6 +144,30 @@ public class MainActivity extends FragmentActivity {
     }
 
     @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.btn:
+                if (isBind){
+                    myService.setBtnClickable();
+                }
+                break;
+            case R.id.btn2:
+                if (isBind) {
+                    return;
+                }
+                bindService(new Intent(this, MyService.class), mServiceConnection, BIND_AUTO_CREATE);
+                break;
+            case R.id.btn3:
+                if (mWebView != null) {
+                    mWebView.reload();
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
+    @Override
     public void onBackPressed() {
         if (mWebView != null && mWebView.canGoBack()) {
             mWebView.goBack();
@@ -149,25 +176,12 @@ public class MainActivity extends FragmentActivity {
         finish();
     }
 
-    public void toggle(View view) {
-        if (isBind) {
-            return;
-        }
-        bindService(new Intent(this, MyService.class), mServiceConnection, BIND_AUTO_CREATE);
-    }
-
     @Override
     protected void onDestroy() {
         isBind = false;
         myService = null;
         unbindService(mServiceConnection);
         super.onDestroy();
-
     }
 
-    public void refresh(View view) {
-        if (mWebView != null) {
-            mWebView.reload();
-        }
-    }
 }

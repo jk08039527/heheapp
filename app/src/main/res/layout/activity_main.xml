@@ -9,8 +9,8 @@
         android:id="@+id/btn"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:onClick="toggle"
-        android:text="@string/app_name"
+        android:onClick="open"
+        android:text="@string/click"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toLeftOf="@+id/btn2" />
 
@@ -18,8 +18,8 @@
         android:id="@+id/btn2"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Login"
-        android:visibility="gone"
+        android:text="@string/start"
+        android:onClick="toggle"
         app:layout_constraintLeft_toRightOf="@+id/btn"
         app:layout_constraintRight_toLeftOf="@+id/btn3" />
 
@@ -28,7 +28,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:onClick="refresh"
-        android:text="Refresh"
+        android:text="@string/refresh"
         app:layout_constraintLeft_toRightOf="@+id/btn2"
         app:layout_constraintRight_toRightOf="parent" />
 

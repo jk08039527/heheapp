@@ -41,6 +41,7 @@ public class MyService extends Service {
     private int money;
     private int count;
     private int notPlay;
+    private boolean mBtnClickable;//点击生效
 
     protected WeakHandler mWeakHandler = new WeakHandler(new Handler.Callback() {
 
@@ -133,6 +134,11 @@ public class MyService extends Service {
         return new PlayBinder();
     }
 
+    public void setBtnClickable() {
+        mBtnClickable = !mBtnClickable;
+        Toast.makeText(this, mBtnClickable ? "点击生效！" : "点击取消!", Toast.LENGTH_SHORT).show();
+    }
+
     public class PlayBinder extends Binder {
 
         public MyService getPlayService() {
@@ -180,19 +186,20 @@ public class MyService extends Service {
         } else {
             clickX = (int) (width * 0.75);
         }
+        if (mBtnClickable) {
+            new CountDownTimer(500 * (money / 10 + 1), 500) {
 
-        new CountDownTimer(500 * (money / 10 + 1), 500) {
+                @Override
+                public void onTick(final long millisUntilFinished) {
+                    execShellCmd("input tap " + clickX + " " + clickY);
+                }
 
-            @Override
-            public void onTick(final long millisUntilFinished) {
-                execShellCmd("input tap " + clickX + " " + clickY);
-            }
-
-            @Override
-            public void onFinish() {
-                execShellCmd("input tap " + ASSIABLEX + " " + ASSIABLEY);
-            }
-        }.start();
+                @Override
+                public void onFinish() {
+                    execShellCmd("input tap " + ASSIABLEX + " " + ASSIABLEY);
+                }
+            }.start();
+        }
         notPlay = 0;
         Toast.makeText(this, (valueCode == GBData.VALUE_LONG ? "龙" : "凤") + money, Toast.LENGTH_SHORT).show();
     }
