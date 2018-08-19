@@ -64,11 +64,11 @@ public class MyService extends Service {
             if (length > 0) {
                 if (last == ints[length - 1]) {
                     win = win + money;
-                } else {
+                } else if (last != GBData.VALUE_NONE) {
                     win = win - money;
                 }
             }
-            Log.d(TAG, "handleMessage: " + win);
+            Toast.makeText(MyService.this, "净胜：win", Toast.LENGTH_SHORT).show();
             // 当前是否可玩儿
             // 3个连续则投递。最后5个中2个孤岛放弃
             if (length > GUDAO) {
@@ -84,6 +84,7 @@ public class MyService extends Service {
                 }
                 Log.d(TAG, "gudao: " + wanIndex);
                 if (wanIndex >= 2 && notPlay < NOTPLAYCOUNT) {
+                    last = GBData.VALUE_NONE;
                     Toast.makeText(MyService.this, "孤岛太多!" + wanIndex, Toast.LENGTH_SHORT).show();
                     notPlay++;
                     return false;
@@ -92,6 +93,7 @@ public class MyService extends Service {
 
             if (length > 2 && ints[length - 1] != ints[length - 2] && ints[length - 3] != ints[length - 2] && notPlay < NOTPLAYCOUNT) {
                 Toast.makeText(MyService.this, "本局放弃!", Toast.LENGTH_SHORT).show();
+                last = GBData.VALUE_NONE;
                 notPlay++;
                 return false;
             } else {

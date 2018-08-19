@@ -15,6 +15,7 @@ public class GBData {
     private static final int VALUE_MAX = 240;//阈值
     private static final int MIN1 = 55;//阈值1
     private static final int MIN2 = 65;//阈值2
+    public static final int VALUE_NONE = 0;
     public static final int VALUE_FENG = 1;
     public static final int VALUE_LONG = 2;
     private static int peaceCount;
