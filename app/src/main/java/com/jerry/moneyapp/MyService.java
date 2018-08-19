@@ -72,14 +72,18 @@ public class MyService extends Service {
             // 3个连续则投递。最后5个中2个孤岛放弃
             if (length > GUDAO) {
                 int wanIndex = 0;
-                for (int i = length - 2; i > length - 1 - GUDAO; i--) {
-                    if (ints[i] != ints[i - 1] && ints[i] != ints[i + 1]) {
+                for (int i = length - 1; i > length - 1 - GUDAO; i--) {
+                    if (i == length - 1) {
+                        if (ints[i] != ints[i - 1]) {
+                            wanIndex++;
+                        }
+                    } else if (ints[i] != ints[i - 1] && ints[i] != ints[i + 1]) {
                         wanIndex++;
                     }
                 }
                 Log.d(TAG, "gudao: " + wanIndex);
                 if (wanIndex >= 2 && notPlay < NOTPLAYCOUNT) {
-                    Toast.makeText(MyService.this, "孤岛太多!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MyService.this, "孤岛太多!" + wanIndex, Toast.LENGTH_SHORT).show();
                     notPlay++;
                     return false;
                 }
@@ -96,7 +100,7 @@ public class MyService extends Service {
                     notPlay++;
                 } else {
                     money = 10;
-                    if (length > 1 && ints[length - 1] != ints[length - 2]) {
+                    if (notPlay == 0 && length > 1 && ints[length - 1] != ints[length - 2]) {
                         money *= 2;
                     }
                     last = ints[length - 1];
