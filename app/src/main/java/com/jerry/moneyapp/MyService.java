@@ -27,7 +27,7 @@ public class MyService extends Service {
     public static final int ASSIABLEX = 1000;//1320
     public static final int ASSIABLEY = 870;//1180
     public static final int COUNTY = 6;
-    private static final int GUDAO = 4;
+    private static final int GUDAO = 5;
     private static final int NOTPLAYCOUNT = 10;
 
     private static int width;
