@@ -206,6 +206,8 @@ public class MyService extends Service {
                 }
             }.start();
             notPlay = 0;
+        } else {
+            notPlay++;
         }
         Toast.makeText(this, (valueCode == GBData.VALUE_LONG ? "龙" : "凤") + money, Toast.LENGTH_SHORT).show();
     }
