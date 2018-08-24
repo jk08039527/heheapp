@@ -1,5 +1,7 @@
 apply plugin: 'com.android.application'
 
+def keystoreDir = file(rootDir.getAbsolutePath() + "/keystore")
+
 android {
     compileSdkVersion 27
     defaultConfig {
@@ -8,7 +10,10 @@ android {
         targetSdkVersion 27
         versionCode 1
         versionName "1.0"
-        testInstrumentationRunner "android.support.Test.runner.AndroidJUnitRunner"
+        ndk {
+            // 设置支持的SO库架构
+            abiFilters 'armeabi','x86'
+        }
     }
     buildTypes {
         release {
@@ -20,10 +25,24 @@ android {
         targetCompatibility 1.8
         sourceCompatibility 1.8
     }
+    signingConfigs {
+        debug {
+
+        }
+
+        release {
+            storeFile new File(keystoreDir, "money.keystore")
+            storePassword '123456'
+            keyAlias 'money'
+            keyPassword '123456'
+            v2SigningEnabled false
+        }
+    }
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'com.android.support:appcompat-v7:27.1.1'
     implementation 'com.android.support.constraint:constraint-layout:1.1.2'
+    implementation 'com.tencent.bugly:crashreport:latest.release'
 }

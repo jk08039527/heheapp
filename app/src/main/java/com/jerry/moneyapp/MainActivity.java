@@ -156,7 +156,9 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                     return;
                 }
                 bindService(new Intent(this, MyService.class), mServiceConnection, BIND_AUTO_CREATE);
-                myService.forcusUpdate();
+                if (myService != null) {
+                    myService.forcusUpdate();
+                }
                 break;
             case R.id.btn3:
                 if (mWebView != null) {
