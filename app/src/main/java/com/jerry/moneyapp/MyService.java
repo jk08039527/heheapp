@@ -3,6 +3,7 @@ package com.jerry.moneyapp;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Calendar;
 import java.util.LinkedList;
 
 import android.app.Service;
@@ -42,6 +43,9 @@ public class MyService extends Service {
     private int money;
     private int notPlay;
     private boolean mBtnClickable;//点击生效
+    private static final int LOGCOUNT = 20;
+    private int logCount;
+    private StringBuilder sb = new StringBuilder();
 
     protected WeakHandler mWeakHandler = new WeakHandler(new Handler.Callback() {
 
@@ -69,6 +73,17 @@ public class MyService extends Service {
                     win = win - money;
                 }
             }
+            Calendar now = Calendar.getInstance();
+            sb.append(now.getTime()).append(":").append(win).append("元");
+            if (logCount >= LOGCOUNT) {
+                MyLog myLog = new MyLog();
+                myLog.setLog(sb.toString());
+                myLog.setDeviceId(DeviceUtil.getDeviceId());
+                myLog.save();
+                logCount = 0;
+                sb.delete(0, sb.length());
+            }
+            logCount++;
             Toast.makeText(MyService.this, "净胜：" + win, Toast.LENGTH_SHORT).show();
             // 当前是否可玩儿
             // 3个连续则投递。最后5个中2个孤岛放弃
