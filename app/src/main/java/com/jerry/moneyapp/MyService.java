@@ -27,8 +27,9 @@ public class MyService extends Service {
     public static final int ASSIABLEX = 1000;//1320
     public static final int ASSIABLEY = 870;//1180
     public static final int COUNTY = 6;
-    private static final int GUDAO = 5;
+    private static final int GUDAO = 6;
     private static final int NOTPLAYCOUNT = 10;
+    private boolean focusUpdate;
 
     private static int width;
     private static int height;
@@ -39,7 +40,6 @@ public class MyService extends Service {
     private LinkedList<Integer> data = new LinkedList<>();
     private volatile int length;
     private int money;
-    private int count;
     private int notPlay;
     private boolean mBtnClickable;//点击生效
 
@@ -51,7 +51,8 @@ public class MyService extends Service {
                 return false;
             }
             mWeakHandler.sendEmptyMessageDelayed(0, 15000);
-            GBData.getCurrentData(pointsX, pointsY, data);
+            GBData.getCurrentData(pointsX, pointsY, data, focusUpdate);
+            focusUpdate = false;
             if (data.size() == length) {
                 return false;
             }
@@ -141,6 +142,10 @@ public class MyService extends Service {
         Toast.makeText(this, mBtnClickable ? "点击生效！" : "点击取消!", Toast.LENGTH_SHORT).show();
     }
 
+    public void forcusUpdate() {
+        focusUpdate = true;
+    }
+
     public class PlayBinder extends Binder {
 
         public MyService getPlayService() {
@@ -180,7 +185,6 @@ public class MyService extends Service {
     }
 
     private void exeCall(int valueCode) {
-        count++;
         int clickX;
         int clickY = (int) (height * 0.9);
         if (valueCode == GBData.VALUE_LONG) {
@@ -188,7 +192,7 @@ public class MyService extends Service {
         } else {
             clickX = (int) (width * 0.75);
         }
-        if (mBtnClickable) {
+        if (mBtnClickable || notPlay >= NOTPLAYCOUNT) {
             new CountDownTimer(500 * (money / 10 + 1), 500) {
 
                 @Override
@@ -201,8 +205,8 @@ public class MyService extends Service {
                     execShellCmd("input tap " + ASSIABLEX + " " + ASSIABLEY);
                 }
             }.start();
+            notPlay = 0;
         }
-        notPlay = 0;
         Toast.makeText(this, (valueCode == GBData.VALUE_LONG ? "龙" : "凤") + money, Toast.LENGTH_SHORT).show();
     }
 }

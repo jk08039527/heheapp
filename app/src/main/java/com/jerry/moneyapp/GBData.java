@@ -26,7 +26,7 @@ public class GBData {
      * @param y
      * @return
      */
-    public static void getCurrentData(int[] x, int[] y, LinkedList<Integer> list) {
+    public static void getCurrentData(int[] x, int[] y, LinkedList<Integer> list, boolean focusUpdate) {
         if (reader == null) {
             Log.w(TAG, "getColor: reader is null");
             return;
@@ -58,7 +58,7 @@ public class GBData {
         }
 
         int currentSize = list.size() + peaceCount;
-        if (currentSize == 0) {
+        if (currentSize == 0 || focusUpdate) {
             for (int aX : x) {
                 for (int aY : y) {
                     int color = bitmap.getPixel(aX, aY);
