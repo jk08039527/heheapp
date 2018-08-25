@@ -24,8 +24,10 @@ public class DeviceUtil {
     @SuppressLint("hardwareIds")
     public static String getDeviceId() {
         Context context = MyApplication.getInstances().getApplicationContext();
-        String deviceId = "";
-
+        String deviceId = SharedPreferencesHelper.getString(SharedPreferencesHelper.getSettingSp(), "device_id", "");
+        if (!TextUtils.isEmpty(deviceId)) {
+            return deviceId;
+        }
         TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
         try {
             if (tm == null) {
@@ -47,6 +49,7 @@ public class DeviceUtil {
         if (isChinese(deviceId)) {
             deviceId = changeToUrlEncode(deviceId);
         }
+        SharedPreferencesHelper.setPreference(SharedPreferencesHelper.getSettingSp(), "device_id", deviceId);
         return deviceId;
     }
 
