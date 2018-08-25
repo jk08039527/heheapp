@@ -74,7 +74,7 @@ public class MyService extends Service {
                 }
             }
             Calendar now = Calendar.getInstance();
-            sb.append(now.getTime()).append(":").append(win).append("元");
+            sb.append(now.getTime()).append(":").append(win).append("元").append("\n");
             if (logCount >= LOGCOUNT) {
                 MyLog myLog = new MyLog();
                 myLog.setLog(sb.toString());
