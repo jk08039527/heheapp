@@ -121,7 +121,11 @@ public class MyService extends Service {
                 if (notPlay == 0 && length > 1 && ints[length - 1] != ints[length - 2]) {
                     money *= 2;
                 }
-                last = ints[length - 1];
+                if (length > 0) {
+                    last = ints[length - 1];
+                } else {
+                    last = GBData.VALUE_LONG;
+                }
                 exeCall(last);
             }
             return false;
