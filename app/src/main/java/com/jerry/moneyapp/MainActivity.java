@@ -149,6 +149,8 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
             case R.id.btn:
                 if (isBind){
                     myService.setBtnClickable();
+                } else {
+                    Toast.makeText(this, "先点击开始", Toast.LENGTH_SHORT).show();
                 }
                 break;
             case R.id.btn2:
