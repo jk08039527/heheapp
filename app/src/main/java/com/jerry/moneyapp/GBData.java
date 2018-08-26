@@ -18,7 +18,7 @@ public class GBData {
     public static final int VALUE_NONE = 0;
     public static final int VALUE_FENG = 1;
     public static final int VALUE_LONG = 2;
-    private static int peaceCount;
+    private static int peaceCount;//和
     public static ImageReader reader;
 
     /**
@@ -59,6 +59,7 @@ public class GBData {
 
         int currentSize = list.size() + peaceCount;
         if (currentSize == 0 || focusUpdate) {
+            list.clear();
             for (int aX : x) {
                 for (int aY : y) {
                     int color = bitmap.getPixel(aX, aY);

@@ -59,6 +59,10 @@ public class MyService extends Service {
             if (data.size() == length) {
                 return false;
             }
+            if (focusUpdate && data.size() - length > 1) {
+                Toast.makeText(MyService.this, "请自选!", Toast.LENGTH_SHORT).show();
+                return false;
+            }
             focusUpdate = false;
             execShellCmd("input tap " + 400 + " " + 400);//点击一下空白处
             length = data.size();
