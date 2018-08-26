@@ -118,10 +118,8 @@ public class MyService extends Service {
                 return false;
             } else {
                 money = 10;
-                if (length > 1 && ints[length - 1] != ints[length - 2]) {
-                    if (notPlay == 0 || !mBtnClickable) {
-                        money *= 2;
-                    }
+                if (notPlay == 0 && length > 1 && ints[length - 1] != ints[length - 2]) {
+                    money *= 2;
                 }
                 if (length > 0) {
                     last = ints[length - 1];
