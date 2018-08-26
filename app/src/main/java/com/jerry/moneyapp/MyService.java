@@ -56,10 +56,10 @@ public class MyService extends Service {
             }
             mWeakHandler.sendEmptyMessageDelayed(0, 15000);
             GBData.getCurrentData(pointsX, pointsY, data, focusUpdate);
-            focusUpdate = false;
             if (data.size() == length) {
                 return false;
             }
+            focusUpdate = false;
             execShellCmd("input tap " + 400 + " " + 400);//点击一下空白处
             length = data.size();
             int[] ints = new int[length];
@@ -113,17 +113,11 @@ public class MyService extends Service {
                 notPlay++;
                 return false;
             } else {
-                if (length == 0) {
-                    money = 10;
-                    Toast.makeText(MyService.this, "请自选!", Toast.LENGTH_SHORT).show();
-                    notPlay++;
-                } else {
-                    money = 10;
-                    if (notPlay == 0 && length > 1 && ints[length - 1] != ints[length - 2]) {
-                        money *= 2;
-                    }
-                    last = ints[length - 1];
+                money = 10;
+                if (notPlay == 0 && length > 1 && ints[length - 1] != ints[length - 2]) {
+                    money *= 2;
                 }
+                last = ints[length - 1];
                 exeCall(last);
             }
             return false;
