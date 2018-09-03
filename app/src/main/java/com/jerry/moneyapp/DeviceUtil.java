@@ -1,6 +1,7 @@
 package com.jerry.moneyapp;
 
 import java.net.URLEncoder;
+import java.text.DecimalFormat;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -14,6 +15,8 @@ import android.text.TextUtils;
  * Created by th on 16/5/17. 类说明:
  */
 public class DeviceUtil {
+
+    private static DecimalFormat df = new DecimalFormat("#.0");
 
     private DeviceUtil() {
     }
@@ -52,8 +55,8 @@ public class DeviceUtil {
         SharedPreferencesHelper.setPreference(SharedPreferencesHelper.getSettingSp(), "device_id", deviceId);
         return deviceId;
     }
-
     private static Pattern chinesePattern = Pattern.compile("^[\\u4E00-\\u9FA5\\uF900-\\uFA2D]+$");
+
 
     public static boolean isChinese(String string) {
         if (TextUtils.isEmpty(string)) {
@@ -79,4 +82,7 @@ public class DeviceUtil {
         }
     }
 
+    public static String m2(double d) {
+        return df.format(d);
+    }
 }

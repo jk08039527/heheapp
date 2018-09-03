@@ -3,6 +3,7 @@ package com.jerry.moneyapp;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.LinkedList;
 
@@ -20,7 +21,7 @@ import android.widget.Toast;
 public class MyService extends Service {
 
     private static final String TAG = "MyService";
-    private static int win;//净胜
+    private static double win;//净胜
     private static final int LEFT = 9;//17
     private static final int RIGHT = 1071;//144
     private static final int TOP = 460;//610
@@ -45,6 +46,8 @@ public class MyService extends Service {
     private boolean mBtnClickable;//点击生效
     private static final int LOGCOUNT = 20;
     private int logCount;
+    private int multiple = 1;//倍数
+    private ArrayList<Integer> paint = new ArrayList<>();
     private StringBuilder sb = new StringBuilder();
 
     protected WeakHandler mWeakHandler = new WeakHandler(new Handler.Callback() {
@@ -72,11 +75,37 @@ public class MyService extends Service {
             }
             if (length > 0) {
                 if (last == ints[length - 1]) {
-                    win = win + money;
+                    win = win + money * 0.97;
                 } else if (last != GBData.VALUE_NONE) {
                     win = win - money;
                 }
             }
+            // 判断是否加倍
+            if (length > 0) {
+                paint.clear();
+                int index = length - 1;
+                int temp = ints[length - 1];
+                int tempSize = 1;
+                while (index > 0) {
+                    index--;
+                    if (ints[index] == ints[index + 1]) {
+                        tempSize++;
+                    } else {
+                        paint.add(tempSize);
+                        tempSize = 1;
+                        if (paint.size() > 2) {
+                            break;
+                        }
+                    }
+                }
+                if (paint.size() > 2 && paint.get(0) > 1 && paint.get(1) > 1 && paint.get(0) + paint.get(1) > 4) {
+                    multiple = 2;
+                    Toast.makeText(MyService.this, "加倍", Toast.LENGTH_SHORT).show();
+                }
+            } else {
+                multiple = 1;
+            }
+
             Calendar now = Calendar.getInstance();
             sb.append(now.getTime()).append(":").append(win).append("元").append("\n");
             if (logCount >= LOGCOUNT) {
@@ -88,7 +117,7 @@ public class MyService extends Service {
                 sb.delete(0, sb.length());
             }
             logCount++;
-            Toast.makeText(MyService.this, "净胜：" + win, Toast.LENGTH_SHORT).show();
+            Toast.makeText(MyService.this, "净胜：" + DeviceUtil.m2(win), Toast.LENGTH_SHORT).show();
             // 当前是否可玩儿
             // 3个连续则投递。最后5个中2个孤岛放弃
             if (length > GUDAO) {
@@ -107,6 +136,7 @@ public class MyService extends Service {
                     last = GBData.VALUE_NONE;
                     Toast.makeText(MyService.this, "孤岛太多!" + wanIndex, Toast.LENGTH_SHORT).show();
                     notPlay++;
+                    multiple = 1;
                     return false;
                 }
             }
@@ -115,9 +145,10 @@ public class MyService extends Service {
                 Toast.makeText(MyService.this, "本局放弃!", Toast.LENGTH_SHORT).show();
                 last = GBData.VALUE_NONE;
                 notPlay++;
+                multiple = 1;
                 return false;
             } else {
-                money = 10;
+                money = 10 * multiple;
                 if (notPlay == 0 && length > 1 && ints[length - 1] != ints[length - 2]) {
                     money *= 2;
                 }
@@ -126,7 +157,7 @@ public class MyService extends Service {
                 } else {
                     last = GBData.VALUE_LONG;
                 }
-                exeCall(last);
+                exeCall();
             }
             return false;
         }
@@ -201,10 +232,10 @@ public class MyService extends Service {
         }
     }
 
-    private void exeCall(int valueCode) {
+    private void exeCall() {
         int clickX;
         int clickY = (int) (height * 0.9);
-        if (valueCode == GBData.VALUE_LONG) {
+        if (last == GBData.VALUE_LONG) {
             clickX = (int) (width * 0.25);
         } else {
             clickX = (int) (width * 0.75);
@@ -226,6 +257,6 @@ public class MyService extends Service {
         } else {
             notPlay++;
         }
-        Toast.makeText(this, (valueCode == GBData.VALUE_LONG ? "龙" : "凤") + money, Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, (last == GBData.VALUE_LONG ? "龙" : "凤") + money, Toast.LENGTH_SHORT).show();
     }
 }
