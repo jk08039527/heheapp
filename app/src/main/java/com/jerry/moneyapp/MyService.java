@@ -68,8 +68,8 @@ public class MyService extends Service {
             }
             focusUpdate = false;
             //点击一下空白处
-            execShellCmd("input tap " + 400 + " " + 400);
             length = data.size();
+            execShellCmd("input tap " + 400 + " " + 400);
             int[] ints = new int[length];
             for (int i = 0; i < length; i++) {
                 ints[i] = data.get(i);
@@ -109,21 +109,21 @@ public class MyService extends Service {
                 multiple = 1;
             }
 
-            Calendar now = Calendar.getInstance();
-            sb.append(now.getTime()).append(":").append(win).append("元").append("\n");
-            if (logCount >= LOGCOUNT) {
+            if (data.size() >= 70) {
+                Calendar now = Calendar.getInstance();
+                sb.append(now.getTime()).append(":").append(win).append("元").append("\n");
                 MyLog myLog = new MyLog();
                 myLog.setLog(sb.toString());
+                myLog.setData(data);
                 myLog.setDeviceId(DeviceUtil.getDeviceId());
                 myLog.save();
-                logCount = 0;
                 sb.delete(0, sb.length());
             }
             logCount++;
             Toast.makeText(MyService.this, "净胜：" + DeviceUtil.m2(win), Toast.LENGTH_SHORT).show();
             // 当前是否可玩儿
             // 3个连续则投递。最后5个中2个孤岛放弃
-            if (length > GUDAO) {
+            if (length > GUDAO && multiple > 0) {
                 int wanIndex = 0;
                 for (int i = length - 1; i > length - 1 - GUDAO; i--) {
                     if (i == length - 1) {
@@ -143,14 +143,14 @@ public class MyService extends Service {
                 }
             }
 
-            if (length > 2 && ints[length - 1] != ints[length - 2] && ints[length - 3] != ints[length - 2] && notPlay < NOTPLAYCOUNT) {
+            if (length > 2 && ints[length - 1] != ints[length - 2] && ints[length - 3] != ints[length - 2] && notPlay < NOTPLAYCOUNT && multiple > 0) {
                 Toast.makeText(MyService.this, "本局放弃!", Toast.LENGTH_SHORT).show();
                 last = GBData.VALUE_NONE;
                 notPlay++;
                 return false;
             } else {
                 money = (!mBtnClickable && notPlay >= NOTPLAYCOUNT) ? 10 : 10 * Math.abs(multiple);
-                if (notPlay == 0 && length > 1 && ints[length - 1] != ints[length - 2]) {
+                if (notPlay == 0 && length > 1 && ints[length - 1] != ints[length - 2] && multiple > 0) {
                     money *= 2;
                 }
                 if (length > 0) {

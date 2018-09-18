@@ -1,5 +1,7 @@
 package com.jerry.moneyapp;
 
+import java.util.LinkedList;
+
 import cn.bmob.v3.BmobObject;
 
 /**
@@ -10,6 +12,7 @@ import cn.bmob.v3.BmobObject;
 public class MyLog extends BmobObject {
     private String log;
     private String deviceId;
+    private LinkedList<Integer> data;
 
     public String getLog() {
         return log;
@@ -25,5 +28,13 @@ public class MyLog extends BmobObject {
 
     public void setDeviceId(final String deviceId) {
         this.deviceId = deviceId;
+    }
+
+    public LinkedList<Integer> getData() {
+        return data;
+    }
+
+    public void setData(LinkedList<Integer> data) {
+        this.data = data;
     }
 }
