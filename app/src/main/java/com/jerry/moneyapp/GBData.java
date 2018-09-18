@@ -12,7 +12,7 @@ import android.util.Log;
 public class GBData {
 
     private static final String TAG = "GBData";
-    private static final int VALUE_MAX = 240;//阈值
+    private static final int VALUE_MAX = 235;//阈值
     private static final int MIN1 = 55;//阈值1
     private static final int MIN2 = 65;//阈值2
     public static final int VALUE_NONE = 0;
@@ -48,11 +48,9 @@ public class GBData {
         Bitmap bitmap = Bitmap.createBitmap(width + rowPadding / pixelStride, height, Bitmap.Config.ARGB_8888);
         bitmap.copyPixelsFromBuffer(buffer);
         image.close();
-        int assiableColor = bitmap.getPixel((MyService.ASSIABLEX + (int) (Math.random() * 10)), MyService.ASSIABLEY);
-        int r = Color.red(assiableColor);
+        int assiableColor = bitmap.getPixel(MyService.ASSIABLEX, MyService.ASSIABLEY);
         int g = Color.green(assiableColor);
-        int b = Color.blue(assiableColor);
-        if (r + g + b < 150) {//46+49+52
+        if (g < 240) {
             Log.w(TAG, "not assiable!");
             return;
         }
@@ -66,13 +64,13 @@ public class GBData {
                     int red = Color.red(color);
                     int green = Color.green(color);
                     int blue = Color.blue(color);
-                    if (blue > VALUE_MAX && red > MIN1 && red < MIN2) {
+                    if (blue > VALUE_MAX && red > MIN1) {
                         list.add(VALUE_LONG);
-                    } else if (red > VALUE_MAX && blue > MIN1 && blue < MIN2) {
+                    } else if (red > VALUE_MAX && blue > MIN1) {
                         list.add(VALUE_FENG);
-                    } else if (red + blue < 70 && green > 140) {
+                    } else if (red + blue < 100 && green > 220) {
                         peaceCount++;
-                    } else if (red > 215 && red < 220 && blue > 215 && blue < 220) {
+                    } else if (red > 215 && green > 215 && blue > 215) {
                         return;
                     } else {
                         peaceCount = 0;

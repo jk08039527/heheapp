@@ -22,12 +22,12 @@ public class MyService extends Service {
 
     private static final String TAG = "MyService";
     private static double win;//净胜
-    private static final int LEFT = 9;//17
-    private static final int RIGHT = 1071;//144
-    private static final int TOP = 460;//610
-    private static final int BOTTOM = 800;//1080
-    public static final int ASSIABLEX = 1000;//1320
-    public static final int ASSIABLEY = 870;//1180
+    private static final int LEFT = 12;//17
+    private static final int RIGHT = 1068;//144
+    private static final int TOP = 470;//610
+    private static final int BOTTOM = 805;//1080
+    public static final int ASSIABLEX = 990;//1320
+    public static final int ASSIABLEY = 900;//1180
     public static final int COUNTY = 6;
     private static final int GUDAO = 6;
     private static final int NOTPLAYCOUNT = 10;
@@ -62,7 +62,7 @@ public class MyService extends Service {
             if (data.size() == length) {
                 return false;
             }
-            if (focusUpdate && data.size() - length > 1) {
+            if (focusUpdate && Math.abs(data.size() - length) > 3) {
                 Toast.makeText(MyService.this, "请自选!", Toast.LENGTH_SHORT).show();
                 return false;
             }
@@ -78,10 +78,9 @@ public class MyService extends Service {
                     win = win + money * 0.97;
                 } else if (last != GBData.VALUE_NONE) {
                     win = win - money;
+                    multiple = 1;
                 }
-            }
-            // 判断是否加倍
-            if (length > 0) {
+                // 判断是否加倍
                 paint.clear();
                 int index = length - 1;
                 int temp = ints[length - 1];
@@ -98,7 +97,7 @@ public class MyService extends Service {
                         }
                     }
                 }
-                if (paint.size() > 2 && paint.get(0) > 1 && paint.get(1) > 1 && paint.get(0) + paint.get(1) > 4) {
+                if (paint.size() > 2 && paint.get(0) > 1 && paint.get(1) > 1 && paint.get(2) > 1 && paint.get(1) + paint.get(2) > 4) {
                     multiple = 2;
                     Toast.makeText(MyService.this, "加倍", Toast.LENGTH_SHORT).show();
                 }
@@ -136,7 +135,6 @@ public class MyService extends Service {
                     last = GBData.VALUE_NONE;
                     Toast.makeText(MyService.this, "孤岛太多!" + wanIndex, Toast.LENGTH_SHORT).show();
                     notPlay++;
-                    multiple = 1;
                     return false;
                 }
             }
@@ -145,10 +143,9 @@ public class MyService extends Service {
                 Toast.makeText(MyService.this, "本局放弃!", Toast.LENGTH_SHORT).show();
                 last = GBData.VALUE_NONE;
                 notPlay++;
-                multiple = 1;
                 return false;
             } else {
-                money = 10 * multiple;
+                money = (!mBtnClickable && notPlay >= NOTPLAYCOUNT) ? 10 : 10 * multiple;
                 if (notPlay == 0 && length > 1 && ints[length - 1] != ints[length - 2]) {
                     money *= 2;
                 }
@@ -170,7 +167,7 @@ public class MyService extends Service {
         height = Resources.getSystem().getDisplayMetrics().heightPixels;
         double eachX = (RIGHT - LEFT) / 18;
         double eachY = (BOTTOM - TOP) / 6;
-        double initX = LEFT + eachX * 0.875;
+        double initX = LEFT + eachX * 0.85;
         double initY = TOP + eachY / 2;
         for (int i = 0; i < pointsX.length; i++) {
             pointsX[i] = (int) (initX + i * eachX);
