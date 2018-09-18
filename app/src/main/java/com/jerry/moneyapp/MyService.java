@@ -57,7 +57,7 @@ public class MyService extends Service {
             if (msg.what == -1) {
                 return false;
             }
-            mWeakHandler.sendEmptyMessageDelayed(0, 15000);
+            mWeakHandler.sendEmptyMessageDelayed(0, 12000);
             GBData.getCurrentData(pointsX, pointsY, data, focusUpdate);
             if (data.size() == length) {
                 return false;
@@ -67,7 +67,8 @@ public class MyService extends Service {
                 return false;
             }
             focusUpdate = false;
-            execShellCmd("input tap " + 400 + " " + 400);//点击一下空白处
+            //点击一下空白处
+            execShellCmd("input tap " + 400 + " " + 400);
             length = data.size();
             int[] ints = new int[length];
             for (int i = 0; i < length; i++) {
@@ -83,7 +84,6 @@ public class MyService extends Service {
                 // 判断是否加倍
                 paint.clear();
                 int index = length - 1;
-                int temp = ints[length - 1];
                 int tempSize = 1;
                 while (index > 0) {
                     index--;
@@ -97,9 +97,13 @@ public class MyService extends Service {
                         }
                     }
                 }
-                if (paint.size() > 2 && paint.get(0) > 1 && paint.get(1) > 1 && paint.get(2) > 1 && paint.get(1) + paint.get(2) > 4) {
+                if ((paint.size() > 1 && paint.get(0) > 1 && paint.get(1) > 1 && paint.get(0) + paint.get(1) > 5) || (paint.size() > 2 &&
+                        paint.get(0) > 1 && paint.get(1) > 1 && paint.get(2) > 1 && paint.get(0) + paint.get(1) + paint.get(2) > 6)) {
                     multiple = 2;
                     Toast.makeText(MyService.this, "加倍", Toast.LENGTH_SHORT).show();
+                }
+                if (paint.size() > 2 && paint.get(0) == 1 && paint.get(1) == 1 && paint.get(2) == 1) {
+                    multiple = -1;
                 }
             } else {
                 multiple = 1;
@@ -145,12 +149,16 @@ public class MyService extends Service {
                 notPlay++;
                 return false;
             } else {
-                money = (!mBtnClickable && notPlay >= NOTPLAYCOUNT) ? 10 : 10 * multiple;
+                money = (!mBtnClickable && notPlay >= NOTPLAYCOUNT) ? 10 : 10 * Math.abs(multiple);
                 if (notPlay == 0 && length > 1 && ints[length - 1] != ints[length - 2]) {
                     money *= 2;
                 }
                 if (length > 0) {
-                    last = ints[length - 1];
+                    if (multiple < 0) {
+                        last = ints[length - 2];
+                    } else {
+                        last = ints[length - 1];
+                    }
                 } else {
                     last = GBData.VALUE_LONG;
                 }
