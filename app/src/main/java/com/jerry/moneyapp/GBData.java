@@ -55,54 +55,27 @@ public class GBData {
             return;
         }
 
-        int currentSize = list.size() + peaceCount;
-        if (currentSize == 0 || focusUpdate) {
-            list.clear();
-            for (int aX : x) {
-                for (int aY : y) {
-                    int color = bitmap.getPixel(aX, aY);
-                    int red = Color.red(color);
-                    int green = Color.green(color);
-                    int blue = Color.blue(color);
-                    if (blue > VALUE_MAX && red > MIN1) {
-                        list.add(VALUE_LONG);
-                    } else if (red > VALUE_MAX && blue > MIN1) {
-                        list.add(VALUE_FENG);
-                    } else if (red + blue < 100 && green > 220) {
-                        peaceCount++;
-                    } else if (red > 215 && green > 215 && blue > 215) {
-                        return;
-                    } else {
-                        peaceCount = 0;
-                        list.clear();
-                        return;
-                    }
+        list.clear();
+        for (int aX : x) {
+            for (int aY : y) {
+                int color = bitmap.getPixel(aX, aY);
+                int red = Color.red(color);
+                int green = Color.green(color);
+                int blue = Color.blue(color);
+                if (blue > VALUE_MAX && red > MIN1 && red < 200) {
+                    list.add(VALUE_LONG);
+                } else if (red > VALUE_MAX && blue > MIN1 && blue < 200) {
+                    list.add(VALUE_FENG);
+                } else if (red + blue < 100 && green > 220) {
+                    peaceCount++;
+                    list.add(VALUE_NONE);
+                } else if (red > 215 && green > 215 && blue > 215) {
+                    return;
+                } else {
+                    peaceCount = 0;
+                    list.clear();
+                    return;
                 }
-            }
-            return;
-        }
-
-
-        int cXIndex = currentSize / MyService.COUNTY;
-        int cYIndex = currentSize % MyService.COUNTY;
-
-        int color = bitmap.getPixel(x[cXIndex], y[cYIndex]);
-        int red = Color.red(color);
-        int green = Color.green(color);
-        int blue = Color.blue(color);
-        if (blue > VALUE_MAX && red > MIN1 && red < MIN2) {
-            list.add(VALUE_LONG);
-        } else if (red > VALUE_MAX && blue > MIN1 && blue < MIN2) {
-            list.add(VALUE_FENG);
-        } else if (red + blue < 70 && green > 140) {
-            peaceCount++;
-        } else if (red > 215 && red < 220 && blue > 215 && blue < 220) {
-            int color1 = bitmap.getPixel(x[0], y[0]);
-            int red1 = Color.red(color1);
-            int blue1 = Color.blue(color1);
-            if (red1 > 215 && red1 < 220 && blue1 > 215 && blue1 < 220) {
-                peaceCount = 0;
-                list.clear();
             }
         }
     }
