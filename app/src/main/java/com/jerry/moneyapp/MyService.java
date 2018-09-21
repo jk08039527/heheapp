@@ -173,10 +173,10 @@ public class MyService extends Service {
         super.onCreate();
         width = Resources.getSystem().getDisplayMetrics().widthPixels;
         height = Resources.getSystem().getDisplayMetrics().heightPixels;
-        double eachX = (RIGHT - LEFT) / 18;
-        double eachY = (BOTTOM - TOP) / 6;
-        double initX = LEFT + eachX * 0.85;
-        double initY = TOP + eachY / 2;
+        double eachX = (RIGHT - LEFT) / 18d;
+        double eachY = (BOTTOM - TOP) / 6d;
+        double initX = LEFT + eachX * 0.85d;
+        double initY = TOP + eachY / 2d;
         for (int i = 0; i < pointsX.length; i++) {
             pointsX[i] = (int) (initX + i * eachX);
         }
