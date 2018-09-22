@@ -31,7 +31,6 @@ public class MyService extends Service {
     public static final int COUNTY = 6;
     private static final int GUDAO = 6;
     private static final int NOTPLAYCOUNT = 10;
-    private boolean focusUpdate;
 
     private static int width;
     private static int height;
@@ -58,15 +57,10 @@ public class MyService extends Service {
                 return false;
             }
             mWeakHandler.sendEmptyMessageDelayed(0, 12000);
-            GBData.getCurrentData(pointsX, pointsY, data, focusUpdate);
+            GBData.getCurrentData(pointsX, pointsY, data);
             if (data.size() == length) {
                 return false;
             }
-            if (focusUpdate && Math.abs(data.size() - length) > 3) {
-                Toast.makeText(MyService.this, "请自选!", Toast.LENGTH_SHORT).show();
-                return false;
-            }
-            focusUpdate = false;
             //点击一下空白处
             length = data.size();
             execShellCmd("input tap " + 400 + " " + 400);
@@ -193,10 +187,6 @@ public class MyService extends Service {
     public void setBtnClickable() {
         mBtnClickable = !mBtnClickable;
         Toast.makeText(this, mBtnClickable ? "点击生效！" : "点击取消!", Toast.LENGTH_SHORT).show();
-    }
-
-    public void forcusUpdate() {
-        focusUpdate = true;
     }
 
     public class PlayBinder extends Binder {

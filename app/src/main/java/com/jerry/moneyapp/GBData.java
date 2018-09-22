@@ -26,7 +26,7 @@ public class GBData {
      * @param y
      * @return
      */
-    public static void getCurrentData(int[] x, int[] y, LinkedList<Integer> list, boolean focusUpdate) {
+    public static void getCurrentData(int[] x, int[] y, LinkedList<Integer> list) {
         if (reader == null) {
             Log.w(TAG, "getColor: reader is null");
             return;
