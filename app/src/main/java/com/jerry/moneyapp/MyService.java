@@ -61,6 +61,9 @@ public class MyService extends Service {
             if (data.size() == length) {
                 return false;
             }
+            if (data.size() == 0 && length < 68) {
+                return false;
+            }
             //点击一下空白处
             length = data.size();
             execShellCmd("input tap " + 400 + " " + 400);
@@ -102,7 +105,7 @@ public class MyService extends Service {
                 multiple = 1;
             }
 
-            if (data.size() >= 70) {
+            if (data.size() >= 68) {
                 Calendar now = Calendar.getInstance();
                 sb.append(now.getTime()).append(":").append(win).append("元").append("\n");
                 MyLog myLog = new MyLog();
@@ -235,7 +238,7 @@ public class MyService extends Service {
             clickX = (int) (width * 0.75);
         }
         if (mBtnClickable || notPlay >= NOTPLAYCOUNT) {
-            new CountDownTimer(500 * Math.abs(multiple), 500) {
+            new CountDownTimer(500 * Math.abs(multiple) + 100, 500) {
 
                 @Override
                 public void onTick(final long millisUntilFinished) {
