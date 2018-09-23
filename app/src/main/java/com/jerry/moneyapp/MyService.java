@@ -238,7 +238,7 @@ public class MyService extends Service {
             clickX = (int) (width * 0.75);
         }
         if (mBtnClickable || notPlay >= NOTPLAYCOUNT) {
-            new CountDownTimer(500 * Math.abs(multiple + 1), 500) {
+            new CountDownTimer(500 * (money / 10 + 1), 500) {
 
                 @Override
                 public void onTick(final long millisUntilFinished) {
