@@ -95,8 +95,7 @@ public class MyService extends Service {
                         paint.get(0) > 1 && paint.get(1) > 1 && paint.get(2) > 1 && paint.get(0) + paint.get(1) + paint.get(2) > 6)) {
                     multiple = 2;
                     Toast.makeText(MyService.this, "加倍", Toast.LENGTH_SHORT).show();
-                }
-                if (paint.size() > 2 && paint.get(0) == 1 && paint.get(1) == 1 && paint.get(2) == 1) {
+                } else if (paint.size() > 2 && paint.get(0) == 1 && paint.get(1) == 1 && paint.get(2) == 1) {
                     multiple = -1;
                 }
             } else {
@@ -236,7 +235,7 @@ public class MyService extends Service {
             clickX = (int) (width * 0.75);
         }
         if (mBtnClickable || notPlay >= NOTPLAYCOUNT) {
-            new CountDownTimer(500 * (money / 10 + 1), 500) {
+            new CountDownTimer(500 * Math.abs(multiple), 500) {
 
                 @Override
                 public void onTick(final long millisUntilFinished) {
