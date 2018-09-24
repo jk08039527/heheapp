@@ -28,7 +28,6 @@ public class MyService extends Service {
     private static final int BOTTOM = 805;//1080
     public static final int ASSIABLEX = 990;//1320
     public static final int ASSIABLEY = 900;//1180
-    public static final int COUNTY = 6;
     private static final int GUDAO = 6;
     private static final int NOTPLAYCOUNT = 10;
 
@@ -97,7 +96,6 @@ public class MyService extends Service {
                 if ((paint.size() > 1 && paint.get(0) > 1 && paint.get(1) > 1 && paint.get(0) + paint.get(1) > 5) || (paint.size() > 2 &&
                         paint.get(0) > 1 && paint.get(1) > 1 && paint.get(2) > 1 && paint.get(0) + paint.get(1) + paint.get(2) > 6)) {
                     multiple = 2;
-                    Toast.makeText(MyService.this, "加倍", Toast.LENGTH_SHORT).show();
                 } else if (paint.size() > 2 && paint.get(0) == 1 && paint.get(1) == 1 && paint.get(2) == 1) {
                     multiple = -1;
                 }
@@ -116,7 +114,6 @@ public class MyService extends Service {
                 sb.delete(0, sb.length());
             }
             logCount++;
-            Toast.makeText(MyService.this, "净胜：" + DeviceUtil.m2(win), Toast.LENGTH_SHORT).show();
             // 当前是否可玩儿
             // 3个连续则投递。最后5个中2个孤岛放弃
             if (length > GUDAO && multiple > 0) {
@@ -254,6 +251,8 @@ public class MyService extends Service {
         } else {
             notPlay++;
         }
-        Toast.makeText(this, (last == GBData.VALUE_LONG ? "龙" : "凤") + money, Toast.LENGTH_SHORT).show();
+        StringBuilder sb = new StringBuilder();
+        sb.append("净胜：" + DeviceUtil.m2(win)).append("  ").append((last == GBData.VALUE_LONG ? "龙" : "凤") + money);
+        Toast.makeText(MyService.this, sb.toString(), Toast.LENGTH_SHORT).show();
     }
 }
