@@ -70,12 +70,11 @@ public class MyService extends Service {
             for (int i = 0; i < length; i++) {
                 ints[i] = data.get(i);
             }
-            if (length > 0 && notPlay == 0) {
+            if (length > 0) {
                 if (last == ints[length - 1]) {
                     win = win + money * 0.97;
                 } else if (last != GBData.VALUE_NONE) {
                     win = win - money;
-                    multiple = 1;
                 }
                 // 判断是否加倍
                 paint.clear();
@@ -93,6 +92,7 @@ public class MyService extends Service {
                         }
                     }
                 }
+                multiple = 1;
                 if (paint.size() > 1 && paint.get(1) > 1 && paint.get(0) + paint.get(1) > 5) {
                     multiple = 2;
                 } else if (paint.size() > 2 && paint.get(0) > 1 && paint.get(1) > 1 && paint.get(2) > 1 && paint.get(0) + paint.get(1) +
