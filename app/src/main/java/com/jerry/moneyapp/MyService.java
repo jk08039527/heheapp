@@ -116,13 +116,13 @@ public class MyService extends Service {
             logCount++;
             // 当前是否可玩儿
             // 3个连续则投递。最后5个中2个孤岛放弃
-            if (length > GUDAO && multiple > 0) {
+            if (multiple > 0) {
                 int wanIndex = 0;
-                for (int i = length - 1; i > length - 1 - GUDAO; i--) {
-                    if (i == length - 1) {
-                        if (ints[i] != ints[i - 1]) {
-                            wanIndex++;
-                        }
+                for (int i = length - 1; i >= length - Math.min(GUDAO, length); i--) {
+                    if (i == length - 1 && ints[i] != ints[i - 1]) {
+                        wanIndex++;
+                    } else if (i == 0 && ints[i] != ints[i + 1]) {
+                        wanIndex++;
                     } else if (ints[i] != ints[i - 1] && ints[i] != ints[i + 1]) {
                         wanIndex++;
                     }
@@ -135,28 +135,20 @@ public class MyService extends Service {
                     return false;
                 }
             }
-
-            if (length > 2 && ints[length - 1] != ints[length - 2] && ints[length - 3] != ints[length - 2] && notPlay < NOTPLAYCOUNT && multiple > 0) {
-                Toast.makeText(MyService.this, "本局放弃!", Toast.LENGTH_SHORT).show();
-                last = GBData.VALUE_NONE;
-                notPlay++;
-                return false;
-            } else {
-                money = (!mBtnClickable && notPlay >= NOTPLAYCOUNT) ? 10 : 10 * Math.abs(multiple);
-                if (notPlay == 0 && length > 1 && ints[length - 1] != ints[length - 2] && multiple > 0) {
-                    money *= 2;
-                }
-                if (length > 0) {
-                    if (multiple < 0) {
-                        last = ints[length - 2];
-                    } else {
-                        last = ints[length - 1];
-                    }
-                } else {
-                    last = GBData.VALUE_LONG;
-                }
-                exeCall();
+            money = (!mBtnClickable && notPlay >= NOTPLAYCOUNT) ? 10 : 10 * Math.abs(multiple);
+            if (notPlay == 0 && length > 1 && ints[length - 1] != ints[length - 2] && multiple > 0) {
+                money *= 2;
             }
+            if (length > 0) {
+                if (multiple < 0) {
+                    last = ints[length - 2];
+                } else {
+                    last = ints[length - 1];
+                }
+            } else {
+                last = GBData.VALUE_LONG;
+            }
+            exeCall();
             return false;
         }
     });
@@ -183,7 +175,7 @@ public class MyService extends Service {
         return new PlayBinder();
     }
 
-    public void setBtnClickable() {
+    public void setBtnClickable(int gudao) {
         mBtnClickable = !mBtnClickable;
         Toast.makeText(this, mBtnClickable ? "点击生效！" : "点击取消!", Toast.LENGTH_SHORT).show();
     }
