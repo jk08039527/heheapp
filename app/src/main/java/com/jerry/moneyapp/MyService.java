@@ -70,7 +70,7 @@ public class MyService extends Service {
             for (int i = 0; i < length; i++) {
                 ints[i] = data.get(i);
             }
-            if (length > 0) {
+            if (length > 0 && notPlay == 0) {
                 if (last == ints[length - 1]) {
                     win = win + money * 0.97;
                 } else if (last != GBData.VALUE_NONE) {
@@ -93,8 +93,10 @@ public class MyService extends Service {
                         }
                     }
                 }
-                if ((paint.size() > 1 && paint.get(0) > 1 && paint.get(1) > 1 && paint.get(0) + paint.get(1) > 5) || (paint.size() > 2 &&
-                        paint.get(0) > 1 && paint.get(1) > 1 && paint.get(2) > 1 && paint.get(0) + paint.get(1) + paint.get(2) > 6)) {
+                if (paint.size() > 1 && paint.get(1) > 1 && paint.get(0) + paint.get(1) > 5) {
+                    multiple = 2;
+                } else if (paint.size() > 2 && paint.get(0) > 1 && paint.get(1) > 1 && paint.get(2) > 1 && paint.get(0) + paint.get(1) +
+                        paint.get(2) > 6) {
                     multiple = 2;
                 } else if (paint.size() > 2 && paint.get(0) == 1 && paint.get(1) == 1 && paint.get(2) == 1) {
                     multiple = -1;
@@ -121,9 +123,7 @@ public class MyService extends Service {
                 for (int i = length - 1; i >= length - Math.min(GUDAO, length); i--) {
                     if (i == length - 1 && ints[i] != ints[i - 1]) {
                         wanIndex++;
-                    } else if (i == 0 && ints[i] != ints[i + 1]) {
-                        wanIndex++;
-                    } else if (ints[i] != ints[i - 1] && ints[i] != ints[i + 1]) {
+                    } else if (i > 0 && ints[i] != ints[i - 1] && ints[i] != ints[i + 1]) {
                         wanIndex++;
                     }
                 }
@@ -136,9 +136,6 @@ public class MyService extends Service {
                 }
             }
             money = (!mBtnClickable && notPlay >= NOTPLAYCOUNT) ? 10 : 10 * Math.abs(multiple);
-            if (notPlay == 0 && length > 1 && ints[length - 1] != ints[length - 2] && multiple > 0) {
-                money *= 2;
-            }
             if (length > 0) {
                 if (multiple < 0) {
                     last = ints[length - 2];
@@ -175,9 +172,13 @@ public class MyService extends Service {
         return new PlayBinder();
     }
 
-    public void setBtnClickable(int gudao) {
+    public void setBtnClickable() {
         mBtnClickable = !mBtnClickable;
         Toast.makeText(this, mBtnClickable ? "点击生效！" : "点击取消!", Toast.LENGTH_SHORT).show();
+    }
+
+    public void showJingsheng() {
+        Toast.makeText(this, "净胜：" + DeviceUtil.m2(win), Toast.LENGTH_SHORT).show();
     }
 
     public class PlayBinder extends Binder {
@@ -189,6 +190,7 @@ public class MyService extends Service {
 
     public void startExe() {
         mWeakHandler.sendEmptyMessage(0);
+        showJingsheng();
     }
 
     private void execShellCmd(String cmd) {
@@ -243,8 +245,6 @@ public class MyService extends Service {
         } else {
             notPlay++;
         }
-        StringBuilder sb = new StringBuilder();
-        sb.append("净胜：" + DeviceUtil.m2(win)).append("  ").append((last == GBData.VALUE_LONG ? "龙" : "凤") + money);
-        Toast.makeText(MyService.this, sb.toString(), Toast.LENGTH_SHORT).show();
+        Toast.makeText(MyService.this, (last == GBData.VALUE_LONG ? "龙" : "凤") + money, Toast.LENGTH_SHORT).show();
     }
 }
