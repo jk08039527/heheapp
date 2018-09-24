@@ -16,7 +16,7 @@ import cn.bmob.v3.Bmob;
  */
 public class MyApplication extends Application {
 
-    private static final String BUGLY_CRASHREPORT = "c8d375f68d";
+    private static final String BUGLY_CRASHREPORT = "7eb0529af0";
     private static final String BMOB_APPID = "7cdb7db7a6d99713798d4b9755d3c0f5";
     @SuppressLint("StaticFieldLeak")
     private static Context sInstances;

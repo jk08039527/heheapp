@@ -121,16 +121,16 @@ public class MyService extends Service {
             if (multiple > 0) {
                 int wanIndex = 0;
                 for (int i = length - 1; i >= length - Math.min(GUDAO, length); i--) {
-                    if (i == length - 1 && ints[i] != ints[i - 1]) {
+                    if (i == length - 1 && i > 0 && ints[i] != ints[i - 1]) {
                         wanIndex++;
-                    } else if (i > 0 && ints[i] != ints[i - 1] && ints[i] != ints[i + 1]) {
+                    } else if (i > 0 && i < length - 1 && ints[i] != ints[i - 1] && ints[i] != ints[i + 1]) {
                         wanIndex++;
                     }
                 }
                 Log.d(TAG, "gudao: " + wanIndex);
                 if (wanIndex >= 2 && notPlay < NOTPLAYCOUNT) {
                     last = GBData.VALUE_NONE;
-                    Toast.makeText(MyService.this, "孤岛太多!" + wanIndex, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MyService.this, "净胜：" + DeviceUtil.m2(win) + "  孤岛太多!" + wanIndex, Toast.LENGTH_SHORT).show();
                     notPlay++;
                     return false;
                 }
@@ -245,6 +245,7 @@ public class MyService extends Service {
         } else {
             notPlay++;
         }
-        Toast.makeText(MyService.this, (last == GBData.VALUE_LONG ? "龙" : "凤") + money, Toast.LENGTH_SHORT).show();
+        Toast.makeText(MyService.this, "净胜：" + DeviceUtil.m2(win) + (last == GBData.VALUE_LONG ? "  龙" : "  凤") + money, Toast
+                .LENGTH_SHORT).show();
     }
 }
