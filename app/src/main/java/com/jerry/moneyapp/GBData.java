@@ -66,7 +66,7 @@ public class GBData {
                     list.add(VALUE_LONG);
                 } else if (red > VALUE_MAX && blue > MIN1 && blue < 200) {
                     list.add(VALUE_FENG);
-                } else if (red + blue < 100 && green > 220) {
+                } else if (red + blue < 100 && green > 140) {
                     peaceCount++;
                     list.add(VALUE_NONE);
                 } else if (red > 215 && green > 215 && blue > 215) {

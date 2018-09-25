@@ -93,7 +93,9 @@ public class MyService extends Service {
                     }
                 }
                 multiple = 1;
-                if (paint.size() > 1 && paint.get(1) > 1 && paint.get(0) + paint.get(1) > 5) {
+                if (paint.size() > 1 && paint.get(0) == 1 && paint.get(1) > 1) {
+                    multiple = 2;
+                } else if (paint.size() > 1 && paint.get(1) > 1 && paint.get(0) + paint.get(1) > 5) {
                     multiple = 2;
                 } else if (paint.size() > 2 && paint.get(0) > 1 && paint.get(1) > 1 && paint.get(2) > 1 && paint.get(0) + paint.get(1) +
                         paint.get(2) > 6) {
@@ -128,7 +130,7 @@ public class MyService extends Service {
                     }
                 }
                 Log.d(TAG, "gudao: " + wanIndex);
-                if (wanIndex >= 2 && notPlay < NOTPLAYCOUNT) {
+                if (wanIndex > 2 && notPlay < NOTPLAYCOUNT) {
                     last = GBData.VALUE_NONE;
                     Toast.makeText(MyService.this, "净胜：" + DeviceUtil.m2(win) + "  孤岛太多!" + wanIndex, Toast.LENGTH_SHORT).show();
                     notPlay++;
