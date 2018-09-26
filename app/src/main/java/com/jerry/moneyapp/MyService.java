@@ -28,7 +28,8 @@ public class MyService extends Service {
     private static final int BOTTOM = 805;//1080
     public static final int ASSIABLEX = 990;//1320
     public static final int ASSIABLEY = 900;//1180
-    private static final int GUDAO = 6;
+    private static int GUDAO = 6;
+    private static int SHOT;
     private static final int NOTPLAYCOUNT = 10;
 
     private static int width;
@@ -42,9 +43,6 @@ public class MyService extends Service {
     private int money;
     private int notPlay;
     private boolean mBtnClickable;//点击生效
-    private static final int LOGCOUNT = 20;
-    private int logCount;
-    private int multiple = 1;//倍数
     private ArrayList<Integer> paint = new ArrayList<>();
     private StringBuilder sb = new StringBuilder();
 
@@ -70,6 +68,8 @@ public class MyService extends Service {
             for (int i = 0; i < length; i++) {
                 ints[i] = data.get(i);
             }
+            //倍数
+            int multiple;
             if (length > 0) {
                 if (last == ints[length - 1]) {
                     win = win + money * 0.97;
@@ -93,9 +93,17 @@ public class MyService extends Service {
                     }
                 }
                 multiple = 1;
-                if (paint.size() > 1 && paint.get(0) == 1 && paint.get(1) > 1) {
-                    multiple = 2;
-                } else if (paint.size() > 1 && paint.get(1) > 1 && paint.get(0) + paint.get(1) > 5) {
+                if (SHOT == 2) {
+                    if (paint.size() > 1 && paint.get(0) == 1 && paint.get(1) > 1) {
+                        multiple = 2;
+                    }
+                } else if (SHOT == 3) {
+                    if (paint.size() > 2 && paint.get(0) == 1 && paint.get(1) == 1 && paint.get(2) > 1) {
+                        multiple = 2;
+                    }
+                }
+
+                if (paint.size() > 1 && paint.get(1) > 1 && paint.get(0) + paint.get(1) > 5) {
                     multiple = 2;
                 } else if (paint.size() > 2 && paint.get(0) > 1 && paint.get(1) > 1 && paint.get(2) > 1 && paint.get(0) + paint.get(1) +
                         paint.get(2) > 6) {
@@ -117,9 +125,8 @@ public class MyService extends Service {
                 myLog.save();
                 sb.delete(0, sb.length());
             }
-            logCount++;
             // 当前是否可玩儿
-            // 3个连续则投递。最后5个中2个孤岛放弃
+            // 3个连续则投递。最后6个中2个孤岛放弃
             if (multiple > 0) {
                 int wanIndex = 0;
                 for (int i = length - 1; i >= length - Math.min(GUDAO, length); i--) {
@@ -130,7 +137,7 @@ public class MyService extends Service {
                     }
                 }
                 Log.d(TAG, "gudao: " + wanIndex);
-                if (wanIndex > 2 && notPlay < NOTPLAYCOUNT) {
+                if (wanIndex >= SHOT && notPlay < NOTPLAYCOUNT) {
                     last = GBData.VALUE_NONE;
                     Toast.makeText(MyService.this, "净胜：" + DeviceUtil.m2(win) + "  孤岛太多!" + wanIndex, Toast.LENGTH_SHORT).show();
                     notPlay++;
@@ -180,7 +187,21 @@ public class MyService extends Service {
     }
 
     public void showJingsheng() {
-        Toast.makeText(this, "净胜：" + DeviceUtil.m2(win), Toast.LENGTH_SHORT).show();
+        if (SHOT == 3) {
+            SHOT = 2;
+        } else {
+            SHOT = 3;
+        }
+        Toast.makeText(this, SHOT + "净胜：" + DeviceUtil.m2(win), Toast.LENGTH_SHORT).show();
+        switch (SHOT) {
+            case 3:
+                GUDAO = 8;
+                break;
+            case 2:
+            default:
+                GUDAO = 6;
+                break;
+        }
     }
 
     public class PlayBinder extends Binder {
