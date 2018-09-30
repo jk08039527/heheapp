@@ -18,7 +18,6 @@ public class GBData {
     public static final int VALUE_NONE = 0;
     public static final int VALUE_FENG = 1;
     public static final int VALUE_LONG = 2;
-    private static int peaceCount;//和
     public static ImageReader reader;
 
     /**
@@ -67,12 +66,10 @@ public class GBData {
                 } else if (red > VALUE_MAX && blue > MIN1 && blue < 200) {
                     list.add(VALUE_FENG);
                 } else if (red + blue < 100 && green > 140) {
-                    peaceCount++;
                     list.add(VALUE_NONE);
                 } else if (red > 215 && green > 215 && blue > 215) {
                     return;
                 } else {
-                    peaceCount = 0;
                     list.clear();
                     return;
                 }
