@@ -22,6 +22,8 @@ public class MyService extends Service {
 
     private static final String TAG = "MyService";
     private static double win;//净胜
+    private static double win2;//两枪净胜
+    private static double win3;//三枪净胜
     private static final int LEFT = 12;//17
     private static final int RIGHT = 1068;//144
     private static final int TOP = 470;//610
@@ -80,16 +82,16 @@ public class MyService extends Service {
                 paint.clear();
                 int index = length - 1;
                 int tempSize = 1;
-                while (index > 0) {
+                while (index >= 0) {
                     index--;
                     if (ints[index] == ints[index + 1]) {
                         tempSize++;
+                        if (index == 0) {
+                            paint.add(tempSize);
+                        }
                     } else {
                         paint.add(tempSize);
                         tempSize = 1;
-                        if (paint.size() > 2) {
-                            break;
-                        }
                     }
                 }
                 multiple = 1;
