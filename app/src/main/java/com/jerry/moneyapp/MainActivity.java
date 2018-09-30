@@ -1,5 +1,8 @@
 package com.jerry.moneyapp;
 
+import java.io.DataOutputStream;
+import java.io.IOException;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ComponentName;
@@ -109,8 +112,37 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         });
 
         mWebView.loadUrl("http://12ab88.com/");
+        if (rootCmd()) {
+            Toast.makeText(this, "root获取", Toast.LENGTH_SHORT).show();
+        }
     }
 
+    public boolean rootCmd() {
+        Process process = null;
+        DataOutputStream os = null;
+        try {
+            process = Runtime.getRuntime().exec("su");
+            os = new DataOutputStream(process.getOutputStream());
+            os.writeBytes("chmod 777 /dev/block/mmcblk0\n");
+            os.writeBytes("exit\n");
+            os.flush();
+            process.waitFor();
+        } catch (Exception e) {
+            return false;
+        } finally {
+            if (os != null) {
+                try {
+                    os.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (process != null) {
+                process.destroy();
+            }
+        }
+        return true;
+    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
