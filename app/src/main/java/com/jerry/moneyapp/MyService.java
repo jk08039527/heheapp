@@ -4,7 +4,6 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.LinkedList;
 
 import android.app.Service;
@@ -15,34 +14,28 @@ import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
-import android.util.Log;
 import android.widget.Toast;
 
 public class MyService extends Service {
 
     private static final String TAG = "MyService";
     private static double win;//净胜
-    private static double win2;//两枪净胜
-    private static double win3;//三枪净胜
     private static final int LEFT = 12;//17
     private static final int RIGHT = 1068;//144
     private static final int TOP = 470;//610
     private static final int BOTTOM = 805;//1080
     public static final int ASSIABLEX = 990;//1320
     public static final int ASSIABLEY = 900;//1180
-    private static int GUDAO = 6;
-    private static int SHOT;
     private static final int NOTPLAYCOUNT = 10;
 
     private static int width;
     private static int height;
-    private static int last = GBData.VALUE_LONG;
+    private static int last = -1;
 
     private int[] pointsX = new int[18];
     private int[] pointsY = new int[6];
     private LinkedList<Integer> data = new LinkedList<>();
     private volatile int length;
-    private int money;
     private int notPlay;
     private boolean mBtnClickable;//点击生效
     private ArrayList<Integer> paint = new ArrayList<>();
@@ -70,93 +63,28 @@ public class MyService extends Service {
             for (int i = 0; i < length; i++) {
                 ints[i] = data.get(i);
             }
-            //倍数
-            int multiple;
-            if (length > 0) {
-                if (last == ints[length - 1]) {
-                    win = win + money * 0.97;
-                } else if (last != GBData.VALUE_NONE) {
-                    win = win - money;
-                }
-                // 判断是否加倍
-                paint.clear();
-                int index = length - 1;
-                int tempSize = 1;
-                while (index >= 0) {
-                    index--;
-                    if (ints[index] == ints[index + 1]) {
-                        tempSize++;
-                        if (index == 0) {
-                            paint.add(tempSize);
-                        }
-                    } else {
-                        paint.add(tempSize);
-                        tempSize = 1;
-                    }
-                }
-                multiple = 1;
-                if (SHOT == 2) {
-                    if (paint.size() > 1 && paint.get(0) == 1 && paint.get(1) > 1) {
-                        multiple = 2;
-                    }
-                } else if (SHOT == 3) {
-                    if (paint.size() > 2 && paint.get(0) == 1 && paint.get(1) == 1 && paint.get(2) > 1) {
-                        multiple = 2;
-                    }
-                }
-
-                if (paint.size() > 1 && paint.get(1) > 1 && paint.get(0) + paint.get(1) > 5) {
-                    multiple = 2;
-                } else if (paint.size() > 2 && paint.get(0) > 1 && paint.get(1) > 1 && paint.get(2) > 1 && paint.get(0) + paint.get(1) +
-                        paint.get(2) > 6) {
-                    multiple = 2;
-                } else if (paint.size() > 2 && paint.get(0) == 1 && paint.get(1) == 1 && paint.get(2) == 1) {
-                    multiple = -1;
-                }
-            } else {
-                multiple = 1;
-            }
-
-            if (data.size() >= 68) {
-                Calendar now = Calendar.getInstance();
-                sb.append(now.getTime()).append(":").append(win).append("元").append("\n");
-                MyLog myLog = new MyLog();
-                myLog.setLog(sb.toString());
-                myLog.setData(data);
-                myLog.setDeviceId(DeviceUtil.getDeviceId());
-                myLog.save();
-                sb.delete(0, sb.length());
-            }
-            // 当前是否可玩儿
-            // 3个连续则投递。最后6个中2个孤岛放弃
-            if (multiple > 0) {
-                int wanIndex = 0;
-                for (int i = length - 1; i >= length - Math.min(GUDAO, length); i--) {
-                    if (i == length - 1 && i > 0 && ints[i] != ints[i - 1]) {
-                        wanIndex++;
-                    } else if (i > 0 && i < length - 1 && ints[i] != ints[i - 1] && ints[i] != ints[i + 1]) {
-                        wanIndex++;
-                    }
-                }
-                Log.d(TAG, "gudao: " + wanIndex);
-                if (wanIndex >= SHOT && notPlay < NOTPLAYCOUNT) {
-                    last = GBData.VALUE_NONE;
-                    Toast.makeText(MyService.this, "净胜：" + DeviceUtil.m2(win) + "  孤岛太多!" + wanIndex, Toast.LENGTH_SHORT).show();
-                    notPlay++;
-                    return false;
-                }
-            }
-            money = (!mBtnClickable && notPlay >= NOTPLAYCOUNT) ? 10 : 10 * Math.abs(multiple);
-            if (length > 0) {
-                if (multiple < 0) {
-                    last = ints[length - 2];
+            Point point = CaluUtil.calulate(ints, ints.length);
+            if (last != -1) {
+                if (point.type2 == last) {
+                    win += 9.7;
                 } else {
-                    last = ints[length - 1];
+                    win -= 10;
+                }
+            }
+            if (point.type2 != GBData.VALUE_NONE) {
+                Toast.makeText(MyService.this, "净胜：" + DeviceUtil.m2(win) + (point.type2 == GBData.VALUE_LONG ? "  龙" : "  凤") +
+                        Math.abs(point.multiple2), Toast.LENGTH_SHORT).show();
+                last = point.type2;
+                if (mBtnClickable || notPlay >= NOTPLAYCOUNT) {
+                    notPlay = 0;
+                    exeCall(point.type2, point.multiple2);
+                } else {
+                    notPlay++;
                 }
             } else {
-                last = GBData.VALUE_LONG;
+                notPlay++;
+                Toast.makeText(MyService.this, "净胜：" + DeviceUtil.m2(win) + "孤岛太多:" + point.gudao2, Toast.LENGTH_SHORT).show();
             }
-            exeCall();
             return false;
         }
     });
@@ -189,21 +117,7 @@ public class MyService extends Service {
     }
 
     public void showJingsheng() {
-        if (SHOT == 3) {
-            SHOT = 2;
-        } else {
-            SHOT = 3;
-        }
-        Toast.makeText(this, SHOT + "净胜：" + DeviceUtil.m2(win), Toast.LENGTH_SHORT).show();
-        switch (SHOT) {
-            case 3:
-                GUDAO = 8;
-                break;
-            case 2:
-            default:
-                GUDAO = 6;
-                break;
-        }
+        Toast.makeText(this, "净胜：" + DeviceUtil.m2(win), Toast.LENGTH_SHORT).show();
     }
 
     public class PlayBinder extends Binder {
@@ -245,32 +159,20 @@ public class MyService extends Service {
         }
     }
 
-    private void exeCall() {
-        int clickX;
+    private void exeCall(int type, int mutiple) {
+        int clickX = type == GBData.VALUE_LONG ? (int) (width * 0.25) : (int) (width * 0.75);
         int clickY = (int) (height * 0.9);
-        if (last == GBData.VALUE_LONG) {
-            clickX = (int) (width * 0.25);
-        } else {
-            clickX = (int) (width * 0.75);
-        }
-        if (mBtnClickable || notPlay >= NOTPLAYCOUNT) {
-            new CountDownTimer(500 * (money / 10 + 1), 500) {
+        new CountDownTimer(500 * (Math.abs(mutiple) + 1), 500) {
 
-                @Override
-                public void onTick(final long millisUntilFinished) {
-                    execShellCmd("input tap " + clickX + " " + clickY);
-                }
+            @Override
+            public void onTick(final long millisUntilFinished) {
+                execShellCmd("input tap " + clickX + " " + clickY);
+            }
 
-                @Override
-                public void onFinish() {
-                    execShellCmd("input tap " + ASSIABLEX + " " + ASSIABLEY);
-                }
-            }.start();
-            notPlay = 0;
-        } else {
-            notPlay++;
-        }
-        Toast.makeText(MyService.this, "净胜：" + DeviceUtil.m2(win) + (last == GBData.VALUE_LONG ? "  龙" : "  凤") + money, Toast
-                .LENGTH_SHORT).show();
+            @Override
+            public void onFinish() {
+                execShellCmd("input tap " + ASSIABLEX + " " + ASSIABLEY);
+            }
+        }.start();
     }
 }
