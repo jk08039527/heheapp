@@ -187,7 +187,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                 break;
             case R.id.btn2:
                 if (isBind) {
-                    myService.showJingsheng();
+                    myService.showJingsheng("");
                     return;
                 }
                 bindService(new Intent(this, MyService.class), mServiceConnection, BIND_AUTO_CREATE);

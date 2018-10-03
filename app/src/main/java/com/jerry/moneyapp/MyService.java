@@ -3,7 +3,6 @@ package com.jerry.moneyapp;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.ArrayList;
 import java.util.LinkedList;
 
 import android.app.Service;
@@ -18,8 +17,9 @@ import android.widget.Toast;
 
 public class MyService extends Service {
 
-    private static final String TAG = "MyService";
     private static double win;//净胜
+    private static double win2;//净胜2
+    private static double win3;//净胜3
     private static final int LEFT = 12;//17
     private static final int RIGHT = 1068;//144
     private static final int TOP = 470;//610
@@ -31,15 +31,15 @@ public class MyService extends Service {
     private static int width;
     private static int height;
     private static int last = -1;
+    private static int currentType;
 
     private int[] pointsX = new int[18];
     private int[] pointsY = new int[6];
     private LinkedList<Integer> data = new LinkedList<>();
+    private LinkedList<Point> mPoints = new LinkedList<>();
     private volatile int length;
     private int notPlay;
     private boolean mBtnClickable;//点击生效
-    private ArrayList<Integer> paint = new ArrayList<>();
-    private StringBuilder sb = new StringBuilder();
 
     protected WeakHandler mWeakHandler = new WeakHandler(new Handler.Callback() {
 
@@ -63,27 +63,93 @@ public class MyService extends Service {
             for (int i = 0; i < length; i++) {
                 ints[i] = data.get(i);
             }
-            Point point = CaluUtil.calulate(ints, ints.length);
-            if (last != -1) {
-                if (point.type2 == last) {
-                    win += 9.7;
-                } else {
-                    win -= 10;
+            if (mPoints.size() == 0) {
+                int last2 = 0;
+                int last3 = 0;
+                for (int i = 0; i < ints.length - 1; i++) {
+                    Point point = CaluUtil.calulate(ints, i);
+                    mPoints.add(point);
+                    if (mPoints.size() == 1) {
+                        last2 = point.type2;
+                        last3 = point.type3;
+                    } else {
+                        if (point.type2 == last2) {
+                            win2 += 9.7;
+                        }
+                        if (point.type3 == last3) {
+                            win3 += 9.7;
+                        }
+                    }
                 }
             }
-            if (point.type2 != GBData.VALUE_NONE) {
-                Toast.makeText(MyService.this, "净胜：" + DeviceUtil.m2(win) + (point.type2 == GBData.VALUE_LONG ? "  龙" : "  凤") +
-                        Math.abs(point.multiple2), Toast.LENGTH_SHORT).show();
-                last = point.type2;
-                if (mBtnClickable || notPlay >= NOTPLAYCOUNT) {
-                    notPlay = 0;
-                    exeCall(point.type2, point.multiple2);
+            Point point = CaluUtil.calulate(ints, ints.length);
+            mPoints.add(point);
+            if (last != -1) {
+                if (point.type2 != 0) {
+                    if (point.type2 == last) {
+                        win2 += 9.7;
+                        if (currentType == 2) {
+                            win += 9.7;
+                        }
+                    } else {
+                        win2 -= 10;
+                        if (currentType == 2) {
+                            win -= 10;
+                        }
+                    }
+                }
+                if (point.type3 != 0) {
+                    if (point.type3 == last) {
+                        win3 += 9.7;
+                        if (currentType == 3) {
+                            win += 9.7;
+                        }
+                    } else {
+                        win3 -= 10;
+                        if (currentType == 3) {
+                            win -= 10;
+                        }
+                    }
+                }
+            }
+            if (win2 > win3) {
+                currentType = 2;
+            } else {
+                currentType = 3;
+            }
+            if (win2 > 0 || win3 > 0) {
+                if (currentType == 2) {
+                    if (point.type2 != GBData.VALUE_NONE) {
+                        showJingsheng((point.type3 == GBData.VALUE_LONG ? "  龙" : "  凤") + Math.abs(point.multiple2));
+                        last = point.type2;
+                        if (mBtnClickable || notPlay >= NOTPLAYCOUNT) {
+                            notPlay = 0;
+                            exeCall(point.type2, point.multiple2);
+                        } else {
+                            notPlay++;
+                        }
+                    } else {
+                        notPlay++;
+                        showJingsheng("孤岛太多:" + point.gudao2);
+                    }
                 } else {
-                    notPlay++;
+                    if (point.type3 != GBData.VALUE_NONE) {
+                        showJingsheng((point.type3 == GBData.VALUE_LONG ? "  龙" : "  凤") + Math.abs(point.multiple3));
+                        last = point.type3;
+                        if (mBtnClickable || notPlay >= NOTPLAYCOUNT) {
+                            notPlay = 0;
+                            exeCall(point.type3, point.multiple3);
+                        } else {
+                            notPlay++;
+                        }
+                    } else {
+                        notPlay++;
+                        showJingsheng("孤岛太多:" + point.gudao3);
+                    }
                 }
             } else {
                 notPlay++;
-                Toast.makeText(MyService.this, "净胜：" + DeviceUtil.m2(win) + "孤岛太多:" + point.gudao2, Toast.LENGTH_SHORT).show();
+                showJingsheng("");
             }
             return false;
         }
@@ -116,8 +182,12 @@ public class MyService extends Service {
         Toast.makeText(this, mBtnClickable ? "点击生效！" : "点击取消!", Toast.LENGTH_SHORT).show();
     }
 
-    public void showJingsheng() {
-        Toast.makeText(this, "净胜：" + DeviceUtil.m2(win), Toast.LENGTH_SHORT).show();
+    public void showJingsheng(String other) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("净胜2：").append(DeviceUtil.m2(win2))
+                .append("\n净胜3:").append(DeviceUtil.m2(win3)).append("\n净胜：").append(DeviceUtil.m2(win))
+                .append(other);
+        Toast.makeText(MyService.this, sb.toString(), Toast.LENGTH_SHORT).show();
     }
 
     public class PlayBinder extends Binder {
@@ -129,7 +199,7 @@ public class MyService extends Service {
 
     public void startExe() {
         mWeakHandler.sendEmptyMessage(0);
-        showJingsheng();
+        showJingsheng("");
     }
 
     private void execShellCmd(String cmd) {
