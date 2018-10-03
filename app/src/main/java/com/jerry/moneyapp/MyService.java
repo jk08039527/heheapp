@@ -73,11 +73,19 @@ public class MyService extends Service {
                         last2 = point.type2;
                         last3 = point.type3;
                     } else {
-                        if (point.type2 == last2) {
-                            win2 += 9.7;
+                        if (point.type2 != 0) {
+                            if (point.type2 == last2) {
+                                win2 += 9.7;
+                            } else {
+                                win2 -= 10;
+                            }
                         }
-                        if (point.type3 == last3) {
-                            win3 += 9.7;
+                        if (point.type3 != 0) {
+                            if (point.type3 == last3) {
+                                win3 += 9.7;
+                            } else {
+                                win3 -= 10;
+                            }
                         }
                     }
                 }
