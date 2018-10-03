@@ -82,9 +82,8 @@ public class MyService extends Service {
                     }
                 }
             }
-            Point point = CaluUtil.calulate(ints, ints.length);
-            mPoints.add(point);
-            if (last != -1) {
+            if (last != -1 && mPoints.size() > 0) {
+                Point point = mPoints.get(mPoints.size() - 1);
                 if (point.type2 != 0) {
                     if (point.type2 == last) {
                         win2 += 9.7;
@@ -112,6 +111,8 @@ public class MyService extends Service {
                     }
                 }
             }
+            Point point = CaluUtil.calulate(ints, ints.length);
+            mPoints.add(point);
             if (win2 > win3) {
                 currentType = 2;
             } else {
