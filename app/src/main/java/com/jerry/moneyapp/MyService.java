@@ -129,7 +129,7 @@ public class MyService extends Service {
             if (win2 > 0 || win3 > 0) {
                 if (currentType == 2) {
                     if (point.type2 != GBData.VALUE_NONE) {
-                        showJingsheng((point.type3 == GBData.VALUE_LONG ? "  龙" : "  凤") + Math.abs(point.multiple2));
+                        showJingsheng((point.type2 == GBData.VALUE_LONG ? "  龙" : "  凤") + Math.abs(point.multiple2));
                         last = point.type2;
                         if (mBtnClickable || notPlay >= NOTPLAYCOUNT) {
                             notPlay = 0;
