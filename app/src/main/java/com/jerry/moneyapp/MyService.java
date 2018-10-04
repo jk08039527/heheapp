@@ -83,16 +83,16 @@ public class MyService extends Service {
                     mPoints.add(point);
                     if (last2 != 0) {
                         if (last2 == point.current) {
-                            win2 += 9.7;
+                            win2 += 9.7 * Math.abs(point.multiple2);
                         } else {
-                            win2 -= 10;
+                            win2 -= 10 * Math.abs(point.multiple2);
                         }
                     }
                     if (last3 != 0) {
                         if (last3 == point.current) {
-                            win3 += 9.7;
+                            win3 += 9.7 * Math.abs(point.multiple3);
                         } else {
-                            win3 -= 10;
+                            win3 -= 10 * Math.abs(point.multiple3);
                         }
                     }
                     last2 = point.intention2;
@@ -104,23 +104,23 @@ public class MyService extends Service {
                 mPoints.add(point);
                 if (last2 != 0) {
                     if (last2 == point.current) {
-                        win2 += 9.7;
+                        win2 += 9.7 * Math.abs(point.multiple2);
                     } else {
-                        win2 -= 10;
+                        win2 -= 10 * Math.abs(point.multiple2);
                     }
                 }
                 if (last3 != 0) {
                     if (last3 == point.current) {
-                        win3 += 9.7;
+                        win3 += 9.7 * Math.abs(point.multiple3);
                     } else {
-                        win3 -= 10;
+                        win3 -= 10 * Math.abs(point.multiple3);
                     }
                 }
                 if (last != 0) {
                     if (last == point.current) {
-                        win += 9.7;
+                        win += 9.7 * Math.abs(point.multiple2);
                     } else {
-                        win -= 10;
+                        win -= 10 * Math.abs(point.multiple2);
                     }
                 }
             }
