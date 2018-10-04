@@ -54,19 +54,19 @@ public class CaluUtil {
                 point.multiple2 = -1;
                 point.multiple3 = -1;
             }
-            if (point.multiple2 > 0) {
-                // 记录当前数到第几个
-                int gd2 = 0;
-                // 记录当前索引
-                int gdIndex = 0;
-                int min = Math.min(6, position);
-                while (gd2 < min && gdIndex < paint.size()) {
-                    if (paint.get(gdIndex) == 1) {
-                        point.gudao2++;
-                    }
-                    gd2 += paint.get(gdIndex);
-                    gdIndex++;
+            // 记录当前数到第几个
+            int gd = 0;
+            // 记录当前索引
+            int gdIndex = 0;
+            int min = Math.min(6, position);
+            while (gd < min && gdIndex < paint.size()) {
+                if (paint.get(gdIndex) == 1) {
+                    point.gudao2++;
                 }
+                gd += paint.get(gdIndex);
+                gdIndex++;
+            }
+            if (point.multiple2 > 0) {
                 if (point.gudao2 > 1) {
                     point.type2 = GBData.VALUE_NONE;
                 } else {
@@ -75,21 +75,19 @@ public class CaluUtil {
             } else {
                 point.type2 = ints[position - 2];
             }
-
-            if (point.multiple3 > 0) {
-                // 记录当前数到第几个
-                int gd3 = 0;
-                // 记录当前记录的孤岛数
-                // 记录当前索引
-                int gdIndex = 0;
-                int min = Math.min(8, position);
-                while (gd3 < min && gdIndex < paint.size()) {
-                    if (paint.get(gdIndex) == 1) {
-                        point.gudao3++;
-                    }
-                    gd3 += paint.get(gdIndex);
-                    gdIndex++;
+            // 记录当前数到第几个
+            gd = 0;
+            // 记录当前索引
+            gdIndex = 0;
+            min = Math.min(8, position);
+            while (gd < min && gdIndex < paint.size()) {
+                if (paint.get(gdIndex) == 1) {
+                    point.gudao3++;
                 }
+                gd += paint.get(gdIndex);
+                gdIndex++;
+            }
+            if (point.multiple3 > 0) {
                 if (point.gudao3 > 2) {
                     point.type3 = GBData.VALUE_NONE;
                 } else {

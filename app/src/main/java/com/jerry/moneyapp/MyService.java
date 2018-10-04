@@ -13,6 +13,7 @@ import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.text.TextUtils;
 import android.widget.Toast;
 
 public class MyService extends Service {
@@ -31,7 +32,7 @@ public class MyService extends Service {
     private static int width;
     private static int height;
     private static int last = -1;
-    private static int currentType;
+    private static int currentType = 2;
 
     private int[] pointsX = new int[18];
     private int[] pointsY = new int[6];
@@ -126,39 +127,34 @@ public class MyService extends Service {
             } else {
                 currentType = 3;
             }
-            if (win2 > 0 || win3 > 0) {
-                if (currentType == 2) {
-                    if (point.type2 != GBData.VALUE_NONE) {
-                        showJingsheng((point.type2 == GBData.VALUE_LONG ? "  龙" : "  凤") + Math.abs(point.multiple2));
-                        last = point.type2;
-                        if (mBtnClickable || notPlay >= NOTPLAYCOUNT) {
-                            notPlay = 0;
-                            exeCall(point.type2, point.multiple2);
-                        } else {
-                            notPlay++;
-                        }
+            if (currentType == 2) {
+                if (point.type2 != GBData.VALUE_NONE) {
+                    showJingsheng((point.type2 == GBData.VALUE_LONG ? "  龙" : "  凤") + Math.abs(point.multiple2));
+                    last = point.type2;
+                    if ((mBtnClickable && win2 > 0) || notPlay >= NOTPLAYCOUNT) {
+                        notPlay = 0;
+                        exeCall(point.type2, point.multiple2);
                     } else {
                         notPlay++;
-                        showJingsheng("孤岛太多:" + point.gudao2);
                     }
                 } else {
-                    if (point.type3 != GBData.VALUE_NONE) {
-                        showJingsheng((point.type3 == GBData.VALUE_LONG ? "  龙" : "  凤") + Math.abs(point.multiple3));
-                        last = point.type3;
-                        if (mBtnClickable || notPlay >= NOTPLAYCOUNT) {
-                            notPlay = 0;
-                            exeCall(point.type3, point.multiple3);
-                        } else {
-                            notPlay++;
-                        }
-                    } else {
-                        notPlay++;
-                        showJingsheng("孤岛太多:" + point.gudao3);
-                    }
+                    notPlay++;
+                    showJingsheng("孤岛太多:" + point.gudao2);
                 }
             } else {
-                notPlay++;
-                showJingsheng("");
+                if (point.type3 != GBData.VALUE_NONE) {
+                    showJingsheng((point.type3 == GBData.VALUE_LONG ? "  龙" : "  凤") + Math.abs(point.multiple3));
+                    last = point.type3;
+                    if ((mBtnClickable && win3 > 0) || notPlay >= NOTPLAYCOUNT) {
+                        notPlay = 0;
+                        exeCall(point.type3, point.multiple3);
+                    } else {
+                        notPlay++;
+                    }
+                } else {
+                    notPlay++;
+                    showJingsheng("孤岛太多:" + point.gudao3);
+                }
             }
             return false;
         }
@@ -194,8 +190,10 @@ public class MyService extends Service {
     public void showJingsheng(String other) {
         StringBuilder sb = new StringBuilder();
         sb.append("净胜2：").append(DeviceUtil.m2(win2))
-                .append("\n净胜3:").append(DeviceUtil.m2(win3)).append("\n净胜：").append(DeviceUtil.m2(win))
-                .append(other);
+                .append("\n净胜3:").append(DeviceUtil.m2(win3)).append("\n净胜：").append(DeviceUtil.m2(win));
+        if (!TextUtils.isEmpty(other)) {
+            sb.append("\n").append(other);
+        }
         Toast.makeText(MyService.this, sb.toString(), Toast.LENGTH_SHORT).show();
     }
 
