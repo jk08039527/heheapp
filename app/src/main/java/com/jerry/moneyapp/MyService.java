@@ -31,7 +31,9 @@ public class MyService extends Service {
 
     private static int width;
     private static int height;
-    private static int last = -1;
+    private static int last;
+    private static int last2;
+    private static int last3;
     private static int currentType = 2;
 
     private int[] pointsX = new int[18];
@@ -64,76 +66,79 @@ public class MyService extends Service {
             for (int i = 0; i < length; i++) {
                 ints[i] = data.get(i);
             }
-            if (mPoints.size() == 0) {
-                int last2 = 0;
-                int last3 = 0;
-                for (int i = 0; i < ints.length - 1; i++) {
-                    Point point = CaluUtil.calulate(ints, i);
+            if (mPoints.size() == 0 || ints.length == 0) {
+                mPoints.clear();
+                int last2 = GBData.VALUE_LONG;
+                int last3 = GBData.VALUE_LONG;
+                Point initP = new Point();
+                initP.gudao2 = 0;
+                initP.gudao3 = 0;
+                initP.intention2 = last2;
+                initP.intention3 = last3;
+                initP.current = GBData.VALUE_NONE;
+                mPoints.add(initP);
+                for (int i = 0; i < ints.length; i++) {
+                    Point point = CaluUtil.calulate(ints, i + 1);
+                    point.current = ints[i];
                     mPoints.add(point);
-                    if (mPoints.size() == 1) {
-                        last2 = point.type2;
-                        last3 = point.type3;
-                    } else {
-                        if (point.type2 != 0) {
-                            if (point.type2 == last2) {
-                                win2 += 9.7;
-                            } else {
-                                win2 -= 10;
-                            }
-                        }
-                        if (point.type3 != 0) {
-                            if (point.type3 == last3) {
-                                win3 += 9.7;
-                            } else {
-                                win3 -= 10;
-                            }
+                    if (last2 != 0) {
+                        if (last2 == point.current) {
+                            win2 += 9.7;
+                        } else {
+                            win2 -= 10;
                         }
                     }
-                }
-            }
-            if (last != -1 && mPoints.size() > 0) {
-                Point point = mPoints.get(mPoints.size() - 1);
-                if (point.type2 != 0) {
-                    if (point.type2 == last) {
-                        win2 += 9.7;
-                        if (currentType == 2) {
-                            win += 9.7;
+                    if (last3 != 0) {
+                        if (last3 == point.current) {
+                            win3 += 9.7;
+                        } else {
+                            win3 -= 10;
                         }
+                    }
+                    last2 = point.intention2;
+                    last3 = point.intention3;
+                }
+            } else {
+                Point point = CaluUtil.calulate(ints, ints.length);
+                point.current = ints[ints.length - 1];
+                mPoints.add(point);
+                if (last2 != 0) {
+                    if (last2 == point.current) {
+                        win2 += 9.7;
                     } else {
                         win2 -= 10;
-                        if (currentType == 2) {
-                            win -= 10;
-                        }
                     }
                 }
-                if (point.type3 != 0) {
-                    if (point.type3 == last) {
+                if (last3 != 0) {
+                    if (last3 == point.current) {
                         win3 += 9.7;
-                        if (currentType == 3) {
-                            win += 9.7;
-                        }
                     } else {
                         win3 -= 10;
-                        if (currentType == 3) {
-                            win -= 10;
-                        }
+                    }
+                }
+                if (last != 0) {
+                    if (last == point.current) {
+                        win += 9.7;
+                    } else {
+                        win -= 10;
                     }
                 }
             }
-            Point point = CaluUtil.calulate(ints, ints.length);
-            mPoints.add(point);
+            Point point = mPoints.get(mPoints.size() - 1);
+            last2 = point.intention2;
+            last3 = point.intention3;
             if (win2 > win3) {
                 currentType = 2;
             } else {
                 currentType = 3;
             }
             if (currentType == 2) {
-                if (point.type2 != GBData.VALUE_NONE) {
-                    showJingsheng((point.type2 == GBData.VALUE_LONG ? "  龙" : "  凤") + Math.abs(point.multiple2));
-                    last = point.type2;
+                if (point.intention2 != GBData.VALUE_NONE) {
+                    showJingsheng((point.intention2 == GBData.VALUE_LONG ? "  龙" : "  凤") + Math.abs(point.multiple2));
+                    last = point.intention2;
                     if ((mBtnClickable && win2 > 0) || notPlay >= NOTPLAYCOUNT) {
                         notPlay = 0;
-                        exeCall(point.type2, point.multiple2);
+                        exeCall(point.intention2, point.multiple2);
                     } else {
                         notPlay++;
                     }
@@ -142,12 +147,12 @@ public class MyService extends Service {
                     showJingsheng("孤岛太多:" + point.gudao2);
                 }
             } else {
-                if (point.type3 != GBData.VALUE_NONE) {
-                    showJingsheng((point.type3 == GBData.VALUE_LONG ? "  龙" : "  凤") + Math.abs(point.multiple3));
-                    last = point.type3;
+                if (point.intention3 != GBData.VALUE_NONE) {
+                    showJingsheng((point.intention3 == GBData.VALUE_LONG ? "  龙" : "  凤") + Math.abs(point.multiple3));
+                    last = point.intention3;
                     if ((mBtnClickable && win3 > 0) || notPlay >= NOTPLAYCOUNT) {
                         notPlay = 0;
-                        exeCall(point.type3, point.multiple3);
+                        exeCall(point.intention3, point.multiple3);
                     } else {
                         notPlay++;
                     }
@@ -197,9 +202,9 @@ public class MyService extends Service {
         Toast.makeText(MyService.this, sb.toString(), Toast.LENGTH_SHORT).show();
     }
 
-    public class PlayBinder extends Binder {
+    class PlayBinder extends Binder {
 
-        public MyService getPlayService() {
+        MyService getPlayService() {
             return MyService.this;
         }
     }

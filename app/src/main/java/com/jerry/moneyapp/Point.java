@@ -7,8 +7,9 @@ package com.jerry.moneyapp;
  */
 class Point {
 
-    int type2;
-    int type3;
+    int current;
+    int intention2;
+    int intention3;
     int multiple2 = 1;
     int multiple3 = 1;
     int gudao2;

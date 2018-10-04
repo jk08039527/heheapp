@@ -7,13 +7,13 @@ import java.util.ArrayList;
  *
  * @Description
  */
-public class CaluUtil {
+class CaluUtil {
 
     /**
      * @param ints 原始数据
      * @return 第一个参数表示投什么，第二个参数表示投多少
      */
-    public static Point calulate(int[] ints, int position) {
+    static Point calulate(int[] ints, int position) {
         Point point = new Point();
         if (position > ints.length) {
             return point;
@@ -68,12 +68,12 @@ public class CaluUtil {
             }
             if (point.multiple2 > 0) {
                 if (point.gudao2 > 1) {
-                    point.type2 = GBData.VALUE_NONE;
+                    point.intention2 = GBData.VALUE_NONE;
                 } else {
-                    point.type2 = ints[position - 1];
+                    point.intention2 = ints[position - 1];
                 }
             } else {
-                point.type2 = ints[position - 2];
+                point.intention2 = ints[position - 2];
             }
             // 记录当前数到第几个
             gd = 0;
@@ -89,16 +89,16 @@ public class CaluUtil {
             }
             if (point.multiple3 > 0) {
                 if (point.gudao3 > 2) {
-                    point.type3 = GBData.VALUE_NONE;
+                    point.intention3 = GBData.VALUE_NONE;
                 } else {
-                    point.type3 = ints[position - 1];
+                    point.intention3 = ints[position - 1];
                 }
             } else {
-                point.type3 = ints[position - 2];
+                point.intention3 = ints[position - 2];
             }
         } else {
-            point.type2 = GBData.VALUE_LONG;
-            point.type3 = GBData.VALUE_LONG;
+            point.intention2 = GBData.VALUE_LONG;
+            point.intention3 = GBData.VALUE_LONG;
         }
         return point;
     }
