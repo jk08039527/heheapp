@@ -42,6 +42,7 @@ public class MyService extends Service {
     private volatile int length;
     private int notPlay;
     private boolean mBtnClickable;//点击生效
+    private Callback mCallback;
 
     protected WeakHandler mWeakHandler = new WeakHandler(new Handler.Callback() {
 
@@ -155,11 +156,6 @@ public class MyService extends Service {
                 }
                 llp = point;
             }
-            if (award2 < 0 && award3 < 0 && notPlay <= NOTPLAYCOUNT) {
-                notPlay++;
-                showJingsheng("");
-                return false;
-            }
             if (award2 > award3) {
                 currentType = 2;
             } else {
@@ -169,7 +165,7 @@ public class MyService extends Service {
             if (currentType == 2) {
                 if (last.intention2 != GBData.VALUE_NONE) {
                     showJingsheng((last.intention2 == GBData.VALUE_LONG ? "  龙" : "  凤") + Math.abs(last.multiple2));
-                    if ((mBtnClickable && win2 > 0) || notPlay >= NOTPLAYCOUNT) {
+                    if ((mBtnClickable && award2 > 0) || notPlay >= NOTPLAYCOUNT) {
                         notPlay = 0;
                         exeCall(last.intention2, last.multiple2);
                     } else {
@@ -182,7 +178,7 @@ public class MyService extends Service {
             } else {
                 if (last.intention3 != GBData.VALUE_NONE) {
                     showJingsheng((last.intention3 == GBData.VALUE_LONG ? "  龙" : "  凤") + Math.abs(last.multiple3));
-                    if ((mBtnClickable && win3 > 0) || notPlay >= NOTPLAYCOUNT) {
+                    if ((mBtnClickable && award3 > 0) || notPlay >= NOTPLAYCOUNT) {
                         notPlay = 0;
                         exeCall(last.intention3, last.multiple3);
                     } else {
@@ -227,11 +223,12 @@ public class MyService extends Service {
     public void showJingsheng(String other) {
         StringBuilder sb = new StringBuilder();
         sb.append("净胜2：").append(DeviceUtil.m2(win2))
-                .append("\n净胜3:").append(DeviceUtil.m2(win3)).append("\n净胜：").append(DeviceUtil.m2(win));
+                .append("\n净胜3：").append(DeviceUtil.m2(win3)).append("\n净胜：").append(DeviceUtil.m2(win));
         if (!TextUtils.isEmpty(other)) {
             sb.append("\n").append(other);
         }
         Toast.makeText(MyService.this, sb.toString(), Toast.LENGTH_SHORT).show();
+        mCallback.showText(sb.toString());
     }
 
     class PlayBinder extends Binder {
@@ -288,5 +285,15 @@ public class MyService extends Service {
                 execShellCmd("input tap " + ASSIABLEX + " " + ASSIABLEY);
             }
         }.start();
+    }
+
+
+    public void setCallback(Callback callback) {
+        mCallback = callback;
+    }
+
+    public interface Callback {
+
+        void showText(String data);
     }
 }

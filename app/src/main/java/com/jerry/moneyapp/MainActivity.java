@@ -27,14 +27,16 @@ import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.TextView;
 import android.widget.Toast;
 
-public class MainActivity extends FragmentActivity implements View.OnClickListener {
+public class MainActivity extends FragmentActivity implements View.OnClickListener, MyService.Callback {
 
     private static final String TAG = "MainActivity";
     private static final int REQUEST_MEDIA_PROJECTION = 1;
     private MediaProjectionManager mMediaProjectionManager;
     private MediaProjection mMediaProjection;
+    private TextView tvInfo;
     private WebView mWebView;
     private boolean isBind;
     private MyService myService;
@@ -43,6 +45,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         public void onServiceConnected(final ComponentName name, final IBinder service) {
             MyService.PlayBinder playBinder = (MyService.PlayBinder) service;
             myService = playBinder.getPlayService();
+            myService.setCallback(MainActivity.this);
             myService.startExe();
             isBind = true;
         }
@@ -65,6 +68,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         findViewById(R.id.btn).setOnClickListener(this);
         findViewById(R.id.btn2).setOnClickListener(this);
         findViewById(R.id.btn3).setOnClickListener(this);
+        tvInfo = findViewById(R.id.tvInfo);
         mWebView = findViewById(R.id.webview);
         mWebView.removeJavascriptInterface("searchBoxJavaBridge_");
         mWebView.removeJavascriptInterface("accessibilityTraversal");
@@ -142,6 +146,11 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
             }
         }
         return true;
+    }
+
+    @Override
+    public void showText(String text) {
+        tvInfo.setText(text);
     }
 
     @Override
