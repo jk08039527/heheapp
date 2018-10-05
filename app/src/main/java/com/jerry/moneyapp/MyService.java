@@ -14,6 +14,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.text.TextUtils;
+import android.util.Log;
 import android.widget.Toast;
 
 public class MyService extends Service {
@@ -31,9 +32,7 @@ public class MyService extends Service {
 
     private static int width;
     private static int height;
-    private static int last;
-    private static int last2;
-    private static int last3;
+    private static Point last;
     private static int currentType = 2;
 
     private int[] pointsX = new int[18];
@@ -68,65 +67,72 @@ public class MyService extends Service {
             }
             if (mPoints.size() == 0 || ints.length == 0) {
                 mPoints.clear();
-                int last2 = GBData.VALUE_LONG;
-                int last3 = GBData.VALUE_LONG;
-                Point initP = new Point();
-                initP.gudao2 = 0;
-                initP.gudao3 = 0;
-                initP.intention2 = last2;
-                initP.intention3 = last3;
-                initP.current = GBData.VALUE_NONE;
-                mPoints.add(initP);
+                Point lastP = new Point();
+                lastP.gudao2 = 0;
+                lastP.gudao3 = 0;
+                lastP.intention2 = GBData.VALUE_LONG;
+                lastP.intention3 = GBData.VALUE_LONG;
+                lastP.current = GBData.VALUE_NONE;
+                mPoints.add(lastP);
                 for (int i = 0; i < ints.length; i++) {
                     Point point = CaluUtil.calulate(ints, i + 1);
                     point.current = ints[i];
                     mPoints.add(point);
-                    if (last2 != 0) {
-                        if (last2 == point.current) {
-                            win2 += 9.7 * Math.abs(point.multiple2);
+                    if (lastP.intention2 != 0) {
+                        if (lastP.intention2 == point.current) {
+                            win2 += 9.7 * Math.abs(lastP.multiple2);
                         } else {
-                            win2 -= 10 * Math.abs(point.multiple2);
+                            win2 -= 10 * Math.abs(lastP.multiple2);
                         }
                     }
-                    if (last3 != 0) {
-                        if (last3 == point.current) {
-                            win3 += 9.7 * Math.abs(point.multiple3);
+                    if (lastP.intention3 != 0) {
+                        if (lastP.intention3 == point.current) {
+                            win3 += 9.7 * Math.abs(lastP.multiple3);
                         } else {
-                            win3 -= 10 * Math.abs(point.multiple3);
+                            win3 -= 10 * Math.abs(lastP.multiple3);
                         }
                     }
-                    last2 = point.intention2;
-                    last3 = point.intention3;
+                    lastP = point;
+                    Log.d("win2", i + "：" + String.valueOf(win2));
+                    Log.d("win3", i + "：" + String.valueOf(win3));
                 }
             } else {
                 Point point = CaluUtil.calulate(ints, ints.length);
                 point.current = ints[ints.length - 1];
                 mPoints.add(point);
-                if (last2 != 0) {
-                    if (last2 == point.current) {
-                        win2 += 9.7 * Math.abs(point.multiple2);
-                    } else {
-                        win2 -= 10 * Math.abs(point.multiple2);
+                if (last != null) {
+                    if (last.intention2 == GBData.VALUE_NONE) {
+                        if (last.intention2 == point.current) {
+                            win2 += 9.7 * Math.abs(last.multiple2);
+                        } else {
+                            win2 -= 10 * Math.abs(last.multiple2);
+                        }
+                        if (currentType == 2) {
+                            if (last.intention2 == point.current) {
+                                win += 9.7 * Math.abs(last.multiple2);
+                            } else {
+                                win -= 10 * Math.abs(last.multiple2);
+                            }
+                        }
                     }
-                }
-                if (last3 != 0) {
-                    if (last3 == point.current) {
-                        win3 += 9.7 * Math.abs(point.multiple3);
-                    } else {
-                        win3 -= 10 * Math.abs(point.multiple3);
-                    }
-                }
-                if (last != 0) {
-                    if (last == point.current) {
-                        win += 9.7 * Math.abs(point.multiple2);
-                    } else {
-                        win -= 10 * Math.abs(point.multiple2);
+                    if (last.intention3 != 0) {
+                        if (last.intention3 == point.current) {
+                            win3 += 9.7 * Math.abs(last.multiple3);
+                        } else {
+                            win3 -= 10 * Math.abs(last.multiple3);
+                        }
+                        if (currentType == 3) {
+                            if (last.intention3 == point.current) {
+                                win += 9.7 * Math.abs(last.multiple3);
+                            } else {
+                                win -= 10 * Math.abs(last.multiple3);
+                            }
+                        }
                     }
                 }
             }
             Point point = mPoints.get(mPoints.size() - 1);
-            last2 = point.intention2;
-            last3 = point.intention3;
+            last = point;
             if (win2 > win3) {
                 currentType = 2;
             } else {
@@ -135,7 +141,6 @@ public class MyService extends Service {
             if (currentType == 2) {
                 if (point.intention2 != GBData.VALUE_NONE) {
                     showJingsheng((point.intention2 == GBData.VALUE_LONG ? "  龙" : "  凤") + Math.abs(point.multiple2));
-                    last = point.intention2;
                     if ((mBtnClickable && win2 > 0) || notPlay >= NOTPLAYCOUNT) {
                         notPlay = 0;
                         exeCall(point.intention2, point.multiple2);
@@ -149,7 +154,6 @@ public class MyService extends Service {
             } else {
                 if (point.intention3 != GBData.VALUE_NONE) {
                     showJingsheng((point.intention3 == GBData.VALUE_LONG ? "  龙" : "  凤") + Math.abs(point.multiple3));
-                    last = point.intention3;
                     if ((mBtnClickable && win3 > 0) || notPlay >= NOTPLAYCOUNT) {
                         notPlay = 0;
                         exeCall(point.intention3, point.multiple3);

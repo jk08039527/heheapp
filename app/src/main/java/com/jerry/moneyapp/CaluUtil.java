@@ -39,8 +39,12 @@ class CaluUtil {
 
             if (paint.size() > 1 && paint.get(0) == 1 && paint.get(1) > 1) {
                 point.multiple2 = 2;
+            } else if (paint.size() == 1 && paint.get(0) == 1 && ints[position - 1] == GBData.VALUE_FENG) {
+                point.multiple2 = 2;
             }
             if (paint.size() > 2 && paint.get(0) == 1 && paint.get(1) == 1 && paint.get(2) > 1) {
+                point.multiple3 = 2;
+            } else if (paint.size() == 2 && paint.get(0) == 1 && paint.get(1) == 1 && ints[position - 2] == GBData.VALUE_FENG) {
                 point.multiple3 = 2;
             }
             if (paint.size() > 1 && paint.get(1) > 1 && paint.get(0) + paint.get(1) > 5) {
