@@ -23,8 +23,8 @@ public class MyService extends Service {
     private double win;//净胜
     private double win2;//净胜2
     private double win3;//净胜3
-    private double award2;//净胜2，近20局
-    private double award3;//净胜3，近20局
+    private double award2;//净胜2，近10局
+    private double award3;//净胜3，近10局
     private static final int LEFT = 12;//17
     private static final int RIGHT = 1068;//144
     private static final int TOP = 470;//610
@@ -137,11 +137,11 @@ public class MyService extends Service {
                 Log.d("win2", ints.length - 1 + "：" + String.valueOf(win2));
                 Log.d("win3", ints.length - 1 + "：" + String.valueOf(win3));
             }
-            int fsfsf = Math.min(mPoints.size(), 20);
+            int size = Math.min(mPoints.size(), 10);
             award2 = 0;
             award3 = 0;
-            Point llp = mPoints.get(mPoints.size() - fsfsf);
-            for (int i = mPoints.size() - fsfsf + 1; i < mPoints.size(); i++) {
+            Point llp = mPoints.get(mPoints.size() - size);
+            for (int i = mPoints.size() - size + 1; i < mPoints.size(); i++) {
                 Point point = mPoints.get(i);
                 if (llp.intention2 != GBData.VALUE_NONE) {
                     if (llp.intention2 == point.current) {
