@@ -19,11 +19,11 @@ import android.widget.Toast;
 
 public class MyService extends Service {
 
-    private static double win;//净胜
-    private static double win2;//净胜2
-    private static double win3;//净胜3
-    private int award2;//净胜2，近20局
-    private int award3;//净胜3，近20局
+    private double win;//净胜
+    private double win2;//净胜2
+    private double win3;//净胜3
+    private double award2;//净胜2，近20局
+    private double award3;//净胜3，近20局
     private static final int LEFT = 12;//17
     private static final int RIGHT = 1068;//144
     private static final int TOP = 470;//610
@@ -32,10 +32,10 @@ public class MyService extends Service {
     public static final int ASSIABLEY = 900;//1180
     private static final int NOTPLAYCOUNT = 10;
 
-    private static int width;
-    private static int height;
-    private static Point last;
-    private static int currentType = 2;
+    private int width;
+    private int height;
+    private Point last;
+    private int currentType = 2;
 
     private int[] pointsX = new int[18];
     private int[] pointsY = new int[6];
@@ -110,7 +110,7 @@ public class MyService extends Service {
                         } else {
                             win2 -= 10 * Math.abs(last.multiple2);
                         }
-                        if (currentType == 2 && notPlay == 0) {
+                        if (currentType == 2 && award2 > -10) {
                             if (last.intention2 == point.current) {
                                 win += 9.7 * Math.abs(last.multiple2);
                             } else {
@@ -124,7 +124,7 @@ public class MyService extends Service {
                         } else {
                             win3 -= 10 * Math.abs(last.multiple3);
                         }
-                        if (currentType == 3 && notPlay == 0) {
+                        if (currentType == 3 && award2 > -10) {
                             if (last.intention3 == point.current) {
                                 win += 9.7 * Math.abs(last.multiple3);
                             } else {
@@ -165,7 +165,7 @@ public class MyService extends Service {
             }
             last = mPoints.get(mPoints.size() - 1);
             if (currentType == 2) {
-                if (last.intention2 != GBData.VALUE_NONE && award2 > 0) {
+                if (last.intention2 != GBData.VALUE_NONE && award2 > -10) {
                     showJingsheng((last.intention2 == GBData.VALUE_LONG ? "  龙" : "  凤") + Math.abs(last.multiple2));
                     if (mBtnClickable || notPlay >= NOTPLAYCOUNT) {
                         notPlay = 0;
@@ -175,14 +175,14 @@ public class MyService extends Service {
                     }
                 } else {
                     notPlay++;
-                    if (last.intention2 != GBData.VALUE_NONE) {
+                    if (last.intention2 == GBData.VALUE_NONE) {
                         showJingsheng("孤岛太多:" + last.gudao2);
                     } else {
                         showJingsheng("板不好");
                     }
                 }
             } else {
-                if (last.intention3 != GBData.VALUE_NONE && award3 > 0) {
+                if (last.intention3 != GBData.VALUE_NONE && award3 > -10) {
                     showJingsheng((last.intention3 == GBData.VALUE_LONG ? "  龙" : "  凤") + Math.abs(last.multiple3));
                     if (mBtnClickable || notPlay >= NOTPLAYCOUNT) {
                         notPlay = 0;
@@ -192,7 +192,7 @@ public class MyService extends Service {
                     }
                 } else {
                     notPlay++;
-                    if (last.intention3 != GBData.VALUE_NONE) {
+                    if (last.intention3 == GBData.VALUE_NONE) {
                         showJingsheng("孤岛太多:" + last.gudao3);
                     } else {
                         showJingsheng("板不好");
