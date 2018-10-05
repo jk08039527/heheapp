@@ -116,12 +116,10 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         });
 
         mWebView.loadUrl("http://12ab88.com/");
-        if (rootCmd()) {
-            Toast.makeText(this, "root获取", Toast.LENGTH_SHORT).show();
-        }
+        rootCmd();
     }
 
-    public boolean rootCmd() {
+    public void rootCmd() {
         Process process = null;
         DataOutputStream os = null;
         try {
@@ -132,7 +130,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
             os.flush();
             process.waitFor();
         } catch (Exception e) {
-            return false;
+            e.printStackTrace();
         } finally {
             if (os != null) {
                 try {
@@ -145,7 +143,6 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                 process.destroy();
             }
         }
-        return true;
     }
 
     @Override
