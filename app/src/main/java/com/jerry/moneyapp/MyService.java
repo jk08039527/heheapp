@@ -22,6 +22,8 @@ public class MyService extends Service {
     private static double win;//净胜
     private static double win2;//净胜2
     private static double win3;//净胜3
+    private int award2;//净胜2，近20局
+    private int award3;//净胜3，近20局
     private static final int LEFT = 12;//17
     private static final int RIGHT = 1068;//144
     private static final int TOP = 470;//610
@@ -108,7 +110,7 @@ public class MyService extends Service {
                         } else {
                             win2 -= 10 * Math.abs(last.multiple2);
                         }
-                        if (currentType == 2) {
+                        if (currentType == 2 && notPlay == 0) {
                             if (last.intention2 == point.current) {
                                 win += 9.7 * Math.abs(last.multiple2);
                             } else {
@@ -122,7 +124,7 @@ public class MyService extends Service {
                         } else {
                             win3 -= 10 * Math.abs(last.multiple3);
                         }
-                        if (currentType == 3) {
+                        if (currentType == 3 && notPlay == 0) {
                             if (last.intention3 == point.current) {
                                 win += 9.7 * Math.abs(last.multiple3);
                             } else {
@@ -135,10 +137,10 @@ public class MyService extends Service {
                 Log.d("win3", ints.length - 1 + "：" + String.valueOf(win3));
             }
             int fsfsf = Math.min(mPoints.size(), 20);
-            int award2 = 0;
-            int award3 = 0;
+            award2 = 0;
+            award3 = 0;
             Point llp = mPoints.get(mPoints.size() - fsfsf);
-            for (int i = mPoints.size() - fsfsf + 1; i < fsfsf; i++) {
+            for (int i = mPoints.size() - fsfsf + 1; i < mPoints.size(); i++) {
                 Point point = mPoints.get(i);
                 if (llp.intention2 != GBData.VALUE_NONE) {
                     if (llp.intention2 == point.current) {
@@ -163,9 +165,9 @@ public class MyService extends Service {
             }
             last = mPoints.get(mPoints.size() - 1);
             if (currentType == 2) {
-                if (last.intention2 != GBData.VALUE_NONE) {
+                if (last.intention2 != GBData.VALUE_NONE && award2 > 0) {
                     showJingsheng((last.intention2 == GBData.VALUE_LONG ? "  龙" : "  凤") + Math.abs(last.multiple2));
-                    if ((mBtnClickable && award2 > 0) || notPlay >= NOTPLAYCOUNT) {
+                    if (mBtnClickable || notPlay >= NOTPLAYCOUNT) {
                         notPlay = 0;
                         exeCall(last.intention2, last.multiple2);
                     } else {
@@ -173,12 +175,16 @@ public class MyService extends Service {
                     }
                 } else {
                     notPlay++;
-                    showJingsheng("孤岛太多:" + last.gudao2);
+                    if (last.intention2 != GBData.VALUE_NONE) {
+                        showJingsheng("孤岛太多:" + last.gudao2);
+                    } else {
+                        showJingsheng("板不好");
+                    }
                 }
             } else {
-                if (last.intention3 != GBData.VALUE_NONE) {
+                if (last.intention3 != GBData.VALUE_NONE && award3 > 0) {
                     showJingsheng((last.intention3 == GBData.VALUE_LONG ? "  龙" : "  凤") + Math.abs(last.multiple3));
-                    if ((mBtnClickable && award3 > 0) || notPlay >= NOTPLAYCOUNT) {
+                    if (mBtnClickable || notPlay >= NOTPLAYCOUNT) {
                         notPlay = 0;
                         exeCall(last.intention3, last.multiple3);
                     } else {
@@ -186,7 +192,11 @@ public class MyService extends Service {
                     }
                 } else {
                     notPlay++;
-                    showJingsheng("孤岛太多:" + last.gudao3);
+                    if (last.intention3 != GBData.VALUE_NONE) {
+                        showJingsheng("孤岛太多:" + last.gudao3);
+                    } else {
+                        showJingsheng("板不好");
+                    }
                 }
             }
             return false;
@@ -222,8 +232,9 @@ public class MyService extends Service {
 
     public void showJingsheng(String other) {
         StringBuilder sb = new StringBuilder();
-        sb.append("净胜2：").append(DeviceUtil.m2(win2))
-                .append("\n净胜3：").append(DeviceUtil.m2(win3)).append("\n净胜：").append(DeviceUtil.m2(win));
+        sb.append("净胜2：").append(DeviceUtil.m2(win2)).append(",").append(DeviceUtil.m2(award2))
+                .append("\n净胜3：").append(DeviceUtil.m2(win3)).append(",").append(DeviceUtil.m2(award3))
+                .append("\n净胜：").append(DeviceUtil.m2(win));
         if (!TextUtils.isEmpty(other)) {
             sb.append("\n").append(other);
         }
