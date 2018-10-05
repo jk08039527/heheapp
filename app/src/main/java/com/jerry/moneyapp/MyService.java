@@ -133,12 +133,39 @@ public class MyService extends Service {
                 Log.d("win2", ints.length - 1 + "：" + String.valueOf(win2));
                 Log.d("win3", ints.length - 1 + "：" + String.valueOf(win3));
             }
-            last = mPoints.get(mPoints.size() - 1);
-            if (win2 > win3) {
+            int fsfsf = Math.min(mPoints.size(), 20);
+            int award2 = 0;
+            int award3 = 0;
+            Point llp = mPoints.get(mPoints.size() - fsfsf);
+            for (int i = mPoints.size() - fsfsf + 1; i < fsfsf; i++) {
+                Point point = mPoints.get(i);
+                if (llp.intention2 != GBData.VALUE_NONE) {
+                    if (llp.intention2 == point.current) {
+                        award2 += 9.7 * Math.abs(llp.multiple2);
+                    } else {
+                        award2 -= 10 * Math.abs(llp.multiple2);
+                    }
+                }
+                if (llp.intention3 != GBData.VALUE_NONE) {
+                    if (llp.intention3 == point.current) {
+                        award3 += 9.7 * Math.abs(llp.multiple3);
+                    } else {
+                        award3 -= 10 * Math.abs(llp.multiple3);
+                    }
+                }
+                llp = point;
+            }
+            if (award2 < 0 && award3 < 0 && notPlay <= NOTPLAYCOUNT) {
+                notPlay++;
+                showJingsheng("");
+                return false;
+            }
+            if (award2 > award3) {
                 currentType = 2;
             } else {
                 currentType = 3;
             }
+            last = mPoints.get(mPoints.size() - 1);
             if (currentType == 2) {
                 if (last.intention2 != GBData.VALUE_NONE) {
                     showJingsheng((last.intention2 == GBData.VALUE_LONG ? "  龙" : "  凤") + Math.abs(last.multiple2));
