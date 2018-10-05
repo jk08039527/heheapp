@@ -101,7 +101,7 @@ public class MyService extends Service {
                 point.current = ints[ints.length - 1];
                 mPoints.add(point);
                 if (last != null) {
-                    if (last.intention2 == GBData.VALUE_NONE) {
+                    if (last.intention2 != GBData.VALUE_NONE) {
                         if (last.intention2 == point.current) {
                             win2 += 9.7 * Math.abs(last.multiple2);
                         } else {
@@ -115,7 +115,7 @@ public class MyService extends Service {
                             }
                         }
                     }
-                    if (last.intention3 != 0) {
+                    if (last.intention3 != GBData.VALUE_NONE) {
                         if (last.intention3 == point.current) {
                             win3 += 9.7 * Math.abs(last.multiple3);
                         } else {
@@ -130,39 +130,40 @@ public class MyService extends Service {
                         }
                     }
                 }
+                Log.d("win2", ints.length - 1 + "：" + String.valueOf(win2));
+                Log.d("win3", ints.length - 1 + "：" + String.valueOf(win3));
             }
-            Point point = mPoints.get(mPoints.size() - 1);
-            last = point;
+            last = mPoints.get(mPoints.size() - 1);
             if (win2 > win3) {
                 currentType = 2;
             } else {
                 currentType = 3;
             }
             if (currentType == 2) {
-                if (point.intention2 != GBData.VALUE_NONE) {
-                    showJingsheng((point.intention2 == GBData.VALUE_LONG ? "  龙" : "  凤") + Math.abs(point.multiple2));
+                if (last.intention2 != GBData.VALUE_NONE) {
+                    showJingsheng((last.intention2 == GBData.VALUE_LONG ? "  龙" : "  凤") + Math.abs(last.multiple2));
                     if ((mBtnClickable && win2 > 0) || notPlay >= NOTPLAYCOUNT) {
                         notPlay = 0;
-                        exeCall(point.intention2, point.multiple2);
+                        exeCall(last.intention2, last.multiple2);
                     } else {
                         notPlay++;
                     }
                 } else {
                     notPlay++;
-                    showJingsheng("孤岛太多:" + point.gudao2);
+                    showJingsheng("孤岛太多:" + last.gudao2);
                 }
             } else {
-                if (point.intention3 != GBData.VALUE_NONE) {
-                    showJingsheng((point.intention3 == GBData.VALUE_LONG ? "  龙" : "  凤") + Math.abs(point.multiple3));
+                if (last.intention3 != GBData.VALUE_NONE) {
+                    showJingsheng((last.intention3 == GBData.VALUE_LONG ? "  龙" : "  凤") + Math.abs(last.multiple3));
                     if ((mBtnClickable && win3 > 0) || notPlay >= NOTPLAYCOUNT) {
                         notPlay = 0;
-                        exeCall(point.intention3, point.multiple3);
+                        exeCall(last.intention3, last.multiple3);
                     } else {
                         notPlay++;
                     }
                 } else {
                     notPlay++;
-                    showJingsheng("孤岛太多:" + point.gudao3);
+                    showJingsheng("孤岛太多:" + last.gudao3);
                 }
             }
             return false;
