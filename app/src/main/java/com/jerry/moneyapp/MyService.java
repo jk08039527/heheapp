@@ -3,6 +3,7 @@ package com.jerry.moneyapp;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Calendar;
 import java.util.LinkedList;
 
 import android.app.Service;
@@ -124,7 +125,7 @@ public class MyService extends Service {
                         } else {
                             win3 -= 10 * Math.abs(last.multiple3);
                         }
-                        if (currentType == 3 && award2 > -10) {
+                        if (currentType == 3 && award3 > -10) {
                             if (last.intention3 == point.current) {
                                 win += 9.7 * Math.abs(last.multiple3);
                             } else {
@@ -198,6 +199,17 @@ public class MyService extends Service {
                         showJingsheng("板不好");
                     }
                 }
+            }
+            if (data.size() >= 68) {
+                Calendar now = Calendar.getInstance();
+                StringBuilder sb = new StringBuilder();
+                sb.append(now.getTime()).append(":").append(win).append("元").append("\n");
+                MyLog myLog = new MyLog();
+                myLog.setLog(sb.toString());
+                myLog.setData(data);
+                myLog.setDeviceId(DeviceUtil.getDeviceId());
+                myLog.save();
+                sb.delete(0, sb.length());
             }
             return false;
         }
