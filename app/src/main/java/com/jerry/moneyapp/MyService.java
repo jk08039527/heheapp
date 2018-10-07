@@ -23,8 +23,8 @@ public class MyService extends Service {
     private double win;//净胜
     private double win2;//净胜2
     private double win3;//净胜3
-    private double award2;//净胜2，近10局
-    private double award3;//净胜3，近10局
+    private double award2;//净胜2，近15局
+    private double award3;//净胜3，近15局
     private static final int LEFT = 12;//17
     private static final int RIGHT = 1068;//144
     private static final int TOP = 470;//610
@@ -137,7 +137,7 @@ public class MyService extends Service {
                 Log.d("win2", ints.length - 1 + "：" + String.valueOf(win2));
                 Log.d("win3", ints.length - 1 + "：" + String.valueOf(win3));
             }
-            int size = Math.min(mPoints.size(), 10);
+            int size = Math.min(mPoints.size(), 15);
             award2 = 0;
             award3 = 0;
             Point llp = mPoints.get(mPoints.size() - size);
@@ -159,18 +159,18 @@ public class MyService extends Service {
                 }
                 llp = point;
             }
-            if (award2 > award3) {
+            if (award2 >= award3) {
                 currentType = 2;
             } else {
                 currentType = 3;
             }
             last = mPoints.get(mPoints.size() - 1);
             if (currentType == 2) {
-                if (last.intention2 != GBData.VALUE_NONE && award2 > -10) {
+                if (last.multiple2 < 0 || notPlay >= NOTPLAYCOUNT || (last.intention2 != GBData.VALUE_NONE && award2 >= -10)) {
                     showJingsheng((last.intention2 == GBData.VALUE_LONG ? "  龙" : "  凤") + Math.abs(last.multiple2));
                     if (mBtnClickable || notPlay >= NOTPLAYCOUNT) {
+                        exeCall(last.intention2, notPlay >= NOTPLAYCOUNT ? 1 : last.multiple2);
                         notPlay = 0;
-                        exeCall(last.intention2, last.multiple2);
                     } else {
                         notPlay++;
                     }
@@ -183,11 +183,11 @@ public class MyService extends Service {
                     }
                 }
             } else {
-                if (last.intention3 != GBData.VALUE_NONE && award3 > -10) {
+                if (last.multiple3 < 0 || notPlay >= NOTPLAYCOUNT || (last.intention3 != GBData.VALUE_NONE && award3 >= -10)) {
                     showJingsheng((last.intention3 == GBData.VALUE_LONG ? "  龙" : "  凤") + Math.abs(last.multiple3));
                     if (mBtnClickable || notPlay >= NOTPLAYCOUNT) {
+                        exeCall(last.intention3, notPlay >= NOTPLAYCOUNT ? 1 : last.multiple3);
                         notPlay = 0;
-                        exeCall(last.intention3, last.multiple3);
                     } else {
                         notPlay++;
                     }
@@ -244,8 +244,8 @@ public class MyService extends Service {
 
     public void showJingsheng(String other) {
         StringBuilder sb = new StringBuilder();
-        sb.append("净胜2：").append(DeviceUtil.m2(win2)).append(",").append(DeviceUtil.m2(award2))
-                .append("\n净胜3：").append(DeviceUtil.m2(win3)).append(",").append(DeviceUtil.m2(award3))
+        sb.append("净胜2：").append(DeviceUtil.m2(win2)).append("，").append(DeviceUtil.m2(award2))
+                .append("\n净胜3：").append(DeviceUtil.m2(win3)).append("，").append(DeviceUtil.m2(award3))
                 .append("\n净胜：").append(DeviceUtil.m2(win));
         if (!TextUtils.isEmpty(other)) {
             sb.append("\n").append(other);

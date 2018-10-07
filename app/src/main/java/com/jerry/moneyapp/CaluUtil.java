@@ -36,34 +36,38 @@ class CaluUtil {
                 }
                 index--;
             }
-
-            if (paint.size() > 1 && paint.get(0) == 1 && paint.get(1) > 1) {
-                point.multiple2 = 2;
-            } else if (paint.size() == 1 && paint.get(0) == 1 && ints[position - 1] == GBData.VALUE_FENG) {
-                point.multiple2 = 2;
-            }
-            if (paint.size() > 2 && paint.get(0) == 1 && paint.get(1) == 1 && paint.get(2) > 1) {
-                point.multiple3 = 2;
-            } else if (paint.size() == 2 && paint.get(0) == 1 && paint.get(1) == 1 && ints[position - 2] == GBData.VALUE_FENG) {
-                point.multiple3 = 2;
-            }
-            if (paint.size() > 1 && paint.get(1) > 1 && paint.get(0) + paint.get(1) > 5) {
-                point.multiple2 = 2;
-                point.multiple3 = 2;
+            boolean good = false;
+            if (paint.size() > 1 && paint.get(0) > 1 && paint.get(1) > 1 && paint.get(0) + paint.get(1) > 5) {
+                point.multiple2 = 5;
+                point.multiple3 = 5;
+                good = true;
             } else if (paint.size() > 2 && paint.get(0) > 1 && paint.get(1) > 1 && paint.get(2) > 1 && paint.get(0) + paint.get(1) +
                     paint.get(2) > 6) {
-                point.multiple2 = 2;
-                point.multiple3 = 2;
+                point.multiple2 = 5;
+                point.multiple3 = 5;
+                good = true;
             } else if (paint.size() > 2 && paint.get(0) == 1 && paint.get(1) == 1 && paint.get(2) == 1) {
                 point.multiple2 = -1;
                 point.multiple3 = -1;
+            }
+            if (!good) {
+                if (paint.size() > 1 && paint.get(0) == 1 && paint.get(1) > 1) {
+                    point.multiple2 = 2;
+                } else if (paint.size() == 1 && paint.get(0) == 1 && ints[position - 1] == GBData.VALUE_FENG) {
+                    point.multiple2 = 2;
+                }
+                if (paint.size() > 2 && paint.get(0) == 1 && paint.get(1) == 1 && paint.get(2) > 1) {
+                    point.multiple3 = 2;
+                } else if (paint.size() == 2 && paint.get(0) == 1 && paint.get(1) == 1 && ints[position - 2] == GBData.VALUE_FENG) {
+                    point.multiple3 = 2;
+                }
             }
             // 记录当前数到第几个
             int gd = 0;
             // 记录当前索引
             int gdIndex = 0;
             int min = Math.min(6, position);
-            while (gd < min && gdIndex < paint.size()) {
+            while (gd < min && gdIndex < paint.size() - 1) {
                 if (paint.get(gdIndex) == 1) {
                     point.gudao2++;
                 }
@@ -84,7 +88,7 @@ class CaluUtil {
             // 记录当前索引
             gdIndex = 0;
             min = Math.min(8, position);
-            while (gd < min && gdIndex < paint.size()) {
+            while (gd < min && gdIndex < paint.size() - 1) {
                 if (paint.get(gdIndex) == 1) {
                     point.gudao3++;
                 }
