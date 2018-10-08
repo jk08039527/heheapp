@@ -38,13 +38,13 @@ class CaluUtil {
             }
             boolean good = false;
             if (paint.size() > 1 && paint.get(0) > 1 && paint.get(1) > 1 && paint.get(0) + paint.get(1) > 5) {
-                point.multiple2 = 5;
-                point.multiple3 = 5;
+                point.multiple2 = 2;
+                point.multiple3 = 2;
                 good = true;
             } else if (paint.size() > 2 && paint.get(0) > 1 && paint.get(1) > 1 && paint.get(2) > 1 && paint.get(0) + paint.get(1) +
                     paint.get(2) > 6) {
-                point.multiple2 = 5;
-                point.multiple3 = 5;
+                point.multiple2 = 2;
+                point.multiple3 = 2;
                 good = true;
             } else if (paint.size() > 2 && paint.get(0) == 1 && paint.get(1) == 1 && paint.get(2) == 1) {
                 point.multiple2 = -1;
