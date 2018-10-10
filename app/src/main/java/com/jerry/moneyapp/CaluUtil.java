@@ -1,6 +1,7 @@
 package com.jerry.moneyapp;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 /**
  * Created by wzl on 2018/10/1.
@@ -13,7 +14,7 @@ class CaluUtil {
      * @param ints 原始数据
      * @return 第一个参数表示投什么，第二个参数表示投多少
      */
-    static Point calulate(int[] ints, int position) {
+    static Point calulate(int[] ints, int position, LinkedList<Point> points) {
         Point point = new Point();
         if (position > ints.length) {
             return point;
