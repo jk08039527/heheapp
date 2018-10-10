@@ -18,4 +18,5 @@ class Point {
     double win3;
     double award2;
     double award3;
+    boolean manyGudao;
 }

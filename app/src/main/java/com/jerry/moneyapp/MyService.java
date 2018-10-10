@@ -161,6 +161,18 @@ public class MyService extends Service {
             } else {
                 currentType = 3;
             }
+            //制衡打法，有可能赔更多
+            if (last.manyGudao) {
+                int mutipleTemp = (int) (win / 20);
+                if (Math.abs(mutipleTemp) <= 16) {
+                    if (last.multiple2 < 0 && last.win2 < -40 && last.award2 < -40 && win < -40) {
+                        last.multiple2 = mutipleTemp;
+                    }
+                    if (last.multiple3 < 0 && last.win3 < -40 && last.award3 < -40 && win < -40) {
+                        last.multiple3 = mutipleTemp;
+                    }
+                }
+            }
             if (currentType == 2) {
                 if (last.multiple2 < 0 || notPlay >= NOTPLAYCOUNT || (last.intention2 != GBData.VALUE_NONE && last.award2 >= -10)) {
                     showJingsheng((last.intention2 == GBData.VALUE_LONG ? "  龙" : "  凤") + Math.abs(last.multiple2));
