@@ -118,7 +118,7 @@ public class MyService extends Service {
                             point.win2 = last.win2 - 10 * Math.abs(last.multiple2);
                         }
                         if (currentType == 2 && point.award2 > -10) {
-                            if (last.intention2 == point.current) {
+                            if (last.intention == point.current) {
                                 win += 9.7 * Math.abs(last.multiple2);
                             } else {
                                 win -= 10 * Math.abs(last.multiple2);
@@ -134,7 +134,7 @@ public class MyService extends Service {
                             point.win3 = last.win3 - 10 * Math.abs(last.multiple3);
                         }
                         if (currentType == 3 && point.award3 > -10) {
-                            if (last.intention3 == point.current) {
+                            if (last.intention == point.current) {
                                 win += 9.7 * Math.abs(last.multiple3);
                             } else {
                                 win -= 10 * Math.abs(last.multiple3);
@@ -158,8 +158,10 @@ public class MyService extends Service {
             last = mPoints.get(mPoints.size() - 1);
             if (last.award2 >= last.award3) {
                 currentType = 2;
+                last.intention = last.intention2;
             } else {
                 currentType = 3;
+                last.intention = last.intention3;
             }
             //制衡打法，有可能赔更多
             if (last.manyGudao) {
@@ -187,6 +189,7 @@ public class MyService extends Service {
                     if (last.intention2 == GBData.VALUE_NONE) {
                         showJingsheng("孤岛太多:" + last.gudao2);
                     } else {
+                        last.intention = GBData.VALUE_NONE;
                         showJingsheng("板不好");
                     }
                 }
@@ -204,6 +207,7 @@ public class MyService extends Service {
                     if (last.intention3 == GBData.VALUE_NONE) {
                         showJingsheng("孤岛太多:" + last.gudao3);
                     } else {
+                        last.intention = GBData.VALUE_NONE;
                         showJingsheng("板不好");
                     }
                 }

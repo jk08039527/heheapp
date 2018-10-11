@@ -8,6 +8,7 @@ package com.jerry.moneyapp;
 class Point {
 
     int current;
+    int intention;
     int intention2;
     int intention3;
     int multiple2 = 1;

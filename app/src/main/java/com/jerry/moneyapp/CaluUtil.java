@@ -65,6 +65,9 @@ class CaluUtil {
                 point.manyGudao = true;
             } else if (tempList.size() > 2 && (tempList.get(1) > 2 || tempList.get(2) > 2)) {
                 point.manyGudao = true;
+            } else if (paint.size() > 5 && (paint.get(0) == 1 && paint.get(1) == 1 && paint.get(2) == 1) && (paint.get(3) > 1 && paint
+                    .get(4) > 1 && paint.get(3) + paint.get(4) > 6)) {
+                point.manyGudao = true;
             }
 
             if (!good) {
