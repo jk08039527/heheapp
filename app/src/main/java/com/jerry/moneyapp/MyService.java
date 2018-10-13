@@ -221,6 +221,7 @@ public class MyService extends Service {
                         }
                     }
                 } else {
+                    last.intention = GBData.VALUE_NONE;
                     showJingsheng("板不好");
                 }
             }
