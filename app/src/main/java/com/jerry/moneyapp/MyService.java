@@ -163,55 +163,68 @@ public class MyService extends Service {
                 currentType = 3;
                 last.intention = last.intention3;
             }
-            //制衡打法，有可能赔更多
-            if (last.manyGudao) {
-                int mutipleTemp = (int) (win / 20);
-                if (Math.abs(mutipleTemp) <= 16) {
-                    if (last.multiple2 < 0 && last.win2 < -40 && last.award2 < -40 && win < -40) {
-                        last.multiple2 = mutipleTemp;
-                    }
-                    if (last.multiple3 < 0 && last.win3 < -40 && last.award3 < -40 && win < -40) {
-                        last.multiple3 = mutipleTemp;
-                    }
-                }
-            }
-            if (currentType == 2) {
-                if (last.multiple2 < 0 || notPlay >= NOTPLAYCOUNT || (last.intention2 != GBData.VALUE_NONE && last.award2 >= -10)) {
-                    showJingsheng((last.intention2 == GBData.VALUE_LONG ? "  龙" : "  凤") + Math.abs(last.multiple2));
-                    if (mBtnClickable || notPlay >= NOTPLAYCOUNT) {
-                        exeCall(last.intention2, notPlay >= NOTPLAYCOUNT ? 1 : last.multiple2);
-                        notPlay = 0;
+            if (mPoints.size() > 5 && last.award2 > 0 && last.award3 > 0 && last.win2 > 0 && last.win3 > 0) {
+                if (currentType == 2) {
+                    if (last.multiple2 < 0 || notPlay >= NOTPLAYCOUNT || (last.intention2 != GBData.VALUE_NONE && last.award2 >= -10)) {
+                        showJingsheng((last.intention2 == GBData.VALUE_LONG ? "  龙" : "  凤") + Math.abs(last.multiple2));
+                        if (mBtnClickable || notPlay >= NOTPLAYCOUNT) {
+                            exeCall(last.intention2, notPlay >= NOTPLAYCOUNT ? 1 : last.multiple2);
+                            notPlay = 0;
+                        } else {
+                            notPlay++;
+                        }
                     } else {
                         notPlay++;
+                        if (last.intention2 == GBData.VALUE_NONE) {
+                            showJingsheng("孤岛太多:" + last.gudao2);
+                        } else {
+                            last.intention = GBData.VALUE_NONE;
+                            showJingsheng("板不好");
+                        }
                     }
                 } else {
-                    notPlay++;
-                    if (last.intention2 == GBData.VALUE_NONE) {
-                        showJingsheng("孤岛太多:" + last.gudao2);
+                    if (last.multiple3 < 0 || notPlay >= NOTPLAYCOUNT || (last.intention3 != GBData.VALUE_NONE && last.award3 >= -10)) {
+                        showJingsheng((last.intention3 == GBData.VALUE_LONG ? "  龙" : "  凤") + Math.abs(last.multiple3));
+                        if (mBtnClickable || notPlay >= NOTPLAYCOUNT) {
+                            exeCall(last.intention3, notPlay >= NOTPLAYCOUNT ? 1 : last.multiple3);
+                            notPlay = 0;
+                        } else {
+                            notPlay++;
+                        }
                     } else {
-                        last.intention = GBData.VALUE_NONE;
-                        showJingsheng("板不好");
+                        notPlay++;
+                        if (last.intention3 == GBData.VALUE_NONE) {
+                            showJingsheng("孤岛太多:" + last.gudao3);
+                        } else {
+                            last.intention = GBData.VALUE_NONE;
+                            showJingsheng("板不好");
+                        }
                     }
                 }
             } else {
-                if (last.multiple3 < 0 || notPlay >= NOTPLAYCOUNT || (last.intention3 != GBData.VALUE_NONE && last.award3 >= -10)) {
-                    showJingsheng((last.intention3 == GBData.VALUE_LONG ? "  龙" : "  凤") + Math.abs(last.multiple3));
-                    if (mBtnClickable || notPlay >= NOTPLAYCOUNT) {
-                        exeCall(last.intention3, notPlay >= NOTPLAYCOUNT ? 1 : last.multiple3);
-                        notPlay = 0;
+                if (mPoints.size() % 10 == 1) {
+                    if (currentType == 2) {
+                        if (last.intention2 != GBData.VALUE_NONE) {
+                            showJingsheng((last.intention2 == GBData.VALUE_LONG ? "  龙1" : "  凤1"));
+                            exeCall(last.intention2, 1);
+                        } else {
+                            showJingsheng((last.current == GBData.VALUE_LONG ? "  龙1" : "  凤1"));
+                            exeCall(last.current, 1);
+                        }
                     } else {
-                        notPlay++;
+                        if (last.intention3 != GBData.VALUE_NONE) {
+                            showJingsheng((last.intention3 == GBData.VALUE_LONG ? "  龙1" : "  凤1"));
+                            exeCall(last.intention3, 1);
+                        } else {
+                            showJingsheng((last.current == GBData.VALUE_LONG ? "  龙1" : "  凤1"));
+                            exeCall(last.current, 1);
+                        }
                     }
                 } else {
-                    notPlay++;
-                    if (last.intention3 == GBData.VALUE_NONE) {
-                        showJingsheng("孤岛太多:" + last.gudao3);
-                    } else {
-                        last.intention = GBData.VALUE_NONE;
-                        showJingsheng("板不好");
-                    }
+                    showJingsheng("板不好");
                 }
             }
+
             if (data.size() >= 68) {
                 Calendar now = Calendar.getInstance();
                 StringBuilder sb = new StringBuilder();
