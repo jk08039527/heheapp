@@ -202,7 +202,7 @@ public class MyService extends Service {
                     }
                 }
             } else {
-                if (mPoints.size() % 10 == 1) {
+                if (mPoints.size() % 10 == 2) {
                     if (currentType == 2) {
                         if (last.intention2 != GBData.VALUE_NONE) {
                             showJingsheng((last.intention2 == GBData.VALUE_LONG ? "  龙1" : "  凤1"));
