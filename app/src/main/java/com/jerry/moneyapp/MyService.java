@@ -125,13 +125,6 @@ public class MyService extends Service {
                         } else {
                             point.win2 = last.win2 - 10 * Math.abs(last.multiple2);
                         }
-                        if (currentType == 2 && last.intention != GBData.VALUE_NONE) {
-                            if (last.intention == point.current) {
-                                win += 9.7 * Math.abs(last.multiple2);
-                            } else {
-                                win -= 10 * Math.abs(last.multiple2);
-                            }
-                        }
                     } else {
                         point.win2 = last.win2;
                     }
@@ -141,15 +134,21 @@ public class MyService extends Service {
                         } else {
                             point.win3 = last.win3 - 10 * Math.abs(last.multiple3);
                         }
-                        if (currentType == 3 && last.intention != GBData.VALUE_NONE) {
-                            if (last.intention == point.current) {
-                                win += 9.7 * Math.abs(last.multiple3);
-                            } else {
-                                win -= 10 * Math.abs(last.multiple3);
-                            }
-                        }
                     } else {
                         point.win3 = last.win3;
+                    }
+                    if (last.intention != GBData.VALUE_NONE) {
+                        int mutiple = 1;
+                        if (currentType == 2) {
+                            mutiple = last.multiple2;
+                        } else {
+                            mutiple = last.multiple3;
+                        }
+                        if (last.intention == point.current) {
+                            win += 9.7 * Math.abs(mutiple);
+                        } else {
+                            win -= 10 * Math.abs(mutiple);
+                        }
                     }
                     if (mPoints.size() >= 15) {
                         point.award2 = point.win2 - mPoints.get(mPoints.size() - 15).win2;
@@ -172,13 +171,13 @@ public class MyService extends Service {
             if (ints.length > 6 && last.award2 > 0 && last.award3 > 0 && last.win2 > 0 && last.win3 > 0) {
                 if (currentType == 2 && (last.multiple2 < 0 || last.intention2 != GBData.VALUE_NONE)) {
                     last.intention = last.intention2;
-                    showJingsheng((last.intention2 == GBData.VALUE_LONG ? "  龙" : "  凤") + Math.abs(last.multiple2));
+                    showJingsheng((getIntentStr(last.intention2, last.multiple2)));
                     if (mBtnClickable) {
                         exeCall(last.intention2, last.multiple2);
                     }
                 } else if (currentType == 3 && (last.multiple3 < 0 || last.intention3 != GBData.VALUE_NONE)) {
                     last.intention = last.intention3;
-                    showJingsheng((last.intention3 == GBData.VALUE_LONG ? "  龙" : "  凤") + Math.abs(last.multiple3));
+                    showJingsheng((getIntentStr(last.intention3, last.multiple3)));
                     if (mBtnClickable) {
                         exeCall(last.intention3, last.multiple3);
                     }
@@ -204,6 +203,13 @@ public class MyService extends Service {
             return false;
         }
     });
+
+    private String getIntentStr(int intent, int mutiple) {
+        if (intent == GBData.VALUE_NONE) {
+            return " pass";
+        }
+        return intent == GBData.VALUE_LONG ? "  龙" : "  凤" + mutiple;
+    }
 
     @Override
     public void onCreate() {
@@ -239,11 +245,11 @@ public class MyService extends Service {
         StringBuilder sb = new StringBuilder();
         sb.append("净胜2：").append(DeviceUtil.m2(last.win2)).append("，")
                 .append(DeviceUtil.m2(last.award2)).append("，")
-                .append(last.intention2 == GBData.VALUE_LONG ? "  龙" : "  凤").append(Math.abs(last.multiple2))
+                .append(getIntentStr(last.intention2, Math.abs(last.multiple2)))
                 .append("\n净胜3：").append(DeviceUtil.m2(last.win3)).append("，")
                 .append(DeviceUtil.m2(last.award3)).append("，")
-                .append(last.intention3 == GBData.VALUE_LONG ? "  龙" : "  凤").append(Math.abs(last.multiple3))
-                .append("\n净胜：").append(DeviceUtil.m2(win)).append("，").append(last.intention == GBData.VALUE_LONG ? "  龙" : "  凤");
+                .append(getIntentStr(last.intention3, Math.abs(last.multiple3)))
+                .append("\n净胜：").append(DeviceUtil.m2(win)).append("，").append(getIntentStr(last.intention, 0));
         if (!TextUtils.isEmpty(other)) {
             sb.append("\n").append(other);
         }
