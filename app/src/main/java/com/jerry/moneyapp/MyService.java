@@ -208,7 +208,7 @@ public class MyService extends Service {
         if (intent == GBData.VALUE_NONE) {
             return " pass";
         }
-        return intent == GBData.VALUE_LONG ? "  龙" : "  凤" + mutiple;
+        return (intent == GBData.VALUE_LONG ? "  龙" : "  凤") + String.valueOf(mutiple);
     }
 
     @Override
