@@ -28,6 +28,10 @@ public class MyService extends Service {
     public static final int ASSIABLEX = 990;//1320
     public static final int ASSIABLEY = 900;//1180
 
+    public static final int MIDDELX = 500;//1180
+    public static final int ENTERY = 930;//1180
+    public static final int JUDGEY = 1240;//1180
+
     private int width;
     private int height;
     private Point last;
@@ -49,8 +53,13 @@ public class MyService extends Service {
             if (msg.what == -1) {
                 return false;
             }
+            boolean enter = GBData.getCurrentData(pointsX, pointsY, data);
+            if (enter) {
+                execShellCmd("input tap " + MIDDELX + " " + ENTERY);
+                mWeakHandler.sendEmptyMessageDelayed(0, 2000);
+                return false;
+            }
             mWeakHandler.sendEmptyMessageDelayed(0, 12000);
-            GBData.getCurrentData(pointsX, pointsY, data);
             if (data.size() == length) {
                 return false;
             }
@@ -167,21 +176,16 @@ public class MyService extends Service {
                     showJingsheng((last.intention2 == GBData.VALUE_LONG ? "  龙" : "  凤") + Math.abs(last.multiple2));
                     if (mBtnClickable) {
                         exeCall(last.intention2, last.multiple2);
-                    } else {
-                        handleBad(ints);
                     }
                 } else if (currentType == 3 && (last.multiple3 < 0 || last.intention3 != GBData.VALUE_NONE)) {
                     showJingsheng((last.intention3 == GBData.VALUE_LONG ? "  龙" : "  凤") + Math.abs(last.multiple3));
                     if (mBtnClickable) {
                         exeCall(last.intention3, last.multiple3);
-                    } else {
-                        handleBad(ints);
                     }
                 }
             } else {
                 last.intention = GBData.VALUE_NONE;
                 showJingsheng("板不好");
-                handleBad(ints);
             }
 
             if (data.size() >= 69) {
@@ -200,28 +204,6 @@ public class MyService extends Service {
             return false;
         }
     });
-
-    private void handleBad(int[] ints) {
-        if (ints.length % 10 == 7) {
-            if (currentType == 2) {
-                if (last.intention2 != GBData.VALUE_NONE) {
-                    showJingsheng((last.intention2 == GBData.VALUE_LONG ? "  龙1" : "  凤1"));
-                    exeCall(last.intention2, 1);
-                } else {
-                    showJingsheng((last.current == GBData.VALUE_LONG ? "  龙1" : "  凤1"));
-                    exeCall(last.current, 1);
-                }
-            } else {
-                if (last.intention3 != GBData.VALUE_NONE) {
-                    showJingsheng((last.intention3 == GBData.VALUE_LONG ? "  龙1" : "  凤1"));
-                    exeCall(last.intention3, 1);
-                } else {
-                    showJingsheng((last.current == GBData.VALUE_LONG ? "  龙1" : "  凤1"));
-                    exeCall(last.current, 1);
-                }
-            }
-        }
-    }
 
     @Override
     public void onCreate() {
