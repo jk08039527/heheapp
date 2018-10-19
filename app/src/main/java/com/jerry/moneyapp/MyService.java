@@ -243,7 +243,7 @@ public class MyService extends Service {
                 .append("\n净胜3：").append(DeviceUtil.m2(last.win3)).append("，")
                 .append(DeviceUtil.m2(last.award3)).append("，")
                 .append(last.intention3 == GBData.VALUE_LONG ? "  龙" : "  凤").append(Math.abs(last.multiple3))
-                .append("\n净胜：").append(DeviceUtil.m2(win)).append("，").append(last.intention);
+                .append("\n净胜：").append(DeviceUtil.m2(win)).append("，").append(last.intention == GBData.VALUE_LONG ? "  龙" : "  凤");
         if (!TextUtils.isEmpty(other)) {
             sb.append("\n").append(other);
         }
