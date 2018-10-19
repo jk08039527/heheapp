@@ -78,8 +78,8 @@ public class MyService extends Service {
                 Point lastP = new Point();
                 lastP.gudao2 = 0;
                 lastP.gudao3 = 0;
-                lastP.intention2 = GBData.VALUE_LONG;
-                lastP.intention3 = GBData.VALUE_LONG;
+                lastP.intention2 = GBData.VALUE_NONE;
+                lastP.intention3 = GBData.VALUE_NONE;
                 lastP.current = GBData.VALUE_NONE;
                 mPoints.add(lastP);
                 for (int i = 0; i < ints.length; i++) {
@@ -166,18 +166,18 @@ public class MyService extends Service {
             last = mPoints.get(mPoints.size() - 1);
             if (last.award2 >= last.award3) {
                 currentType = 2;
-                last.intention = last.intention2;
             } else {
                 currentType = 3;
-                last.intention = last.intention3;
             }
             if (ints.length > 6 && last.award2 > 0 && last.award3 > 0 && last.win2 > 0 && last.win3 > 0) {
                 if (currentType == 2 && (last.multiple2 < 0 || last.intention2 != GBData.VALUE_NONE)) {
+                    last.intention = last.intention2;
                     showJingsheng((last.intention2 == GBData.VALUE_LONG ? "  龙" : "  凤") + Math.abs(last.multiple2));
                     if (mBtnClickable) {
                         exeCall(last.intention2, last.multiple2);
                     }
                 } else if (currentType == 3 && (last.multiple3 < 0 || last.intention3 != GBData.VALUE_NONE)) {
+                    last.intention = last.intention3;
                     showJingsheng((last.intention3 == GBData.VALUE_LONG ? "  龙" : "  凤") + Math.abs(last.multiple3));
                     if (mBtnClickable) {
                         exeCall(last.intention3, last.multiple3);
@@ -237,9 +237,13 @@ public class MyService extends Service {
             return;
         }
         StringBuilder sb = new StringBuilder();
-        sb.append("净胜2：").append(DeviceUtil.m2(last.win2)).append("，").append(DeviceUtil.m2(last.award2))
-                .append("\n净胜3：").append(DeviceUtil.m2(last.win3)).append("，").append(DeviceUtil.m2(last.award3))
-                .append("\n净胜：").append(DeviceUtil.m2(win));
+        sb.append("净胜2：").append(DeviceUtil.m2(last.win2)).append("，")
+                .append(DeviceUtil.m2(last.award2)).append("，")
+                .append(last.intention2 == GBData.VALUE_LONG ? "  龙" : "  凤").append(Math.abs(last.multiple2))
+                .append("\n净胜3：").append(DeviceUtil.m2(last.win3)).append("，")
+                .append(DeviceUtil.m2(last.award3)).append("，")
+                .append(last.intention3 == GBData.VALUE_LONG ? "  龙" : "  凤").append(Math.abs(last.multiple3))
+                .append("\n净胜：").append(DeviceUtil.m2(win)).append("，").append(last.intention);
         if (!TextUtils.isEmpty(other)) {
             sb.append("\n").append(other);
         }
