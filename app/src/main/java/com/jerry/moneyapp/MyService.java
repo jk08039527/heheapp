@@ -137,19 +137,6 @@ public class MyService extends Service {
                     } else {
                         point.win3 = last.win3;
                     }
-                    if (last.intention != GBData.VALUE_NONE) {
-                        int mutiple = 1;
-                        if (currentType == 2) {
-                            mutiple = last.multiple2;
-                        } else {
-                            mutiple = last.multiple3;
-                        }
-                        if (last.intention == point.current) {
-                            win += 9.7 * Math.abs(mutiple);
-                        } else {
-                            win -= 10 * Math.abs(mutiple);
-                        }
-                    }
                     if (mPoints.size() >= 15) {
                         point.award2 = point.win2 - mPoints.get(mPoints.size() - 15).win2;
                         point.award3 = point.win3 - mPoints.get(mPoints.size() - 15).win3;
@@ -162,25 +149,42 @@ public class MyService extends Service {
                 Log.d("win3", ints.length - 1 + "：" + String.valueOf(point.win3));
                 mPoints.add(point);
             }
+            if (last.intention != GBData.VALUE_NONE) {
+                int mutiple;
+                if (currentType == 2) {
+                    mutiple = last.multiple2;
+                } else {
+                    mutiple = last.multiple3;
+                }
+                if (last.intention == ints[ints.length - 1]) {
+                    win += 9.7 * Math.abs(mutiple);
+                } else {
+                    win -= 10 * Math.abs(mutiple);
+                }
+            }
             last = mPoints.get(mPoints.size() - 1);
             if (last.award2 >= last.award3) {
                 currentType = 2;
             } else {
                 currentType = 3;
             }
-            if (ints.length > 6 && last.award2 > 0 && last.award3 > 0 && last.win2 > 0 && last.win3 > 0) {
-                if (currentType == 2 && (last.multiple2 < 0 || last.intention2 != GBData.VALUE_NONE)) {
+            double qiwang = -0.15 * ints.length;
+            if (ints.length > 6 && last.award2 > 0 && last.award3 > 0 && last.win2 > qiwang && last.win3 > qiwang) {
+                if (currentType == 2 && last.intention2 != GBData.VALUE_NONE) {
                     last.intention = last.intention2;
                     showJingsheng((getIntentStr(last.intention2, last.multiple2)));
                     if (mBtnClickable) {
                         exeCall(last.intention2, last.multiple2);
                     }
-                } else if (currentType == 3 && (last.multiple3 < 0 || last.intention3 != GBData.VALUE_NONE)) {
+                } else if (currentType == 3 && last.intention3 != GBData.VALUE_NONE) {
                     last.intention = last.intention3;
                     showJingsheng((getIntentStr(last.intention3, last.multiple3)));
                     if (mBtnClickable) {
                         exeCall(last.intention3, last.multiple3);
                     }
+                } else {
+                    last.intention = GBData.VALUE_NONE;
+                    showJingsheng("孤岛");
                 }
             } else {
                 last.intention = GBData.VALUE_NONE;
