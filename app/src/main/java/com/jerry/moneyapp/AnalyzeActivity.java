@@ -216,7 +216,7 @@ public class AnalyzeActivity extends AppCompatActivity {
                         point.win = lastP.win;
                     }
                 }
-                if (points.size() > 0 && points.size() >= LASTPOINTNUM) {
+                if (LASTPOINTNUM > 0 && points.size() >= LASTPOINTNUM) {
                     point.award2 = point.win2 - points.get(points.size() - LASTPOINTNUM).win2;
                     point.award3 = point.win3 - points.get(points.size() - LASTPOINTNUM).win3;
                 } else {
