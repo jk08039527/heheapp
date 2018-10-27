@@ -103,9 +103,9 @@ public class MyService extends Service {
                     } else {
                         point.win3 = lastP.win3;
                     }
-                    if (mPoints.size() >= 15) {
-                        point.award2 = point.win2 - mPoints.get(mPoints.size() - 15).win2;
-                        point.award3 = point.win3 - mPoints.get(mPoints.size() - 15).win3;
+                    if (mPoints.size() >= AnalyzeActivity.LASTPOINTNUM) {
+                        point.award2 = point.win2 - mPoints.get(mPoints.size() - AnalyzeActivity.LASTPOINTNUM).win2;
+                        point.award3 = point.win3 - mPoints.get(mPoints.size() - AnalyzeActivity.LASTPOINTNUM).win3;
                     } else {
                         point.award2 = point.win2;
                         point.award3 = point.win3;
@@ -137,26 +137,27 @@ public class MyService extends Service {
                     } else {
                         point.win3 = last.win3;
                     }
-                    if (mPoints.size() > 6) {
-                        point.award2 = point.win2 - mPoints.get(6).win2;
-                        point.award3 = point.win3 - mPoints.get(6).win3;
-                    } else {
-                        point.award2 = point.win2;
-                        point.award3 = point.win3;
-                    }
                     if (last.intention != GBData.VALUE_NONE) {
-                        int mutiple;
-                        if (currentType == 2) {
-                            mutiple = last.multiple2;
+                        if (last.intention == point.current) {
+                            point.win = last.win + 9.7 * Math.abs(last.multiple);
                         } else {
-                            mutiple = last.multiple3;
+                            point.win = last.win - 10 * Math.abs(last.multiple);
                         }
-                        if (last.intention == ints[ints.length - 1]) {
-                            win += 9.7 * Math.abs(mutiple);
-                        } else {
-                            win -= 10 * Math.abs(mutiple);
-                        }
+                    } else {
+                        point.win = last.win;
                     }
+                }
+                if (mPoints.size() >= AnalyzeActivity.LASTPOINTNUM) {
+                    point.award2 = point.win2 - mPoints.get(mPoints.size() - AnalyzeActivity.LASTPOINTNUM).win2;
+                    point.award3 = point.win3 - mPoints.get(mPoints.size() - AnalyzeActivity.LASTPOINTNUM).win3;
+                } else {
+                    point.award2 = point.win2;
+                    point.award3 = point.win3;
+                }
+                if (point.award2 >= point.award3) {
+                    point.currentType = 2;
+                } else {
+                    point.currentType = 3;
                 }
                 Log.d("win2", ints.length - 1 + "：" + String.valueOf(point.win2));
                 Log.d("win3", ints.length - 1 + "：" + String.valueOf(point.win3));
@@ -168,16 +169,19 @@ public class MyService extends Service {
             } else {
                 currentType = 3;
             }
-            double qiwang = ints.length * 0.8;
-            if (ints.length > 6 && last.award2 >= -10 && last.award3 >= -10 && last.win2 > qiwang && last.win3 > qiwang) {
+            if (ints.length > AnalyzeActivity.START && last.award2 >= AnalyzeActivity.LASTWIN2
+                    && last.award3 >= AnalyzeActivity.LASTWIN3 && last.win2 > AnalyzeActivity.WHOLEWIN2
+                    && last.win3 > AnalyzeActivity.WHOLEWIN3) {
                 if (currentType == 2 && last.intention2 != GBData.VALUE_NONE) {
                     last.intention = last.intention2;
+                    last.multiple = last.multiple2;
                     showJingsheng((getIntentStr(last.intention2, last.multiple2)));
                     if (mBtnClickable) {
                         exeCall(last.intention2, last.multiple2);
                     }
                 } else if (currentType == 3 && last.intention3 != GBData.VALUE_NONE) {
                     last.intention = last.intention3;
+                    last.multiple = last.multiple3;
                     showJingsheng((getIntentStr(last.intention3, last.multiple3)));
                     if (mBtnClickable) {
                         exeCall(last.intention3, last.multiple3);

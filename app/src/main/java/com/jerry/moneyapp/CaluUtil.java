@@ -91,7 +91,7 @@ class CaluUtil {
             int gd = 0;
             // 记录当前索引
             int gdIndex = 0;
-            int min = Math.min(6, position);
+            int min = Math.min(AnalyzeActivity.GUDAOCOUNT2, position);
             while (gd < min && gdIndex < paint.size() - 1) {
                 if (paint.get(gdIndex) == 1) {
                     point.gudao2++;
@@ -100,7 +100,7 @@ class CaluUtil {
                 gdIndex++;
             }
             if (point.multiple2 > 0) {
-                if (point.gudao2 > 1) {
+                if (point.gudao2 >= AnalyzeActivity.GUDAOLINIT2) {
                     point.intention2 = GBData.VALUE_NONE;
                 } else {
                     point.intention2 = ints[position - 1];
@@ -112,7 +112,7 @@ class CaluUtil {
             gd = 0;
             // 记录当前索引
             gdIndex = 0;
-            min = Math.min(8, position);
+            min = Math.min(AnalyzeActivity.GUDAOCOUNT3, position);
             while (gd < min && gdIndex < paint.size() - 1) {
                 if (paint.get(gdIndex) == 1) {
                     point.gudao3++;
@@ -121,7 +121,7 @@ class CaluUtil {
                 gdIndex++;
             }
             if (point.multiple3 > 0) {
-                if (point.gudao3 > 2) {
+                if (point.gudao3 >= AnalyzeActivity.GUDAOLINIT3) {
                     point.intention3 = GBData.VALUE_NONE;
                 } else {
                     point.intention3 = ints[position - 1];

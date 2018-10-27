@@ -19,16 +19,16 @@ import cn.bmob.v3.listener.FindListener;
 
 public class AnalyzeActivity extends AppCompatActivity {
 
-    private static int START = 6;
-    private static int WHOLEWIN2;
-    private static int WHOLEWIN3;
-    private static int GUDAOCOUNT2 = 6;
-    private static int GUDAOCOUNT3 = 8;
-    private static int GUDAOLINIT2 = 2;
-    private static int GUDAOLINIT3 = 3;
-    private static int LASTPOINTNUM = 15;
-    private static int LASTWIN2 = -10;
-    private static int LASTWIN3 = -10;
+    public static int START = 5;
+    public static int WHOLEWIN2 = -1;
+    public static int WHOLEWIN3 = -3;
+    public static int GUDAOCOUNT2 = 12;
+    public static int GUDAOCOUNT3 = 0;
+    public static int GUDAOLINIT2 = 2;
+    public static int GUDAOLINIT3 = 3;
+    public static int LASTPOINTNUM = 14;
+    public static int LASTWIN2 = -12;
+    public static int LASTWIN3 = -14;
 
     private List<MyLog> mMyLogs = new ArrayList<>();
     private ArrayList<LinkedList<Record>> pointss = new ArrayList<>();
@@ -234,8 +234,10 @@ public class AnalyzeActivity extends AppCompatActivity {
                             && point.win2 > WHOLEWIN2 && point.win3 > WHOLEWIN3) {
                         if (point.currentType == 2 && point.intention2 != GBData.VALUE_NONE) {
                             point.intention = point.intention2;
+                            point.multiple = point.multiple2;
                         } else if (point.currentType == 3 && point.intention3 != GBData.VALUE_NONE) {
                             point.intention = point.intention3;
+                            point.multiple = point.multiple3;
                         } else {
                             point.intention = GBData.VALUE_NONE;
                         }

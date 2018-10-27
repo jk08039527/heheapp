@@ -11,6 +11,7 @@ class Point {
     int intention;
     int intention2;
     int intention3;
+    int multiple;
     int multiple2 = 1;
     int multiple3 = 1;
     int gudao2;
