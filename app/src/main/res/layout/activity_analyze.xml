@@ -4,13 +4,84 @@
     android:layout_height="match_parent"
     android:background="@android:color/white"
     android:orientation="vertical">
-
     <TextView
         android:id="@+id/text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
         android:textColor="@android:color/black" />
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="35dp"
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/et_start"
+            style="@style/et"
+            android:hint="开打数" />
+
+        <EditText
+            android:id="@+id/et_totlewin2"
+            style="@style/et"
+            android:hint="总净胜2" />
+
+        <EditText
+            android:id="@+id/et_totlewin3"
+            style="@style/et"
+            android:hint="总净胜3" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="35dp"
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/et_gdz2"
+            style="@style/et"
+            android:hint="孤岛总2" />
+
+        <EditText
+            android:id="@+id/et_gdz3"
+            style="@style/et"
+            android:hint="孤岛总3" />
+
+        <EditText
+            android:id="@+id/et_gd2"
+            style="@style/et"
+            android:hint="孤岛2" />
+
+        <EditText
+            android:id="@+id/et_gd3"
+            style="@style/et"
+            android:hint="孤岛3" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="35dp"
+        android:orientation="horizontal">
+
+
+        <EditText
+            android:id="@+id/last_num"
+            style="@style/et"
+            android:hint="近多少数" />
+
+        <EditText
+            android:id="@+id/last_win2"
+            style="@style/et"
+            android:hint="近净胜2" />
+
+        <EditText
+            android:id="@+id/last_win3"
+            style="@style/et"
+            android:hint="近净胜3" />
+
+    </LinearLayout>
 
     <ListView
         android:id="@+id/listView"
