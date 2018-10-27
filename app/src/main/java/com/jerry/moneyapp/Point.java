@@ -15,9 +15,11 @@ class Point {
     int multiple3 = 1;
     int gudao2;
     int gudao3;
+    double win;
     double win2;
     double win3;
     double award2;
     double award3;
     boolean manyGudao;
+    int currentType;
 }
