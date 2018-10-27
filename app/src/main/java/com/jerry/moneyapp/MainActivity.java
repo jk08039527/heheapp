@@ -17,7 +17,7 @@ import android.media.projection.MediaProjection;
 import android.media.projection.MediaProjectionManager;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
@@ -30,7 +30,7 @@ import android.webkit.WebViewClient;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class MainActivity extends FragmentActivity implements View.OnClickListener, MyService.Callback {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, MyService.Callback {
 
     private static final String TAG = "MainActivity";
     private static final int REQUEST_MEDIA_PROJECTION = 1;
@@ -68,6 +68,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         findViewById(R.id.btn).setOnClickListener(this);
         findViewById(R.id.btn2).setOnClickListener(this);
         findViewById(R.id.btn3).setOnClickListener(this);
+        findViewById(R.id.btn4).setOnClickListener(this);
         tvInfo = findViewById(R.id.tvInfo);
         mWebView = findViewById(R.id.webview);
         mWebView.removeJavascriptInterface("searchBoxJavaBridge_");
@@ -202,6 +203,9 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                 if (mWebView != null) {
                     mWebView.reload();
                 }
+                break;
+            case R.id.btn4:
+                startActivity(new Intent(this, AnalyzeActivity.class));
                 break;
             default:
                 break;
