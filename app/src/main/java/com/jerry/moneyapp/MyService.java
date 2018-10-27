@@ -20,7 +20,6 @@ import android.widget.Toast;
 
 public class MyService extends Service {
 
-    private double win;//净胜
     private static final int LEFT = 12;//17
     private static final int RIGHT = 1068;//144
     private static final int TOP = 470;//610
@@ -197,7 +196,7 @@ public class MyService extends Service {
 
             if (data.size() >= 69) {
                 Calendar now = Calendar.getInstance();
-                sb.append(now.getTime()).append(":").append(win).append("元").append("\n");
+                sb.append(now.getTime()).append(":").append(last.win).append("元").append("\n");
                 MyLog myLog = new MyLog();
                 myLog.setLog(sb.toString());
                 myLog.setData(data);
@@ -206,7 +205,7 @@ public class MyService extends Service {
                 sb.delete(0, sb.length());
             } else {
                 Calendar now = Calendar.getInstance();
-                sb.append(now.getTime()).append(":").append(win).append("元").append("\n");
+                sb.append(now.getTime()).append(":").append(last.win).append("元").append("\n");
             }
             return false;
         }
@@ -257,7 +256,7 @@ public class MyService extends Service {
                 .append("\n净胜3：").append(DeviceUtil.m2(last.win3)).append("，")
                 .append(DeviceUtil.m2(last.award3)).append("，")
                 .append(getIntentStr(last.intention3, Math.abs(last.multiple3)))
-                .append("\n净胜：").append(DeviceUtil.m2(win)).append("，").append(getIntentStr(last.intention, 0));
+                .append("\n净胜：").append(DeviceUtil.m2(last.win)).append("，").append(getIntentStr(last.intention, 0));
         if (!TextUtils.isEmpty(other)) {
             sb.append("\n").append(other);
         }
