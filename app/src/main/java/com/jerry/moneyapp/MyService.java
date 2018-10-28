@@ -138,11 +138,25 @@ public class MyService extends Service {
                         point.win3 = last.win3;
                     }
                     if (last.intention != GBData.VALUE_NONE) {
-                        if (last.intention == point.current) {
-                            win +=  9.7 * Math.abs(last.multiple);
-                        } else {
-                            win -=  10 * Math.abs(last.multiple);
+                        if (last.currentType == 2) {
+                            if (last.intention == point.current) {
+                                point.win = last.win + 9.7 * Math.abs(last.multiple2);
+                                win +=  9.7 * Math.abs(last.multiple);
+                            } else {
+                                point.win = last.win - 10 * Math.abs(last.multiple2);
+                                win -=  10 * Math.abs(last.multiple);
+                            }
+                        } else if (last.currentType == 3) {
+                            if (last.intention == point.current) {
+                                point.win = last.win + 9.7 * Math.abs(last.multiple3);
+                                win +=  9.7 * Math.abs(last.multiple);
+                            } else {
+                                point.win = last.win - 10 * Math.abs(last.multiple3);
+                                win -=  10 * Math.abs(last.multiple);
+                            }
                         }
+                    } else {
+                        point.win = last.win;
                     }
                 }
                 if (mPoints.size() >= AnalyzeActivity.LASTPOINTNUM) {

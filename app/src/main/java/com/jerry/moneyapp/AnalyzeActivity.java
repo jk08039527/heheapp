@@ -31,8 +31,8 @@ public class AnalyzeActivity extends AppCompatActivity {
     public static int LASTWIN3 = -14;
 
     private List<MyLog> mMyLogs = new ArrayList<>();
-    private ArrayList<LinkedList<Record>> pointss = new ArrayList<>();
-    private CommonAdapter<LinkedList<Record>> mAdapter;
+    private ArrayList<LinkedList<Point>> pointss = new ArrayList<>();
+    private CommonAdapter<LinkedList<Point>> mAdapter;
     private TextView text;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -130,15 +130,15 @@ public class AnalyzeActivity extends AppCompatActivity {
             }
         });
         ListView listView = findViewById(R.id.listView);
-        mAdapter = new CommonAdapter<LinkedList<Record>>(this, pointss) {
+        mAdapter = new CommonAdapter<LinkedList<Point>>(this, pointss) {
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
                 ViewHolder holder = ViewHolder.get(mContext, convertView, R.layout.item_text);
                 TextView date = holder.getView(R.id.date);
                 TextView money = holder.getView(R.id.money);
-                Record record = pointss.get(position).getLast();
-                date.setText(record.date);
-                double win = pointss.get(position).getLast().point.win;
+                Point record = pointss.get(position).getLast();
+                date.setText(mMyLogs.get(position).getCreatedAt());
+                double win = pointss.get(position).getLast().win;
                 if (win > 0) {
                     money.setTextColor(ContextCompat.getColor(AnalyzeActivity.this, android.R.color.holo_red_light));
                 } else if (win < 0) {
@@ -168,7 +168,6 @@ public class AnalyzeActivity extends AppCompatActivity {
     private void updateData() {
         pointss.clear();
         for (MyLog log : mMyLogs) {
-            LinkedList<Record> records = new LinkedList<>();
             LinkedList<Point> points = new LinkedList<>();
             LinkedList<Integer> integers = log.getData();
             int[] ints = new int[integers.size()];
@@ -177,7 +176,7 @@ public class AnalyzeActivity extends AppCompatActivity {
             }
             Point lastP = null;
             for (int j = 0; j < ints.length; j++) {
-                Point point = calulate(ints, j + 1, points);
+                Point point = CaluUtil.calulate(ints, j + 1, points);
                 point.current = ints[j];
                 if (lastP != null) {
                     if (lastP.intention2 != GBData.VALUE_NONE) {
@@ -247,13 +246,9 @@ public class AnalyzeActivity extends AppCompatActivity {
                 }
 
                 lastP = point;
-                Record record = new Record();
-                record.date = log.getCreatedAt();
-                record.point = lastP;
                 points.add(point);
-                records.add(record);
             }
-            pointss.add(records);
+            pointss.add(points);
         }
         mAdapter.notifyDataSetChanged();
         double win = 0;
@@ -263,8 +258,8 @@ public class AnalyzeActivity extends AppCompatActivity {
         double totalMin = 99999;
         int winCount = 0;//胜场数
         int defeatCount = 0;//负场数
-        for (LinkedList<Record> points : pointss) {
-            double oneWin = points.getLast().point.win;
+        for (LinkedList<Point> points : pointss) {
+            double oneWin = points.getLast().win;
             win += oneWin;
             if (oneWin > 0) {
                 winCount++;
@@ -277,12 +272,12 @@ public class AnalyzeActivity extends AppCompatActivity {
             if (oneWin < oneMin) {
                 oneMin = oneWin;
             }
-            for (Record point : points) {
-                if (point.point.win > totalMax) {
-                    totalMax = point.point.win;
+            for (Point point : points) {
+                if (point.win > totalMax) {
+                    totalMax = point.win;
                 }
-                if (point.point.win < totalMin) {
-                    totalMin = point.point.win;
+                if (point.win < totalMin) {
+                    totalMin = point.win;
                 }
             }
         }
@@ -293,133 +288,5 @@ public class AnalyzeActivity extends AppCompatActivity {
                 .append("，最多输：").append(DeviceUtil.m2(oneMin))
                 .append("，峰值：").append(DeviceUtil.m2(totalMax))
                 .append("，谷值：").append(DeviceUtil.m2(totalMin)));
-    }
-
-    Point calulate(int[] ints, int position, LinkedList<Point> points) {
-        Point point = new Point();
-        if (position > ints.length) {
-            return point;
-        }
-        if (position > 0) {
-            // 判断是否加倍
-            ArrayList<Integer> paint = new ArrayList<>();
-            int index = position - 1;
-            int tempSize = 1;
-            while (index >= 0) {
-                if (index == 0) {
-                    paint.add(tempSize);
-                } else {
-                    if (ints[index] == ints[index - 1]) {
-                        tempSize++;
-                    } else {
-                        paint.add(tempSize);
-                        tempSize = 1;
-                    }
-                }
-                index--;
-            }
-            boolean good = false;
-            if (paint.size() > 1 && paint.get(0) > 1 && paint.get(1) > 1 && paint.get(0) + paint.get(1) > 5) {
-                point.multiple2 = 2;
-                point.multiple3 = 2;
-                good = true;
-            } else if (paint.size() > 2 && paint.get(0) > 1 && paint.get(1) > 1 && paint.get(2) > 1 && paint.get(0) + paint.get(1) +
-                    paint.get(2) > 6) {
-                point.multiple2 = 2;
-                point.multiple3 = 2;
-                good = true;
-            } else if (paint.size() > 2 && paint.get(0) == 1 && paint.get(1) == 1 && paint.get(2) == 1) {
-                point.multiple2 = -1;
-                point.multiple3 = -1;
-            }
-            ArrayList<Integer> tempList = new ArrayList<>();
-            int temp = 0;
-            for (int num : paint) {
-                if (num == 1) {
-                    temp++;
-                } else {
-                    tempList.add(temp);
-                    temp = 0;
-                }
-            }
-            if (tempList.size() == 2 && tempList.get(1) > 2) {
-                point.manyGudao = true;
-            } else if (tempList.size() > 2 && (tempList.get(1) > 2 || tempList.get(2) > 2)) {
-                point.manyGudao = true;
-            } else if (paint.size() > 5 && (paint.get(0) == 1 && paint.get(1) == 1 && paint.get(2) == 1) && (paint.get(3) > 1 && paint
-                    .get(4) > 1 && paint.get(3) + paint.get(4) > 6)) {
-                point.manyGudao = true;
-            }
-
-            if (!good) {
-                int paintSize = paint.size();
-                if (paintSize > 1 && paint.get(0) == 1) {
-                    if (paintSize > 2 && paint.get(1) > 1) {
-                        point.multiple2 = 2;
-                    } else if (paintSize == 2) {
-                        point.multiple2 = 2;
-                    }
-                }
-                if (paintSize > 2 && paint.get(0) == 1 && paint.get(1) == 1) {
-                    if (paintSize > 3 && paint.get(2) > 1) {
-                        point.multiple3 = 2;
-                    } else if (paintSize == 3) {
-                        point.multiple3 = 2;
-                    }
-                }
-            }
-            // 记录当前数到第几个
-            int gd = 0;
-            // 记录当前索引
-            int gdIndex = 0;
-            int min = Math.min(GUDAOCOUNT2, position);
-            while (gd < min && gdIndex < paint.size() - 1) {
-                if (paint.get(gdIndex) == 1) {
-                    point.gudao2++;
-                }
-                gd += paint.get(gdIndex);
-                gdIndex++;
-            }
-            if (point.multiple2 > 0) {
-                if (point.gudao2 >= GUDAOLINIT2) {
-                    point.intention2 = GBData.VALUE_NONE;
-                } else {
-                    point.intention2 = ints[position - 1];
-                }
-            } else {
-                point.intention2 = ints[position - 2];
-            }
-            // 记录当前数到第几个
-            gd = 0;
-            // 记录当前索引
-            gdIndex = 0;
-            min = Math.min(GUDAOCOUNT3, position);
-            while (gd < min && gdIndex < paint.size() - 1) {
-                if (paint.get(gdIndex) == 1) {
-                    point.gudao3++;
-                }
-                gd += paint.get(gdIndex);
-                gdIndex++;
-            }
-            if (point.multiple3 > 0) {
-                if (point.gudao3 >= GUDAOLINIT3) {
-                    point.intention3 = GBData.VALUE_NONE;
-                } else {
-                    point.intention3 = ints[position - 1];
-                }
-            } else {
-                point.intention3 = ints[position - 2];
-            }
-        } else {
-            point.intention2 = GBData.VALUE_LONG;
-            point.intention3 = GBData.VALUE_LONG;
-        }
-        return point;
-    }
-
-    class Record {
-
-        Point point = new Point();
-        String date;
     }
 }
