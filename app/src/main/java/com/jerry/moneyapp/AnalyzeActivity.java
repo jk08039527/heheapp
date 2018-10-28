@@ -152,7 +152,7 @@ public class AnalyzeActivity extends AppCompatActivity {
         };
         listView.setAdapter(mAdapter);
         BmobQuery<MyLog> query = new BmobQuery<>();
-        query.setLimit(500).findObjects(new FindListener<MyLog>() {
+        query.setLimit(500).order("-updatedAt").findObjects(new FindListener<MyLog>() {
             @Override
             public void done(List<MyLog> list, BmobException e) {
                 if (e != null) {
