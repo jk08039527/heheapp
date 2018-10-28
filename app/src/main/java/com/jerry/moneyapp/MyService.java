@@ -141,7 +141,7 @@ public class MyService extends Service {
                         if (last.intention == point.current) {
                             win +=  9.7 * Math.abs(last.multiple);
                         } else {
-                            win +=  9.7 * Math.abs(last.multiple);
+                            win -=  10 * Math.abs(last.multiple);
                         }
                     }
                 }
