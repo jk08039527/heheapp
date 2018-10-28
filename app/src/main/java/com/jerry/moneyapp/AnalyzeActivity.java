@@ -256,11 +256,43 @@ public class AnalyzeActivity extends AppCompatActivity {
             pointss.add(records);
         }
         mAdapter.notifyDataSetChanged();
-        double count = 0;
+        double win = 0;
+        double oneMax = -99999;
+        double oneMin = 99999;
+        double totalMax = -99999;
+        double totalMin = 99999;
+        int winCount = 0;//胜场数
+        int defeatCount = 0;//负场数
         for (LinkedList<Record> points : pointss) {
-            count += points.getLast().point.win;
+            double oneWin = points.getLast().point.win;
+            win += oneWin;
+            if (oneWin > 0) {
+                winCount++;
+            } else if (oneWin < 0) {
+                defeatCount++;
+            }
+            if (oneWin > oneMax) {
+                oneMax = oneWin;
+            }
+            if (oneWin < oneMin) {
+                oneMin = oneWin;
+            }
+            for (Record point : points) {
+                if (point.point.win > totalMax) {
+                    totalMax = point.point.win;
+                }
+                if (point.point.win < totalMin) {
+                    totalMin = point.point.win;
+                }
+            }
         }
-        text.setText(DeviceUtil.m2(count));
+        double winRate = (double) winCount / (winCount + defeatCount);
+        text.setText(new StringBuilder("总净胜：").append(DeviceUtil.m2(win))
+                .append("，胜率：").append(DeviceUtil.m2p(winRate))
+                .append("，最多胜：").append(DeviceUtil.m2(oneMax))
+                .append("，最多输：").append(DeviceUtil.m2(oneMin))
+                .append("，峰值：").append(DeviceUtil.m2(totalMax))
+                .append("，谷值：").append(DeviceUtil.m2(totalMin)));
     }
 
     Point calulate(int[] ints, int position, LinkedList<Point> points) {

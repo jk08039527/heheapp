@@ -2,6 +2,7 @@ package com.jerry.moneyapp;
 
 import java.net.URLEncoder;
 import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -85,4 +86,12 @@ public class DeviceUtil {
     public static String m2(double d) {
         return df.format(d);
     }
+
+    public static String m2p(double doub) {
+        NumberFormat nf = NumberFormat.getPercentInstance();
+        nf.setMaximumFractionDigits(2);
+        nf.setMinimumFractionDigits(2);
+        return nf.format(doub);
+    }
+
 }
