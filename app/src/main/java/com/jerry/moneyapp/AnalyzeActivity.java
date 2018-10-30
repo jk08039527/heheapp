@@ -23,7 +23,7 @@ public class AnalyzeActivity extends AppCompatActivity {
     public static int WHOLEWIN2 = -1;
     public static int WHOLEWIN3 = -3;
     public static int GUDAOCOUNT2 = 12;
-    public static int GUDAOCOUNT3 = 0;
+    public static int GUDAOCOUNT3 = 5;
     public static int GUDAOLINIT2 = 2;
     public static int GUDAOLINIT3 = 3;
     public static int LASTPOINTNUM = 14;
