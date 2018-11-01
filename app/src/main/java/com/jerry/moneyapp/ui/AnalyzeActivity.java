@@ -29,16 +29,16 @@ import cn.bmob.v3.listener.FindListener;
 
 public class AnalyzeActivity extends AppCompatActivity {
 
-    public static int START = 5;
-    public static int WHOLEWIN2 = -1;
-    public static int WHOLEWIN3 = -3;
+    public static int START = 7;
+    public static double WHOLEWIN2 = -1;
+    public static double WHOLEWIN3 = -3.5;
     public static int GUDAOCOUNT2 = 12;
     public static int GUDAOCOUNT3 = 4;
     public static int GUDAOLINIT2 = 2;
     public static int GUDAOLINIT3 = 3;
     public static int LASTPOINTNUM = 14;
-    public static int LASTWIN2 = -11;
-    public static int LASTWIN3 = -13;
+    public static double LASTWIN2 = -10.7;
+    public static double LASTWIN3 = -12.8;
 
     private List<MyLog> mMyLogs = new ArrayList<>();
     private ArrayList<LinkedList<Point>> pointss = new ArrayList<>();
@@ -63,7 +63,7 @@ public class AnalyzeActivity extends AppCompatActivity {
         etTotlewin2.addTextChangedListener(new MyTextWatcherListener() {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                WHOLEWIN2 = ParseUtil.parseInt(s.toString());
+                WHOLEWIN2 = ParseUtil.parseDouble(s.toString());
                 updateData();
             }
         });
@@ -72,7 +72,7 @@ public class AnalyzeActivity extends AppCompatActivity {
         etTotlewin3.addTextChangedListener(new MyTextWatcherListener() {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                WHOLEWIN3 = ParseUtil.parseInt(s.toString());
+                WHOLEWIN3 = ParseUtil.parseDouble(s.toString());
                 updateData();
             }
         });
@@ -126,7 +126,7 @@ public class AnalyzeActivity extends AppCompatActivity {
         lastWin2.addTextChangedListener(new MyTextWatcherListener() {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                LASTWIN2 = ParseUtil.parseInt(s.toString());
+                LASTWIN2 = ParseUtil.parseDouble(s.toString());
                 updateData();
             }
         });
@@ -135,7 +135,7 @@ public class AnalyzeActivity extends AppCompatActivity {
         lastWin3.addTextChangedListener(new MyTextWatcherListener() {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                LASTWIN3 = ParseUtil.parseInt(s.toString());
+                LASTWIN3 = ParseUtil.parseDouble(s.toString());
                 updateData();
             }
         });
@@ -238,7 +238,6 @@ public class AnalyzeActivity extends AppCompatActivity {
                     point.currentType = 3;
                 }
                 if (lastP != null) {
-                    double qiwang = j * 0.8;
                     if (j > START && point.award2 >= LASTWIN2 && point.award3 >= LASTWIN3
                             && point.win2 > WHOLEWIN2 && point.win3 > WHOLEWIN3) {
                         if (point.currentType == 2 && point.intention2 != GBData.VALUE_NONE) {
