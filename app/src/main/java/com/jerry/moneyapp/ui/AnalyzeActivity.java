@@ -30,7 +30,7 @@ import cn.bmob.v3.listener.FindListener;
 public class AnalyzeActivity extends AppCompatActivity {
 
     public static int START = 7;
-    public static double WHOLEWIN2 = -1;
+    public static double WHOLEWIN2 = -1.8;
     public static double WHOLEWIN3 = -3.5;
     public static int GUDAOCOUNT2 = 12;
     public static int GUDAOCOUNT3 = 4;
