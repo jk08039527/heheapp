@@ -1,4 +1,4 @@
-package com.jerry.moneyapp;
+package com.jerry.moneyapp.util;
 
 import android.text.Editable;
 import android.text.TextWatcher;

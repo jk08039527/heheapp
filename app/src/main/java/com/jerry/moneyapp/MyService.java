@@ -3,8 +3,20 @@ package com.jerry.moneyapp;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.Locale;
+
+import com.jerry.moneyapp.bean.GBData;
+import com.jerry.moneyapp.bean.MyLog;
+import com.jerry.moneyapp.bean.Point;
+import com.jerry.moneyapp.ui.AnalyzeActivity;
+import com.jerry.moneyapp.util.CaluUtil;
+import com.jerry.moneyapp.util.DeviceUtil;
+import com.jerry.moneyapp.util.WeakHandler;
 
 import android.app.Service;
 import android.content.Intent;
@@ -17,6 +29,10 @@ import android.os.Message;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
+
+import cn.bmob.v3.BmobQuery;
+import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.FindListener;
 
 public class MyService extends Service {
 
@@ -208,14 +224,38 @@ public class MyService extends Service {
             }
 
             if (data.size() >= 69) {
-                Calendar now = Calendar.getInstance();
-                sb.append(now.getTime()).append(":").append(win).append("元").append("\n");
-                MyLog myLog = new MyLog();
-                myLog.setLog(sb.toString());
-                myLog.setData(data);
-                myLog.setDeviceId(DeviceUtil.getDeviceId());
-                myLog.save();
-                sb.delete(0, sb.length());
+                BmobQuery<MyLog> query = new BmobQuery<>();
+                query.setLimit(1).order("-updatedAt").findObjects(new FindListener<MyLog>() {
+                    @Override
+                    public void done(List<MyLog> list, BmobException e) {
+                        if (e != null) {
+                            return;
+                        }
+                        if (list.size() > 0) {
+                            long lastTime = 0;
+                            try {
+                                String lateDate = list.get(0).getCreatedAt();
+                                lastTime = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.CHINA).parse(lateDate).getTime();
+                            } catch (ParseException e1) {
+                                e1.printStackTrace();
+                            }
+                            if (lastTime > 0) {
+                                long second = (System.currentTimeMillis() - lastTime) / 1000;
+                                if (second < 200) {
+                                    return;
+                                }
+                            }
+                        }
+                        Calendar now = Calendar.getInstance();
+                        sb.append(now.getTime()).append(":").append(win).append("元").append("\n");
+                        MyLog myLog = new MyLog();
+                        myLog.setLog(sb.toString());
+                        myLog.setData(data);
+                        myLog.setDeviceId(DeviceUtil.getDeviceId());
+                        myLog.save();
+                        sb.delete(0, sb.length());
+                    }
+                });
             } else {
                 Calendar now = Calendar.getInstance();
                 sb.append(now.getTime()).append(":").append(win).append("元").append("\n");
@@ -277,9 +317,9 @@ public class MyService extends Service {
         mCallback.showText(sb.toString());
     }
 
-    class PlayBinder extends Binder {
+    public class PlayBinder extends Binder {
 
-        MyService getPlayService() {
+        public MyService getPlayService() {
             return MyService.this;
         }
     }

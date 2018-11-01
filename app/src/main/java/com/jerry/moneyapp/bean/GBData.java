@@ -1,7 +1,9 @@
-package com.jerry.moneyapp;
+package com.jerry.moneyapp.bean;
 
 import java.nio.ByteBuffer;
 import java.util.LinkedList;
+
+import com.jerry.moneyapp.MyService;
 
 import android.graphics.Bitmap;
 import android.graphics.Color;

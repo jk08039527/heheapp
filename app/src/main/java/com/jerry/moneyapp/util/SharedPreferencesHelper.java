@@ -1,4 +1,6 @@
-package com.jerry.moneyapp;
+package com.jerry.moneyapp.util;
+
+import com.jerry.moneyapp.MyApplication;
 
 import android.content.Context;
 import android.content.SharedPreferences;

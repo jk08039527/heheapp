@@ -1,8 +1,18 @@
-package com.jerry.moneyapp;
+package com.jerry.moneyapp.ui;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+
+import com.jerry.moneyapp.R;
+import com.jerry.moneyapp.bean.GBData;
+import com.jerry.moneyapp.bean.MyLog;
+import com.jerry.moneyapp.bean.Point;
+import com.jerry.moneyapp.util.CaluUtil;
+import com.jerry.moneyapp.util.DeviceUtil;
+import com.jerry.moneyapp.util.MyTextWatcherListener;
+import com.jerry.moneyapp.util.ParseUtil;
+import com.jerry.moneyapp.util.ViewHolder;
 
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
@@ -152,7 +162,7 @@ public class AnalyzeActivity extends AppCompatActivity {
         };
         listView.setAdapter(mAdapter);
         BmobQuery<MyLog> query = new BmobQuery<>();
-        query.setLimit(500).order("-updatedAt").findObjects(new FindListener<MyLog>() {
+        query.setLimit(200).order("-updatedAt").findObjects(new FindListener<MyLog>() {
             @Override
             public void done(List<MyLog> list, BmobException e) {
                 if (e != null) {

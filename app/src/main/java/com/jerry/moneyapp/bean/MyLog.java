@@ -1,4 +1,4 @@
-package com.jerry.moneyapp;
+package com.jerry.moneyapp.bean;
 
 import java.util.LinkedList;
 

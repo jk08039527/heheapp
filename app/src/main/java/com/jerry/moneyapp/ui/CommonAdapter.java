@@ -1,4 +1,4 @@
-package com.jerry.moneyapp;
+package com.jerry.moneyapp.ui;
 
 import java.util.ArrayList;
 import java.util.List;

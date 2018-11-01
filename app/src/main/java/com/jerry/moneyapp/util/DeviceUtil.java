@@ -1,4 +1,4 @@
-package com.jerry.moneyapp;
+package com.jerry.moneyapp.util;
 
 import java.net.URLEncoder;
 import java.text.DecimalFormat;
@@ -6,6 +6,8 @@ import java.text.NumberFormat;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import com.jerry.moneyapp.MyApplication;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
