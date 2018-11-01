@@ -33,12 +33,12 @@ public class AnalyzeActivity extends AppCompatActivity {
     public static int WHOLEWIN2 = -1;
     public static int WHOLEWIN3 = -3;
     public static int GUDAOCOUNT2 = 12;
-    public static int GUDAOCOUNT3 = 5;
+    public static int GUDAOCOUNT3 = 4;
     public static int GUDAOLINIT2 = 2;
     public static int GUDAOLINIT3 = 3;
     public static int LASTPOINTNUM = 14;
-    public static int LASTWIN2 = -12;
-    public static int LASTWIN3 = -14;
+    public static int LASTWIN2 = -11;
+    public static int LASTWIN3 = -13;
 
     private List<MyLog> mMyLogs = new ArrayList<>();
     private ArrayList<LinkedList<Point>> pointss = new ArrayList<>();
