@@ -17,7 +17,6 @@ import com.jerry.moneyapp.util.ViewHolder;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -232,7 +231,6 @@ public class AnalyzeActivity extends AppCompatActivity {
                 points.add(point);
             }
             LinkedList<Point> fsf = log.getPoints();
-            Log.d("fdf", fsf.toString());
             pointss.add(points);
         }
         mAdapter.notifyDataSetChanged();
