@@ -87,6 +87,8 @@ public class MyService extends Service {
                 ints[i] = data.get(i);
             }
             if (mPoints.size() == 0 || ints.length == 0) {
+                mPoints.clear();
+                sb.delete(0, sb.length());
                 for (int j = 0; j < ints.length; j++) {
                     Point point = CaluUtil.calulate(ints, j + 1, mPoints);
                     point.current = ints[j];
@@ -270,7 +272,7 @@ public class MyService extends Service {
                             }
                         }
                         Calendar now = Calendar.getInstance();
-                        sb.append(now.getTime()).append(":").append(win).append("元").append("\n");
+                        sb.append(now.getTime()).append(":").append(last.win).append("元").append("\n");
                         MyLog myLog = new MyLog();
                         myLog.setLog(sb.toString());
                         myLog.setData(data);
@@ -281,7 +283,7 @@ public class MyService extends Service {
                 });
             } else {
                 Calendar now = Calendar.getInstance();
-                sb.append(now.getTime()).append(":").append(win).append("元").append("\n");
+                sb.append(now.getTime()).append(":").append(last.win).append("元").append("\n");
             }
             return false;
         }
