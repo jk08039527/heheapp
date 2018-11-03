@@ -30,15 +30,12 @@ import cn.bmob.v3.listener.FindListener;
 public class AnalyzeActivity extends AppCompatActivity {
 
     public static int START = 7;
-    public static double WHOLEWIN2 = -1.8;
-    public static double WHOLEWIN3 = -3.5;
-    public static int GUDAOCOUNT2 = 12;
-    public static int GUDAOCOUNT3 = 4;
-    public static int GUDAOLINIT2 = 2;
-    public static int GUDAOLINIT3 = 3;
-    public static int LASTPOINTNUM = 14;
+    public static double WHOLEWIN2 = 3.8;
+    public static double WHOLEWIN3 = 5.4;
+    public static int LASTPOINTNUM2 = 12;
     public static double LASTWIN2 = -10.7;
-    public static double LASTWIN3 = -12.8;
+    public static int LASTPOINTNUM3 = 19;
+    public static double LASTWIN3 = -8;
 
     private List<MyLog> mMyLogs = new ArrayList<>();
     private ArrayList<LinkedList<Point>> pointss = new ArrayList<>();
@@ -76,48 +73,12 @@ public class AnalyzeActivity extends AppCompatActivity {
                 updateData();
             }
         });
-        EditText etGdz2 = findViewById(R.id.et_gdz2);
-        etGdz2.setText(String.valueOf(GUDAOCOUNT2));
-        etGdz2.addTextChangedListener(new MyTextWatcherListener() {
+        EditText lastNum2 = findViewById(R.id.last_num2);
+        lastNum2.setText(String.valueOf(LASTPOINTNUM2));
+        lastNum2.addTextChangedListener(new MyTextWatcherListener() {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                GUDAOCOUNT2 = ParseUtil.parseInt(s.toString());
-                updateData();
-            }
-        });
-        EditText etGdz3 = findViewById(R.id.et_gdz3);
-        etGdz3.setText(String.valueOf(GUDAOCOUNT3));
-        etGdz3.addTextChangedListener(new MyTextWatcherListener() {
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                GUDAOCOUNT3 = ParseUtil.parseInt(s.toString());
-                updateData();
-            }
-        });
-        EditText etGd2 = findViewById(R.id.et_gd2);
-        etGd2.setText(String.valueOf(GUDAOLINIT2));
-        etGd2.addTextChangedListener(new MyTextWatcherListener() {
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                GUDAOLINIT2 = ParseUtil.parseInt(s.toString());
-                updateData();
-            }
-        });
-        EditText etGd3 = findViewById(R.id.et_gd3);
-        etGd3.setText(String.valueOf(GUDAOLINIT3));
-        etGd3.addTextChangedListener(new MyTextWatcherListener() {
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                GUDAOLINIT3 = ParseUtil.parseInt(s.toString());
-                updateData();
-            }
-        });
-        EditText lastNum = findViewById(R.id.last_num);
-        lastNum.setText(String.valueOf(LASTPOINTNUM));
-        lastNum.addTextChangedListener(new MyTextWatcherListener() {
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                LASTPOINTNUM = ParseUtil.parseInt(s.toString());
+                LASTPOINTNUM2 = ParseUtil.parseInt(s.toString());
                 updateData();
             }
         });
@@ -127,6 +88,15 @@ public class AnalyzeActivity extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 LASTWIN2 = ParseUtil.parseDouble(s.toString());
+                updateData();
+            }
+        });
+        EditText lastNum3 = findViewById(R.id.last_num3);
+        lastNum3.setText(String.valueOf(LASTPOINTNUM3));
+        lastNum3.addTextChangedListener(new MyTextWatcherListener() {
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                LASTPOINTNUM3 = ParseUtil.parseInt(s.toString());
                 updateData();
             }
         });
@@ -225,11 +195,14 @@ public class AnalyzeActivity extends AppCompatActivity {
                         point.win = lastP.win;
                     }
                 }
-                if (LASTPOINTNUM > 0 && points.size() >= LASTPOINTNUM) {
-                    point.award2 = point.win2 - points.get(points.size() - LASTPOINTNUM).win2;
-                    point.award3 = point.win3 - points.get(points.size() - LASTPOINTNUM).win3;
+                if (LASTPOINTNUM2 > 0 && points.size() >= LASTPOINTNUM2) {
+                    point.award2 = point.win2 - points.get(points.size() - LASTPOINTNUM2).win2;
                 } else {
                     point.award2 = point.win2;
+                }
+                if (LASTPOINTNUM3 > 0 && points.size() >= LASTPOINTNUM3) {
+                    point.award3 = point.win3 - points.get(points.size() - LASTPOINTNUM3).win3;
+                } else {
                     point.award3 = point.win3;
                 }
                 if (point.award2 >= point.award3) {

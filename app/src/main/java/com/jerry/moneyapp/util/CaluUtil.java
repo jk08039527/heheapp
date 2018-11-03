@@ -5,7 +5,6 @@ import java.util.LinkedList;
 
 import com.jerry.moneyapp.bean.GBData;
 import com.jerry.moneyapp.bean.Point;
-import com.jerry.moneyapp.ui.AnalyzeActivity;
 
 /**
  * Created by wzl on 2018/10/1.
@@ -14,6 +13,10 @@ import com.jerry.moneyapp.ui.AnalyzeActivity;
  */
 public class CaluUtil {
 
+    private static final int GUDAOCOUNT2 = 12;
+    private static final int GUDAOCOUNT3 = 4;
+    private static final int GUDAOLINIT2 = 2;
+    private static final int GUDAOLINIT3 = 3;
     /**
      * @param ints 原始数据
      * @return 第一个参数表示投什么，第二个参数表示投多少
@@ -95,7 +98,7 @@ public class CaluUtil {
             int gd = 0;
             // 记录当前索引
             int gdIndex = 0;
-            int min = Math.min(AnalyzeActivity.GUDAOCOUNT2, position);
+            int min = Math.min(GUDAOCOUNT2, position);
             while (gd < min && gdIndex < paint.size() - 1) {
                 if (paint.get(gdIndex) == 1) {
                     point.gudao2++;
@@ -104,7 +107,7 @@ public class CaluUtil {
                 gdIndex++;
             }
             if (point.multiple2 > 0) {
-                if (point.gudao2 >= AnalyzeActivity.GUDAOLINIT2) {
+                if (point.gudao2 >= GUDAOLINIT2) {
                     point.intention2 = GBData.VALUE_NONE;
                 } else {
                     point.intention2 = ints[position - 1];
@@ -116,7 +119,7 @@ public class CaluUtil {
             gd = 0;
             // 记录当前索引
             gdIndex = 0;
-            min = Math.min(AnalyzeActivity.GUDAOCOUNT3, position);
+            min = Math.min(GUDAOCOUNT3, position);
             while (gd < min && gdIndex < paint.size() - 1) {
                 if (paint.get(gdIndex) == 1) {
                     point.gudao3++;
@@ -125,7 +128,7 @@ public class CaluUtil {
                 gdIndex++;
             }
             if (point.multiple3 > 0) {
-                if (point.gudao3 >= AnalyzeActivity.GUDAOLINIT3) {
+                if (point.gudao3 >= GUDAOLINIT3) {
                     point.intention3 = GBData.VALUE_NONE;
                 } else {
                     point.intention3 = ints[position - 1];
