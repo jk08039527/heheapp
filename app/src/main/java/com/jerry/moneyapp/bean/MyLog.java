@@ -13,6 +13,7 @@ public class MyLog extends BmobObject {
     private String log;
     private String deviceId;
     private LinkedList<Integer> data;
+    private LinkedList<Point> points;
 
     public String getLog() {
         return log;
@@ -36,5 +37,13 @@ public class MyLog extends BmobObject {
 
     public void setData(LinkedList<Integer> data) {
         this.data = data;
+    }
+
+    public LinkedList<Point> getPoints() {
+        return points;
+    }
+
+    public void setPoints(final LinkedList<Point> points) {
+        this.points = points;
     }
 }

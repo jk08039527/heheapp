@@ -144,25 +144,24 @@ public class MyService extends Service {
                     } else {
                         point.currentType = 3;
                     }
-                    if (last != null) {
-                        if (j > AnalyzeActivity.START && last.award2 >= AnalyzeActivity.LASTWIN2
-                                && last.award3 >= AnalyzeActivity.LASTWIN3 && last.win2 > AnalyzeActivity.WHOLEWIN2
-                                && last.win3 > AnalyzeActivity.WHOLEWIN3) {
-                            if (point.currentType == 2 && point.intention2 != GBData.VALUE_NONE) {
-                                point.intention = point.intention2;
-                                point.multiple = point.multiple2;
-                            } else if (point.currentType == 3 && point.intention3 != GBData.VALUE_NONE) {
-                                point.intention = point.intention3;
-                                point.multiple = point.multiple3;
-                            } else {
-                                point.intention = GBData.VALUE_NONE;
-                            }
+
+                    if (j > AnalyzeActivity.START && point.award2 >= AnalyzeActivity.LASTWIN2
+                            && point.award3 >= AnalyzeActivity.LASTWIN3 && point.win2 > AnalyzeActivity.WHOLEWIN2
+                            && point.win3 > AnalyzeActivity.WHOLEWIN3) {
+                        if (point.currentType == 2 && point.intention2 != GBData.VALUE_NONE) {
+                            point.intention = point.intention2;
+                            point.multiple = point.multiple2;
+                        } else if (point.currentType == 3 && point.intention3 != GBData.VALUE_NONE) {
+                            point.intention = point.intention3;
+                            point.multiple = point.multiple3;
                         } else {
                             point.intention = GBData.VALUE_NONE;
                         }
+                    } else {
+                        point.intention = GBData.VALUE_NONE;
                     }
-                    last = point;
                     mPoints.add(point);
+                    last = point;
                 }
             } else {
                 Point point = CaluUtil.calulate(ints, ints.length, mPoints);
@@ -277,6 +276,7 @@ public class MyService extends Service {
                         myLog.setLog(sb.toString());
                         myLog.setData(data);
                         myLog.setDeviceId(DeviceUtil.getDeviceId());
+                        myLog.setPoints(mPoints);
                         myLog.save();
                         sb.delete(0, sb.length());
                     }
