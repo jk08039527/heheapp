@@ -349,6 +349,7 @@ public class MyService extends Service {
 
     public void startExe() {
         mWeakHandler.sendEmptyMessage(0);
+        mPoints.clear();
         showJingsheng();
     }
 
