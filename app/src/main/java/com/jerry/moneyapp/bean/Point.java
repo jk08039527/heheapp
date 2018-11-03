@@ -21,6 +21,5 @@ public class Point {
     public double win3;
     public double award2;
     public double award3;
-    public boolean manyGudao;
     public int currentType;
 }

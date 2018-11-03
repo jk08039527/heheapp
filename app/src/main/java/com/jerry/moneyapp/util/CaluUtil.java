@@ -58,25 +58,6 @@ public class CaluUtil {
                 point.multiple2 = -1;
                 point.multiple3 = -1;
             }
-            ArrayList<Integer> tempList = new ArrayList<>();
-            int temp = 0;
-            for (int num : paint) {
-                if (num == 1) {
-                    temp++;
-                } else {
-                    tempList.add(temp);
-                    temp = 0;
-                }
-            }
-            if (tempList.size() == 2 && tempList.get(1) > 2) {
-                point.manyGudao = true;
-            } else if (tempList.size() > 2 && (tempList.get(1) > 2 || tempList.get(2) > 2)) {
-                point.manyGudao = true;
-            } else if (paint.size() > 5 && (paint.get(0) == 1 && paint.get(1) == 1 && paint.get(2) == 1) && (paint.get(3) > 1 && paint
-                    .get(4) > 1 && paint.get(3) + paint.get(4) > 6)) {
-                point.manyGudao = true;
-            }
-
             if (!good) {
                 int paintSize = paint.size();
                 if (paintSize > 1 && paint.get(0) == 1) {
