@@ -222,6 +222,9 @@ public class MyService extends Service {
                 last = point;
                 mPoints.add(point);
             }
+            if (last == null) {
+                return false;
+            }
             if (ints.length >= AnalyzeActivity.START && last.award2 >= AnalyzeActivity.LASTWIN2
                     && last.award3 >= AnalyzeActivity.LASTWIN3 && last.win2 > AnalyzeActivity.WHOLEWIN2
                     && last.win3 > AnalyzeActivity.WHOLEWIN3) {
