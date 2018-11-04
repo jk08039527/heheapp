@@ -388,7 +388,6 @@ public class MyService extends Service {
                 .append(getIntentStr(last.intention3, Math.abs(last.multiple3)))
                 .append("\n模拟净胜：").append(DeviceUtil.m2(last.win)).append("，").append(getIntentStr(last.intention, last.multiple))
                 .append("\n实净胜：").append(DeviceUtil.m2(win));
-        Toast.makeText(MyService.this, sb.toString(), Toast.LENGTH_SHORT).show();
         mCallback.showText(sb.toString());
     }
 
