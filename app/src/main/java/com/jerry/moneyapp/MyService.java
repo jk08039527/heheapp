@@ -248,6 +248,20 @@ public class MyService extends Service {
                     } else {
                         point.currentType = 3;
                     }
+                    if (mPoints.size() >= AnalyzeActivity.LASTWINNUM2) {
+                        int[] tempInts = new int[AnalyzeActivity.LASTWINNUM2];
+                        for (int i = 0; i < tempInts.length; i++) {
+                            tempInts[i] = ints[mPoints.size() - AnalyzeActivity.LASTWINNUM2 + i];
+                        }
+                        point.lastwin2 = CaluUtil.calu2(tempInts);
+                    }
+                    if (mPoints.size() >= AnalyzeActivity.LASTWINNUM3) {
+                        int[] tempInts = new int[AnalyzeActivity.LASTWINNUM3];
+                        for (int i = 0; i < tempInts.length; i++) {
+                            tempInts[i] = ints[mPoints.size() - AnalyzeActivity.LASTWINNUM3 + i];
+                        }
+                        point.lastwin3 = CaluUtil.calu3(tempInts);
+                    }
                 }
                 last = point;
                 mPoints.add(point);
