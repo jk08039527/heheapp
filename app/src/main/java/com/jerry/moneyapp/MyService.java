@@ -89,6 +89,7 @@ public class MyService extends Service {
             if (mPoints.size() == 0 || ints.length == 0) {
                 mPoints.clear();
                 sb.delete(0, sb.length());
+                last = null;
                 for (int j = 0; j < ints.length; j++) {
                     Point point = CaluUtil.calulate(ints, j + 1, mPoints);
                     point.current = ints[j];
