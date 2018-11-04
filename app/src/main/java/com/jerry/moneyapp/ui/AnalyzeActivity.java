@@ -30,17 +30,17 @@ import cn.bmob.v3.listener.FindListener;
 public class AnalyzeActivity extends AppCompatActivity {
 
     public static int START = 5;
-    public static double WHOLEWIN2 = 4.3;
+    public static double WHOLEWIN2 = 4.8;
     public static double WHOLEWIN3 = 8;
     public static int LASTAWARDNUM2 = 12;
     public static int LASTAWARDNUM3 = 19;
     public static int LASTWINNUM2 = 9;
     public static int LASTWINNUM3 = 7;
 
-    public static double K21 = -0.06;
+    public static double K21 = -0.31;
     public static double K22 = 15;
     public static double K31 = -0.38;
-    public static double K32 = 9;
+    public static double K32 = 8;
 
     private List<MyLog> mMyLogs = new ArrayList<>();
     private ArrayList<LinkedList<Point>> pointss = new ArrayList<>();
