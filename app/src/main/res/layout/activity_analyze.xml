@@ -38,35 +38,7 @@
         android:orientation="horizontal">
 
         <EditText
-            android:id="@+id/et_gdz2"
-            style="@style/et"
-            android:hint="孤岛总2" />
-
-        <EditText
-            android:id="@+id/et_gdz3"
-            style="@style/et"
-            android:hint="孤岛总3" />
-
-        <EditText
-            android:id="@+id/et_gd2"
-            style="@style/et"
-            android:hint="孤岛2" />
-
-        <EditText
-            android:id="@+id/et_gd3"
-            style="@style/et"
-            android:hint="孤岛3" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="35dp"
-        android:orientation="horizontal">
-
-
-        <EditText
-            android:id="@+id/last_num"
+            android:id="@+id/last_num2"
             style="@style/et"
             android:hint="近多少数" />
 
@@ -74,6 +46,12 @@
             android:id="@+id/last_win2"
             style="@style/et"
             android:hint="近净胜2" />
+
+
+        <EditText
+            android:id="@+id/last_num3"
+            style="@style/et"
+            android:hint="近多少数" />
 
         <EditText
             android:id="@+id/last_win3"

@@ -1,11 +1,13 @@
 package com.jerry.moneyapp.bean;
 
+import java.io.Serializable;
+
 /**
  * Created by wzl on 2018/10/1.
  *
  * @Description
  */
-public class Point {
+public class Point implements Serializable {
 
     public int current;
     public int intention;
@@ -21,6 +23,5 @@ public class Point {
     public double win3;
     public double award2;
     public double award3;
-    public boolean manyGudao;
     public int currentType;
 }

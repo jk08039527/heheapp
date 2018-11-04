@@ -26,8 +26,6 @@ import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
-import android.text.TextUtils;
-import android.util.Log;
 import android.widget.Toast;
 
 import cn.bmob.v3.BmobQuery;
@@ -51,7 +49,6 @@ public class MyService extends Service {
     private int width;
     private int height;
     private Point last;
-    private int currentType = 2;
 
     private int[] pointsX = new int[18];
     private int[] pointsY = new int[6];
@@ -91,45 +88,81 @@ public class MyService extends Service {
             }
             if (mPoints.size() == 0 || ints.length == 0) {
                 mPoints.clear();
-                Point lastP = new Point();
-                lastP.gudao2 = 0;
-                lastP.gudao3 = 0;
-                lastP.intention2 = GBData.VALUE_NONE;
-                lastP.intention3 = GBData.VALUE_NONE;
-                lastP.current = GBData.VALUE_NONE;
-                mPoints.add(lastP);
-                for (int i = 0; i < ints.length; i++) {
-                    Point point = CaluUtil.calulate(ints, i + 1, mPoints);
-                    point.current = ints[i];
-                    if (lastP.intention2 != GBData.VALUE_NONE) {
-                        if (lastP.intention2 == point.current) {
-                            point.win2 = lastP.win2 + 9.7 * Math.abs(lastP.multiple2);
+                sb.delete(0, sb.length());
+                last = null;
+                for (int j = 0; j < ints.length; j++) {
+                    Point point = CaluUtil.calulate(ints, j + 1, mPoints);
+                    point.current = ints[j];
+                    if (last != null) {
+                        if (last.intention2 != GBData.VALUE_NONE) {
+                            if (last.intention2 == point.current) {
+                                point.win2 = last.win2 + 9.7 * Math.abs(last.multiple2);
+                            } else {
+                                point.win2 = last.win2 - 10 * Math.abs(last.multiple2);
+                            }
                         } else {
-                            point.win2 = lastP.win2 - 10 * Math.abs(lastP.multiple2);
+                            point.win2 = last.win2;
                         }
-                    } else {
-                        point.win2 = lastP.win2;
-                    }
-                    if (lastP.intention3 != GBData.VALUE_NONE) {
-                        if (lastP.intention3 == point.current) {
-                            point.win3 = lastP.win3 + 9.7 * Math.abs(lastP.multiple3);
+                        if (last.intention3 != GBData.VALUE_NONE) {
+                            if (last.intention3 == point.current) {
+                                point.win3 = last.win3 + 9.7 * Math.abs(last.multiple3);
+                            } else {
+                                point.win3 = last.win3 - 10 * Math.abs(last.multiple3);
+                            }
                         } else {
-                            point.win3 = lastP.win3 - 10 * Math.abs(lastP.multiple3);
+                            point.win3 = last.win3;
                         }
-                    } else {
-                        point.win3 = lastP.win3;
+                        if (last.intention != GBData.VALUE_NONE) {
+                            if (last.currentType == 2) {
+                                if (last.intention == point.current) {
+                                    point.win = last.win + 9.7 * Math.abs(last.multiple2);
+                                } else {
+                                    point.win = last.win - 10 * Math.abs(last.multiple2);
+                                }
+                            } else if (last.currentType == 3) {
+                                if (last.intention == point.current) {
+                                    point.win = last.win + 9.7 * Math.abs(last.multiple3);
+                                } else {
+                                    point.win = last.win - 10 * Math.abs(last.multiple3);
+                                }
+                            }
+                        } else {
+                            point.win = last.win;
+                        }
                     }
-                    if (mPoints.size() >= AnalyzeActivity.LASTPOINTNUM) {
-                        point.award2 = point.win2 - mPoints.get(mPoints.size() - AnalyzeActivity.LASTPOINTNUM).win2;
-                        point.award3 = point.win3 - mPoints.get(mPoints.size() - AnalyzeActivity.LASTPOINTNUM).win3;
+                    if (AnalyzeActivity.LASTPOINTNUM2 > 0 && mPoints.size() >= AnalyzeActivity.LASTPOINTNUM2) {
+                        point.award2 = point.win2 - mPoints.get(mPoints.size() - AnalyzeActivity.LASTPOINTNUM2).win2;
                     } else {
                         point.award2 = point.win2;
+                    }
+                    if (AnalyzeActivity.LASTPOINTNUM3 > 0 && mPoints.size() >= AnalyzeActivity.LASTPOINTNUM3) {
+                        point.award3 = point.win3 - mPoints.get(mPoints.size() - AnalyzeActivity.LASTPOINTNUM3).win3;
+                    } else {
                         point.award3 = point.win3;
                     }
+                    if (point.award2 >= point.award3) {
+                        point.currentType = 2;
+                    } else {
+                        point.currentType = 3;
+                    }
+
+                    if (j > AnalyzeActivity.START && point.award2 >= AnalyzeActivity.LASTWIN2
+                            && point.award3 >= AnalyzeActivity.LASTWIN3 && point.win2 > AnalyzeActivity.WHOLEWIN2
+                            && point.win3 > AnalyzeActivity.WHOLEWIN3) {
+                        if (point.currentType == 2 && point.intention2 != GBData.VALUE_NONE) {
+                            point.intention = point.intention2;
+                            point.multiple = point.multiple2;
+                        } else if (point.currentType == 3 && point.intention3 != GBData.VALUE_NONE) {
+                            point.intention = point.intention3;
+                            point.multiple = point.multiple3;
+                        } else {
+                            point.intention = GBData.VALUE_NONE;
+                        }
+                    } else {
+                        point.intention = GBData.VALUE_NONE;
+                    }
                     mPoints.add(point);
-                    lastP = point;
-                    Log.d("win2", i + "：" + String.valueOf(lastP.win2));
-                    Log.d("win3", i + "：" + String.valueOf(lastP.win3));
+                    last = point;
                 }
             } else {
                 Point point = CaluUtil.calulate(ints, ints.length, mPoints);
@@ -157,70 +190,62 @@ public class MyService extends Service {
                         if (last.currentType == 2) {
                             if (last.intention == point.current) {
                                 point.win = last.win + 9.7 * Math.abs(last.multiple2);
-                                win +=  9.7 * Math.abs(last.multiple);
                             } else {
                                 point.win = last.win - 10 * Math.abs(last.multiple2);
-                                win -=  10 * Math.abs(last.multiple);
                             }
                         } else if (last.currentType == 3) {
                             if (last.intention == point.current) {
                                 point.win = last.win + 9.7 * Math.abs(last.multiple3);
-                                win +=  9.7 * Math.abs(last.multiple);
                             } else {
                                 point.win = last.win - 10 * Math.abs(last.multiple3);
-                                win -=  10 * Math.abs(last.multiple);
                             }
                         }
                     } else {
                         point.win = last.win;
                     }
+                    if (AnalyzeActivity.LASTPOINTNUM2 > 0 && mPoints.size() >= AnalyzeActivity.LASTPOINTNUM2) {
+                        point.award2 = point.win2 - mPoints.get(mPoints.size() - AnalyzeActivity.LASTPOINTNUM2).win2;
+                    } else {
+                        point.award2 = point.win2;
+                    }
+                    if (AnalyzeActivity.LASTPOINTNUM3 > 0 && mPoints.size() >= AnalyzeActivity.LASTPOINTNUM3) {
+                        point.award3 = point.win3 - mPoints.get(mPoints.size() - AnalyzeActivity.LASTPOINTNUM3).win3;
+                    } else {
+                        point.award3 = point.win3;
+                    }
+                    if (point.award2 >= point.award3) {
+                        point.currentType = 2;
+                    } else {
+                        point.currentType = 3;
+                    }
                 }
-                if (mPoints.size() >= AnalyzeActivity.LASTPOINTNUM) {
-                    point.award2 = point.win2 - mPoints.get(mPoints.size() - AnalyzeActivity.LASTPOINTNUM).win2;
-                    point.award3 = point.win3 - mPoints.get(mPoints.size() - AnalyzeActivity.LASTPOINTNUM).win3;
-                } else {
-                    point.award2 = point.win2;
-                    point.award3 = point.win3;
-                }
-                if (point.award2 >= point.award3) {
-                    point.currentType = 2;
-                } else {
-                    point.currentType = 3;
-                }
-                Log.d("win2", ints.length - 1 + "：" + String.valueOf(point.win2));
-                Log.d("win3", ints.length - 1 + "：" + String.valueOf(point.win3));
+                last = point;
                 mPoints.add(point);
             }
-            last = mPoints.get(mPoints.size() - 1);
-            if (last.award2 >= last.award3) {
-                currentType = 2;
-            } else {
-                currentType = 3;
-            }
-            if (ints.length > AnalyzeActivity.START && last.award2 >= AnalyzeActivity.LASTWIN2
+            if (ints.length >= AnalyzeActivity.START && last.award2 >= AnalyzeActivity.LASTWIN2
                     && last.award3 >= AnalyzeActivity.LASTWIN3 && last.win2 > AnalyzeActivity.WHOLEWIN2
                     && last.win3 > AnalyzeActivity.WHOLEWIN3) {
-                if (currentType == 2 && last.intention2 != GBData.VALUE_NONE) {
+                if (last.currentType == 2 && last.intention2 != GBData.VALUE_NONE) {
                     last.intention = last.intention2;
                     last.multiple = last.multiple2;
-                    showJingsheng((getIntentStr(last.intention2, last.multiple2)));
+                    showJingsheng();
                     if (mBtnClickable) {
                         exeCall(last.intention2, last.multiple2);
                     }
-                } else if (currentType == 3 && last.intention3 != GBData.VALUE_NONE) {
+                } else if (last.currentType == 3 && last.intention3 != GBData.VALUE_NONE) {
                     last.intention = last.intention3;
                     last.multiple = last.multiple3;
-                    showJingsheng((getIntentStr(last.intention3, last.multiple3)));
+                    showJingsheng();
                     if (mBtnClickable) {
                         exeCall(last.intention3, last.multiple3);
                     }
                 } else {
                     last.intention = GBData.VALUE_NONE;
-                    showJingsheng("孤岛");
+                    showJingsheng();
                 }
             } else {
                 last.intention = GBData.VALUE_NONE;
-                showJingsheng("板不好");
+                showJingsheng();
             }
 
             if (data.size() >= 69) {
@@ -247,18 +272,19 @@ public class MyService extends Service {
                             }
                         }
                         Calendar now = Calendar.getInstance();
-                        sb.append(now.getTime()).append(":").append(win).append("元").append("\n");
+                        sb.append(now.getTime()).append(":").append(last.win).append("元").append("\n");
                         MyLog myLog = new MyLog();
                         myLog.setLog(sb.toString());
                         myLog.setData(data);
                         myLog.setDeviceId(DeviceUtil.getDeviceId());
+                        myLog.setPoints(mPoints);
                         myLog.save();
                         sb.delete(0, sb.length());
                     }
                 });
             } else {
                 Calendar now = Calendar.getInstance();
-                sb.append(now.getTime()).append(":").append(win).append("元").append("\n");
+                sb.append(now.getTime()).append(":").append(last.win).append("元").append("\n");
             }
             return false;
         }
@@ -298,7 +324,7 @@ public class MyService extends Service {
         Toast.makeText(this, mBtnClickable ? "点击生效！" : "点击取消!", Toast.LENGTH_SHORT).show();
     }
 
-    public void showJingsheng(String other) {
+    public void showJingsheng() {
         if (last == null) {
             return;
         }
@@ -309,10 +335,8 @@ public class MyService extends Service {
                 .append("\n净胜3：").append(DeviceUtil.m2(last.win3)).append("，")
                 .append(DeviceUtil.m2(last.award3)).append("，")
                 .append(getIntentStr(last.intention3, Math.abs(last.multiple3)))
-                .append("\n净胜：").append(DeviceUtil.m2(win)).append("，").append(getIntentStr(last.intention, 0));
-        if (!TextUtils.isEmpty(other)) {
-            sb.append("\n").append(other);
-        }
+                .append("\n模拟净胜：").append(DeviceUtil.m2(last.win)).append("，").append(getIntentStr(last.intention, last.multiple))
+                .append("\n实净胜：").append(DeviceUtil.m2(win));
         Toast.makeText(MyService.this, sb.toString(), Toast.LENGTH_SHORT).show();
         mCallback.showText(sb.toString());
     }
@@ -326,7 +350,8 @@ public class MyService extends Service {
 
     public void startExe() {
         mWeakHandler.sendEmptyMessage(0);
-        showJingsheng("");
+        mPoints.clear();
+        showJingsheng();
     }
 
     private void execShellCmd(String cmd) {
