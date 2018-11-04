@@ -161,8 +161,10 @@ public class MyService extends Service {
                     }
 
                     if (j > AnalyzeActivity.START
-                            && point.award2 + AnalyzeActivity.K21 * point.lastwin2 + AnalyzeActivity.K22 >= 0
-                            && point.award3 + AnalyzeActivity.K31 * point.lastwin3 + AnalyzeActivity.K32 >= 0
+                            && AnalyzeActivity.K21 * point.award2 * point.lastwin2 + AnalyzeActivity.K22 * point.award2 + AnalyzeActivity
+                            .K23 * point.lastwin2 + AnalyzeActivity.K24 >= 0
+                            && AnalyzeActivity.K31 * point.award3 * point.lastwin3 + AnalyzeActivity.K32 * point.award3 + AnalyzeActivity
+                            .K33 * point.lastwin3 + AnalyzeActivity.K34 >= 0
                             && point.win2 > AnalyzeActivity.WHOLEWIN2
                             && point.win3 > AnalyzeActivity.WHOLEWIN3) {
                         if (point.currentType == 2 && point.intention2 != GBData.VALUE_NONE) {
@@ -242,8 +244,10 @@ public class MyService extends Service {
                 return false;
             }
             if (ints.length >= AnalyzeActivity.START
-                    && last.award2 + AnalyzeActivity.K21 * last.lastwin2 + AnalyzeActivity.K22 >= 0
-                    && last.award3 + AnalyzeActivity.K31 * last.lastwin3 + AnalyzeActivity.K32 >= 0
+                    && AnalyzeActivity.K21 * last.award2 * last.lastwin2 + AnalyzeActivity.K22 * last.award2 + AnalyzeActivity
+                    .K23 * last.lastwin2 + AnalyzeActivity.K24 >= 0
+                    && AnalyzeActivity.K31 * last.award3 * last.lastwin3 + AnalyzeActivity.K32 * last.award3 + AnalyzeActivity
+                    .K33 * last.lastwin3 + AnalyzeActivity.K34 >= 0
                     && last.win2 > AnalyzeActivity.WHOLEWIN2
                     && last.win3 > AnalyzeActivity.WHOLEWIN3) {
                 if (last.currentType == 2 && last.intention2 != GBData.VALUE_NONE) {

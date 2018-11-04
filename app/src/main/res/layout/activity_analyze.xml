@@ -74,6 +74,21 @@
             android:id="@+id/k22"
             style="@style/et"
             android:hint="k22" />
+        <EditText
+            android:id="@+id/k23"
+            style="@style/et"
+            android:hint="k23" />
+
+        <EditText
+            android:id="@+id/k24"
+            style="@style/et"
+            android:hint="k24" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="35dp"
+        android:orientation="horizontal">
 
         <EditText
             android:id="@+id/k31"
@@ -84,6 +99,16 @@
             android:id="@+id/k32"
             style="@style/et"
             android:hint="k32" />
+
+        <EditText
+            android:id="@+id/k33"
+            style="@style/et"
+            android:hint="k33" />
+
+        <EditText
+            android:id="@+id/k34"
+            style="@style/et"
+            android:hint="k34" />
     </LinearLayout>
 
     <ListView

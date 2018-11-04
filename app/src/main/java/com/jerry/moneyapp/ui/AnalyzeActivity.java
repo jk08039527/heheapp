@@ -37,10 +37,14 @@ public class AnalyzeActivity extends AppCompatActivity {
     public static int LASTWINNUM2 = 9;
     public static int LASTWINNUM3 = 7;
 
-    public static double K21 = -0.31;
-    public static double K22 = 15;
-    public static double K31 = -0.38;
-    public static double K32 = 8;
+    public static double K21 = -0.03;
+    public static double K22 = 1;
+    public static double K23 = -1;
+    public static double K24 = 12;
+    public static double K31 = 0.005;
+    public static double K32 = 1;
+    public static double K33 = -1;
+    public static double K34 = 12;
 
     private List<MyLog> mMyLogs = new ArrayList<>();
     private ArrayList<LinkedList<Point>> pointss = new ArrayList<>();
@@ -105,6 +109,24 @@ public class AnalyzeActivity extends AppCompatActivity {
                 updateData();
             }
         });
+        EditText k23Et = findViewById(R.id.k23);
+        k23Et.setText(String.valueOf(K23));
+        k23Et.addTextChangedListener(new MyTextWatcherListener() {
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                K23 = ParseUtil.parseDouble(s.toString());
+                updateData();
+            }
+        });
+        EditText k24Et = findViewById(R.id.k24);
+        k24Et.setText(String.valueOf(K24));
+        k24Et.addTextChangedListener(new MyTextWatcherListener() {
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                K24 = ParseUtil.parseDouble(s.toString());
+                updateData();
+            }
+        });
         EditText awardNum3 = findViewById(R.id.award_num3);
         awardNum3.setText(String.valueOf(LASTAWARDNUM3));
         awardNum3.addTextChangedListener(new MyTextWatcherListener() {
@@ -129,6 +151,24 @@ public class AnalyzeActivity extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 K32 = ParseUtil.parseDouble(s.toString());
+                updateData();
+            }
+        });
+        EditText k33Et = findViewById(R.id.k33);
+        k33Et.setText(String.valueOf(K33));
+        k33Et.addTextChangedListener(new MyTextWatcherListener() {
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                K33 = ParseUtil.parseDouble(s.toString());
+                updateData();
+            }
+        });
+        EditText k34Et = findViewById(R.id.k34);
+        k34Et.setText(String.valueOf(K34));
+        k34Et.addTextChangedListener(new MyTextWatcherListener() {
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                K34 = ParseUtil.parseDouble(s.toString());
                 updateData();
             }
         });
@@ -266,7 +306,9 @@ public class AnalyzeActivity extends AppCompatActivity {
                     point.lastwin3 = CaluUtil.calu3(tempInts);
                 }
                 if (lastP != null) {
-                    if (j > START && point.award2 + K21 * point.lastwin2 + K22 >= 0 && point.award3 + K31 * point.lastwin3 + K32 >= 0
+                    if (j > START
+                            && K21 * point.award2 * point.lastwin2 + K22 * point.award2 + K23 * point.lastwin2 + K24 >= 0
+                            && K31 * point.award3 * point.lastwin2 + K32 * point.award3 + point.award3 + K33 * point.lastwin3 + K34 >= 0
                             && point.win2 > WHOLEWIN2 && point.win3 > WHOLEWIN3) {
                         if (point.currentType == 2 && point.intention2 != GBData.VALUE_NONE) {
                             point.intention = point.intention2;
