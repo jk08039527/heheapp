@@ -4,6 +4,7 @@
     android:layout_height="match_parent"
     android:background="@android:color/white"
     android:orientation="vertical">
+
     <TextView
         android:id="@+id/text"
         android:layout_width="match_parent"
@@ -38,9 +39,31 @@
         android:orientation="horizontal">
 
         <EditText
+            android:id="@+id/award_num2"
+            style="@style/et"
+            android:hint="近多少数award2" />
+
+        <EditText
+            android:id="@+id/award_num3"
+            style="@style/et"
+            android:hint="近多少数award3" />
+
+        <EditText
             android:id="@+id/last_num2"
             style="@style/et"
-            android:hint="近多少数2" />
+            android:hint="近多少数win2" />
+
+        <EditText
+            android:id="@+id/last_num3"
+            style="@style/et"
+            android:hint="近多少数win3" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="35dp"
+        android:orientation="horizontal">
 
         <EditText
             android:id="@+id/k21"
@@ -51,18 +74,6 @@
             android:id="@+id/k22"
             style="@style/et"
             android:hint="k22" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="35dp"
-        android:orientation="horizontal">
-
-        <EditText
-            android:id="@+id/last_num3"
-            style="@style/et"
-            android:hint="近多少数3" />
 
         <EditText
             android:id="@+id/k31"

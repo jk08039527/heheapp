@@ -124,7 +124,7 @@ public class CaluUtil {
         return point;
     }
 
-    public static double[] calu(int[] ints) {
+    public static double calu2(int[] ints) {
         Point lastP = null;
         LinkedList<Point> ps = new LinkedList<>();
         for (int j = 0; j < ints.length; j++) {
@@ -140,6 +140,23 @@ public class CaluUtil {
                 } else {
                     point.win2 = lastP.win2;
                 }
+            }
+            lastP = point;
+            ps.add(point);
+        }
+        if (lastP == null) {
+            return 0;
+        }
+        return lastP.win2;
+    }
+
+    public static double calu3(int[] ints) {
+        Point lastP = null;
+        LinkedList<Point> ps = new LinkedList<>();
+        for (int j = 0; j < ints.length; j++) {
+            Point point = CaluUtil.calulate(ints, j + 1, ps);
+            point.current = ints[j];
+            if (lastP != null) {
                 if (lastP.intention3 != GBData.VALUE_NONE) {
                     if (lastP.intention3 == point.current) {
                         point.win3 = lastP.win3 + 9.7 * Math.abs(lastP.multiple3);
@@ -154,8 +171,8 @@ public class CaluUtil {
             ps.add(point);
         }
         if (lastP == null) {
-            return null;
+            return 0;
         }
-        return new double[]{lastP.win2, lastP.win3};
+        return lastP.win3;
     }
 }

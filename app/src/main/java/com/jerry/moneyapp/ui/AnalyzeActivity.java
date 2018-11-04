@@ -29,17 +29,18 @@ import cn.bmob.v3.listener.FindListener;
 
 public class AnalyzeActivity extends AppCompatActivity {
 
-    public static int START = 7;
-    public static double WHOLEWIN2 = 3.8;
-    public static double WHOLEWIN3 = 5.4;
-    public static int LASTPOINTNUM2 = 12;
-    public static int LASTPOINTNUM3 = 19;
-    public static int LASTPOINTNUM = 14;
+    public static int START = 5;
+    public static double WHOLEWIN2 = 4.3;
+    public static double WHOLEWIN3 = 8;
+    public static int LASTAWARDNUM2 = 12;
+    public static int LASTAWARDNUM3 = 19;
+    public static int LASTWINNUM2 = 9;
+    public static int LASTWINNUM3 = 7;
 
-    public static double K21 = 0;
-    public static double K22 = 10.7;
-    public static double K31 = 0;
-    public static double K32 = 8;
+    public static double K21 = -0.06;
+    public static double K22 = 15;
+    public static double K31 = -0.38;
+    public static double K32 = 9;
 
     private List<MyLog> mMyLogs = new ArrayList<>();
     private ArrayList<LinkedList<Point>> pointss = new ArrayList<>();
@@ -77,12 +78,12 @@ public class AnalyzeActivity extends AppCompatActivity {
                 updateData();
             }
         });
-        EditText lastNum2 = findViewById(R.id.last_num2);
-        lastNum2.setText(String.valueOf(LASTPOINTNUM2));
-        lastNum2.addTextChangedListener(new MyTextWatcherListener() {
+        EditText awardNum2 = findViewById(R.id.award_num2);
+        awardNum2.setText(String.valueOf(LASTAWARDNUM2));
+        awardNum2.addTextChangedListener(new MyTextWatcherListener() {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                LASTPOINTNUM2 = ParseUtil.parseInt(s.toString());
+                LASTAWARDNUM2 = ParseUtil.parseInt(s.toString());
                 updateData();
             }
         });
@@ -104,12 +105,12 @@ public class AnalyzeActivity extends AppCompatActivity {
                 updateData();
             }
         });
-        EditText lastNum3 = findViewById(R.id.last_num3);
-        lastNum3.setText(String.valueOf(LASTPOINTNUM3));
-        lastNum3.addTextChangedListener(new MyTextWatcherListener() {
+        EditText awardNum3 = findViewById(R.id.award_num3);
+        awardNum3.setText(String.valueOf(LASTAWARDNUM3));
+        awardNum3.addTextChangedListener(new MyTextWatcherListener() {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                LASTPOINTNUM3 = ParseUtil.parseInt(s.toString());
+                LASTAWARDNUM3 = ParseUtil.parseInt(s.toString());
                 updateData();
             }
         });
@@ -128,6 +129,24 @@ public class AnalyzeActivity extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 K32 = ParseUtil.parseDouble(s.toString());
+                updateData();
+            }
+        });
+        EditText lastNum2 = findViewById(R.id.last_num2);
+        lastNum2.setText(String.valueOf(LASTWINNUM2));
+        lastNum2.addTextChangedListener(new MyTextWatcherListener() {
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                LASTWINNUM2 = ParseUtil.parseInt(s.toString());
+                updateData();
+            }
+        });
+        EditText lastNum3 = findViewById(R.id.last_num3);
+        lastNum3.setText(String.valueOf(LASTWINNUM3));
+        lastNum3.addTextChangedListener(new MyTextWatcherListener() {
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                LASTWINNUM3 = ParseUtil.parseInt(s.toString());
                 updateData();
             }
         });
@@ -217,13 +236,13 @@ public class AnalyzeActivity extends AppCompatActivity {
                         point.win = lastP.win;
                     }
                 }
-                if (LASTPOINTNUM2 > 0 && points.size() >= LASTPOINTNUM2) {
-                    point.award2 = point.win2 - points.get(points.size() - LASTPOINTNUM2).win2;
+                if (LASTAWARDNUM2 > 0 && points.size() >= LASTAWARDNUM2) {
+                    point.award2 = point.win2 - points.get(points.size() - LASTAWARDNUM2).win2;
                 } else {
                     point.award2 = point.win2;
                 }
-                if (LASTPOINTNUM3 > 0 && points.size() >= LASTPOINTNUM3) {
-                    point.award3 = point.win3 - points.get(points.size() - LASTPOINTNUM3).win3;
+                if (LASTAWARDNUM3 > 0 && points.size() >= LASTAWARDNUM3) {
+                    point.award3 = point.win3 - points.get(points.size() - LASTAWARDNUM3).win3;
                 } else {
                     point.award3 = point.win3;
                 }
@@ -232,14 +251,19 @@ public class AnalyzeActivity extends AppCompatActivity {
                 } else {
                     point.currentType = 3;
                 }
-                if (points.size() >= LASTPOINTNUM) {
-                    int[] tempInts = new int[LASTPOINTNUM];
+                if (points.size() >= LASTWINNUM2) {
+                    int[] tempInts = new int[LASTWINNUM2];
                     for (int i = 0; i < tempInts.length; i++) {
-                        tempInts[i] = ints[points.size() - LASTPOINTNUM + i];
+                        tempInts[i] = ints[points.size() - LASTWINNUM2 + i];
                     }
-                    double[] tempDoubles = CaluUtil.calu(tempInts);
-                    point.lastwin2 = tempDoubles[0];
-                    point.lastwin3 = tempDoubles[1];
+                    point.lastwin2 = CaluUtil.calu2(tempInts);
+                }
+                if (points.size() >= LASTWINNUM3) {
+                    int[] tempInts = new int[LASTWINNUM3];
+                    for (int i = 0; i < tempInts.length; i++) {
+                        tempInts[i] = ints[points.size() - LASTWINNUM3 + i];
+                    }
+                    point.lastwin3 = CaluUtil.calu3(tempInts);
                 }
                 if (lastP != null) {
                     if (j > START && point.award2 + K21 * point.lastwin2 + K22 >= 0 && point.award3 + K31 * point.lastwin3 + K32 >= 0

@@ -130,13 +130,13 @@ public class MyService extends Service {
                             point.win = last.win;
                         }
                     }
-                    if (AnalyzeActivity.LASTPOINTNUM2 > 0 && mPoints.size() >= AnalyzeActivity.LASTPOINTNUM2) {
-                        point.award2 = point.win2 - mPoints.get(mPoints.size() - AnalyzeActivity.LASTPOINTNUM2).win2;
+                    if (AnalyzeActivity.LASTAWARDNUM2 > 0 && mPoints.size() >= AnalyzeActivity.LASTAWARDNUM2) {
+                        point.award2 = point.win2 - mPoints.get(mPoints.size() - AnalyzeActivity.LASTAWARDNUM2).win2;
                     } else {
                         point.award2 = point.win2;
                     }
-                    if (AnalyzeActivity.LASTPOINTNUM3 > 0 && mPoints.size() >= AnalyzeActivity.LASTPOINTNUM3) {
-                        point.award3 = point.win3 - mPoints.get(mPoints.size() - AnalyzeActivity.LASTPOINTNUM3).win3;
+                    if (AnalyzeActivity.LASTAWARDNUM3 > 0 && mPoints.size() >= AnalyzeActivity.LASTAWARDNUM3) {
+                        point.award3 = point.win3 - mPoints.get(mPoints.size() - AnalyzeActivity.LASTAWARDNUM3).win3;
                     } else {
                         point.award3 = point.win3;
                     }
@@ -144,6 +144,20 @@ public class MyService extends Service {
                         point.currentType = 2;
                     } else {
                         point.currentType = 3;
+                    }
+                    if (mPoints.size() >= AnalyzeActivity.LASTWINNUM2) {
+                        int[] tempInts = new int[AnalyzeActivity.LASTWINNUM2];
+                        for (int i = 0; i < tempInts.length; i++) {
+                            tempInts[i] = ints[mPoints.size() - AnalyzeActivity.LASTWINNUM2 + i];
+                        }
+                        point.lastwin2 = CaluUtil.calu2(tempInts);
+                    }
+                    if (mPoints.size() >= AnalyzeActivity.LASTWINNUM3) {
+                        int[] tempInts = new int[AnalyzeActivity.LASTWINNUM3];
+                        for (int i = 0; i < tempInts.length; i++) {
+                            tempInts[i] = ints[mPoints.size() - AnalyzeActivity.LASTWINNUM3 + i];
+                        }
+                        point.lastwin3 = CaluUtil.calu3(tempInts);
                     }
 
                     if (j > AnalyzeActivity.START
@@ -205,13 +219,13 @@ public class MyService extends Service {
                     } else {
                         point.win = last.win;
                     }
-                    if (AnalyzeActivity.LASTPOINTNUM2 > 0 && mPoints.size() >= AnalyzeActivity.LASTPOINTNUM2) {
-                        point.award2 = point.win2 - mPoints.get(mPoints.size() - AnalyzeActivity.LASTPOINTNUM2).win2;
+                    if (AnalyzeActivity.LASTAWARDNUM2 > 0 && mPoints.size() >= AnalyzeActivity.LASTAWARDNUM2) {
+                        point.award2 = point.win2 - mPoints.get(mPoints.size() - AnalyzeActivity.LASTAWARDNUM2).win2;
                     } else {
                         point.award2 = point.win2;
                     }
-                    if (AnalyzeActivity.LASTPOINTNUM3 > 0 && mPoints.size() >= AnalyzeActivity.LASTPOINTNUM3) {
-                        point.award3 = point.win3 - mPoints.get(mPoints.size() - AnalyzeActivity.LASTPOINTNUM3).win3;
+                    if (AnalyzeActivity.LASTAWARDNUM3 > 0 && mPoints.size() >= AnalyzeActivity.LASTAWARDNUM3) {
+                        point.award3 = point.win3 - mPoints.get(mPoints.size() - AnalyzeActivity.LASTAWARDNUM3).win3;
                     } else {
                         point.award3 = point.win3;
                     }
