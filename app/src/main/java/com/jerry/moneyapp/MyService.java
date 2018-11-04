@@ -208,14 +208,26 @@ public class MyService extends Service {
                         if (last.currentType == 2) {
                             if (last.intention == point.current) {
                                 point.win = last.win + 9.7 * Math.abs(last.multiple2);
+                                if (mBtnClickable) {
+                                    win += 9.7 * Math.abs(last.multiple2);
+                                }
                             } else {
                                 point.win = last.win - 10 * Math.abs(last.multiple2);
+                                if (mBtnClickable) {
+                                    win -= 10 * Math.abs(last.multiple3);
+                                }
                             }
                         } else if (last.currentType == 3) {
                             if (last.intention == point.current) {
                                 point.win = last.win + 9.7 * Math.abs(last.multiple3);
+                                if (mBtnClickable) {
+                                    win += 9.7 * Math.abs(last.multiple3);
+                                }
                             } else {
                                 point.win = last.win - 10 * Math.abs(last.multiple3);
+                                if (mBtnClickable) {
+                                    win -= 10 * Math.abs(last.multiple3);
+                                }
                             }
                         }
                     } else {
