@@ -146,8 +146,10 @@ public class MyService extends Service {
                         point.currentType = 3;
                     }
 
-                    if (j > AnalyzeActivity.START && point.award2 >= AnalyzeActivity.LASTWIN2
-                            && point.award3 >= AnalyzeActivity.LASTWIN3 && point.win2 > AnalyzeActivity.WHOLEWIN2
+                    if (j > AnalyzeActivity.START
+                            && point.award2 + AnalyzeActivity.K21 * point.lastwin2 + AnalyzeActivity.K22 >= 0
+                            && point.award3 + AnalyzeActivity.K31 * point.lastwin3 + AnalyzeActivity.K32 >= 0
+                            && point.win2 > AnalyzeActivity.WHOLEWIN2
                             && point.win3 > AnalyzeActivity.WHOLEWIN3) {
                         if (point.currentType == 2 && point.intention2 != GBData.VALUE_NONE) {
                             point.intention = point.intention2;
@@ -225,8 +227,10 @@ public class MyService extends Service {
             if (last == null) {
                 return false;
             }
-            if (ints.length >= AnalyzeActivity.START && last.award2 >= AnalyzeActivity.LASTWIN2
-                    && last.award3 >= AnalyzeActivity.LASTWIN3 && last.win2 > AnalyzeActivity.WHOLEWIN2
+            if (ints.length >= AnalyzeActivity.START
+                    && last.award2 + AnalyzeActivity.K21 * last.lastwin2 + AnalyzeActivity.K22 >= 0
+                    && last.award3 + AnalyzeActivity.K31 * last.lastwin3 + AnalyzeActivity.K32 >= 0
+                    && last.win2 > AnalyzeActivity.WHOLEWIN2
                     && last.win3 > AnalyzeActivity.WHOLEWIN3) {
                 if (last.currentType == 2 && last.intention2 != GBData.VALUE_NONE) {
                     last.intention = last.intention2;

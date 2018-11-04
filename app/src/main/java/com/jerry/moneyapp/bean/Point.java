@@ -23,5 +23,7 @@ public class Point implements Serializable {
     public double win3;
     public double award2;
     public double award3;
+    public double lastwin2;
+    public double lastwin3;
     public int currentType;
 }

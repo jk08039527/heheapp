@@ -33,9 +33,13 @@ public class AnalyzeActivity extends AppCompatActivity {
     public static double WHOLEWIN2 = 3.8;
     public static double WHOLEWIN3 = 5.4;
     public static int LASTPOINTNUM2 = 12;
-    public static double LASTWIN2 = -10.7;
     public static int LASTPOINTNUM3 = 19;
-    public static double LASTWIN3 = -8;
+    public static int LASTPOINTNUM = 14;
+
+    public static double K21 = 0;
+    public static double K22 = 10.7;
+    public static double K31 = 0;
+    public static double K32 = 8;
 
     private List<MyLog> mMyLogs = new ArrayList<>();
     private ArrayList<LinkedList<Point>> pointss = new ArrayList<>();
@@ -82,12 +86,21 @@ public class AnalyzeActivity extends AppCompatActivity {
                 updateData();
             }
         });
-        EditText lastWin2 = findViewById(R.id.last_win2);
-        lastWin2.setText(String.valueOf(LASTWIN2));
-        lastWin2.addTextChangedListener(new MyTextWatcherListener() {
+        EditText k21Et = findViewById(R.id.k21);
+        k21Et.setText(String.valueOf(K21));
+        k21Et.addTextChangedListener(new MyTextWatcherListener() {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                LASTWIN2 = ParseUtil.parseDouble(s.toString());
+                K21 = ParseUtil.parseDouble(s.toString());
+                updateData();
+            }
+        });
+        EditText k22Et = findViewById(R.id.k22);
+        k22Et.setText(String.valueOf(K22));
+        k22Et.addTextChangedListener(new MyTextWatcherListener() {
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                K22 = ParseUtil.parseDouble(s.toString());
                 updateData();
             }
         });
@@ -100,12 +113,21 @@ public class AnalyzeActivity extends AppCompatActivity {
                 updateData();
             }
         });
-        EditText lastWin3 = findViewById(R.id.last_win3);
-        lastWin3.setText(String.valueOf(LASTWIN3));
-        lastWin3.addTextChangedListener(new MyTextWatcherListener() {
+        EditText k31Et = findViewById(R.id.k31);
+        k31Et.setText(String.valueOf(K31));
+        k31Et.addTextChangedListener(new MyTextWatcherListener() {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                LASTWIN3 = ParseUtil.parseDouble(s.toString());
+                K31 = ParseUtil.parseDouble(s.toString());
+                updateData();
+            }
+        });
+        EditText k32Et = findViewById(R.id.k32);
+        k32Et.setText(String.valueOf(K32));
+        k32Et.addTextChangedListener(new MyTextWatcherListener() {
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                K32 = ParseUtil.parseDouble(s.toString());
                 updateData();
             }
         });
@@ -210,8 +232,17 @@ public class AnalyzeActivity extends AppCompatActivity {
                 } else {
                     point.currentType = 3;
                 }
+                if (points.size() >= LASTPOINTNUM) {
+                    int[] tempInts = new int[LASTPOINTNUM];
+                    for (int i = 0; i < tempInts.length; i++) {
+                        tempInts[i] = ints[points.size() - LASTPOINTNUM + i];
+                    }
+                    double[] tempDoubles = CaluUtil.calu(tempInts);
+                    point.lastwin2 = tempDoubles[0];
+                    point.lastwin3 = tempDoubles[1];
+                }
                 if (lastP != null) {
-                    if (j > START && point.award2 >= LASTWIN2 && point.award3 >= LASTWIN3
+                    if (j > START && point.award2 + K21 * point.lastwin2 + K22 >= 0 && point.award3 + K31 * point.lastwin3 + K32 >= 0
                             && point.win2 > WHOLEWIN2 && point.win3 > WHOLEWIN3) {
                         if (point.currentType == 2 && point.intention2 != GBData.VALUE_NONE) {
                             point.intention = point.intention2;
@@ -271,37 +302,5 @@ public class AnalyzeActivity extends AppCompatActivity {
                 .append("，最多输：").append(DeviceUtil.m2(oneMin))
                 .append("，峰值：").append(DeviceUtil.m2(totalMax))
                 .append("，谷值：").append(DeviceUtil.m2(totalMin)));
-    }
-
-    double[] calu(int[] ints) {
-        Point lastP = null;
-        LinkedList<Point> ps = new LinkedList<>();
-        for (int j = 0; j < ints.length; j++) {
-            Point point = CaluUtil.calulate(ints, j + 1, ps);
-            point.current = ints[j];
-            if (lastP != null) {
-                if (lastP.intention2 != GBData.VALUE_NONE) {
-                    if (lastP.intention2 == point.current) {
-                        point.win2 = lastP.win2 + 9.7 * Math.abs(lastP.multiple2);
-                    } else {
-                        point.win2 = lastP.win2 - 10 * Math.abs(lastP.multiple2);
-                    }
-                } else {
-                    point.win2 = lastP.win2;
-                }
-                if (lastP.intention3 != GBData.VALUE_NONE) {
-                    if (lastP.intention3 == point.current) {
-                        point.win3 = lastP.win3 + 9.7 * Math.abs(lastP.multiple3);
-                    } else {
-                        point.win3 = lastP.win3 - 10 * Math.abs(lastP.multiple3);
-                    }
-                } else {
-                    point.win3 = lastP.win3;
-                }
-            }
-            lastP = point;
-            ps.add(point);
-        }
-        return new double[]{lastP.win2, lastP.win3};
     }
 }
