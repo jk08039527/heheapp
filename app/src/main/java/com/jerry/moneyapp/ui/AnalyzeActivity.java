@@ -29,10 +29,10 @@ import cn.bmob.v3.listener.FindListener;
 
 public class AnalyzeActivity extends AppCompatActivity {
 
-    public static int START = 7;
-    public static double WHOLEWIN2 = 3.8;
+    public static int START = 14;
+    public static double WHOLEWIN2 = 4.8;
     public static double WHOLEWIN3 = 5.4;
-    public static int LASTPOINTNUM2 = 12;
+    public static int LASTPOINTNUM2 = 13;
     public static double LASTWIN2 = -10.7;
     public static int LASTPOINTNUM3 = 19;
     public static double LASTWIN3 = -8;
