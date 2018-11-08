@@ -36,6 +36,8 @@ public class AnalyzeActivity extends AppCompatActivity {
     public static double LASTWIN2 = -10.7;
     public static int LASTPOINTNUM3 = 19;
     public static double LASTWIN3 = -8;
+    public static int OPPOSIT_COUNT = 10;
+    public static int OPPOSIT_NUM = 7;
 
     private List<MyLog> mMyLogs = new ArrayList<>();
     private ArrayList<LinkedList<Point>> pointss = new ArrayList<>();
@@ -106,6 +108,24 @@ public class AnalyzeActivity extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 LASTWIN3 = ParseUtil.parseDouble(s.toString());
+                updateData();
+            }
+        });
+        EditText oppositCount = findViewById(R.id.opposit_count);
+        oppositCount.setText(String.valueOf(OPPOSIT_COUNT));
+        oppositCount.addTextChangedListener(new MyTextWatcherListener() {
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                OPPOSIT_COUNT = ParseUtil.parseInt(s.toString());
+                updateData();
+            }
+        });
+        EditText oppositNum = findViewById(R.id.opposit_num);
+        oppositNum.setText(String.valueOf(OPPOSIT_NUM));
+        oppositNum.addTextChangedListener(new MyTextWatcherListener() {
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                OPPOSIT_NUM = ParseUtil.parseInt(s.toString());
                 updateData();
             }
         });

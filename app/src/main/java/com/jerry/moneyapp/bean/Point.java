@@ -17,6 +17,7 @@ public class Point implements Serializable {
     public int multiple2 = 1;
     public int multiple3 = 1;
     public int gudao2;
+    public int fanzhuan;
     public int gudao3;
     public double win;
     public double win2;
