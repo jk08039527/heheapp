@@ -130,13 +130,13 @@ public class MyService extends Service {
                             point.win = last.win;
                         }
                     }
-                    if (AnalyzeActivity.LASTAWARDNUM2 > 0 && mPoints.size() >= AnalyzeActivity.LASTAWARDNUM2) {
-                        point.award2 = point.win2 - mPoints.get(mPoints.size() - AnalyzeActivity.LASTAWARDNUM2).win2;
+                    if (AnalyzeActivity.LASTPOINTNUM2 > 0 && mPoints.size() >= AnalyzeActivity.LASTPOINTNUM2) {
+                        point.award2 = point.win2 - mPoints.get(mPoints.size() - AnalyzeActivity.LASTPOINTNUM2).win2;
                     } else {
                         point.award2 = point.win2;
                     }
-                    if (AnalyzeActivity.LASTAWARDNUM3 > 0 && mPoints.size() >= AnalyzeActivity.LASTAWARDNUM3) {
-                        point.award3 = point.win3 - mPoints.get(mPoints.size() - AnalyzeActivity.LASTAWARDNUM3).win3;
+                    if (AnalyzeActivity.LASTPOINTNUM3 > 0 && mPoints.size() >= AnalyzeActivity.LASTPOINTNUM3) {
+                        point.award3 = point.win3 - mPoints.get(mPoints.size() - AnalyzeActivity.LASTPOINTNUM3).win3;
                     } else {
                         point.award3 = point.win3;
                     }
@@ -145,27 +145,9 @@ public class MyService extends Service {
                     } else {
                         point.currentType = 3;
                     }
-                    if (mPoints.size() >= AnalyzeActivity.LASTWINNUM2) {
-                        int[] tempInts = new int[AnalyzeActivity.LASTWINNUM2];
-                        for (int i = 0; i < tempInts.length; i++) {
-                            tempInts[i] = ints[mPoints.size() - AnalyzeActivity.LASTWINNUM2 + i];
-                        }
-                        point.lastwin2 = CaluUtil.calu2(tempInts);
-                    }
-                    if (mPoints.size() >= AnalyzeActivity.LASTWINNUM3) {
-                        int[] tempInts = new int[AnalyzeActivity.LASTWINNUM3];
-                        for (int i = 0; i < tempInts.length; i++) {
-                            tempInts[i] = ints[mPoints.size() - AnalyzeActivity.LASTWINNUM3 + i];
-                        }
-                        point.lastwin3 = CaluUtil.calu3(tempInts);
-                    }
 
-                    if (j > AnalyzeActivity.START
-                            && AnalyzeActivity.K21 * point.award2 * point.lastwin2 + AnalyzeActivity.K22 * point.award2 + AnalyzeActivity
-                            .K23 * point.lastwin2 + AnalyzeActivity.K24 >= 0
-                            && AnalyzeActivity.K31 * point.award3 * point.lastwin3 + AnalyzeActivity.K32 * point.award3 + AnalyzeActivity
-                            .K33 * point.lastwin3 + AnalyzeActivity.K34 >= 0
-                            && point.win2 > AnalyzeActivity.WHOLEWIN2
+                    if (j > AnalyzeActivity.START && point.award2 >= AnalyzeActivity.LASTWIN2
+                            && point.award3 >= AnalyzeActivity.LASTWIN3 && point.win2 > AnalyzeActivity.WHOLEWIN2
                             && point.win3 > AnalyzeActivity.WHOLEWIN3) {
                         if (point.currentType == 2 && point.intention2 != GBData.VALUE_NONE) {
                             point.intention = point.intention2;
@@ -233,13 +215,13 @@ public class MyService extends Service {
                     } else {
                         point.win = last.win;
                     }
-                    if (AnalyzeActivity.LASTAWARDNUM2 > 0 && mPoints.size() >= AnalyzeActivity.LASTAWARDNUM2) {
-                        point.award2 = point.win2 - mPoints.get(mPoints.size() - AnalyzeActivity.LASTAWARDNUM2).win2;
+                    if (AnalyzeActivity.LASTPOINTNUM2 > 0 && mPoints.size() >= AnalyzeActivity.LASTPOINTNUM2) {
+                        point.award2 = point.win2 - mPoints.get(mPoints.size() - AnalyzeActivity.LASTPOINTNUM2).win2;
                     } else {
                         point.award2 = point.win2;
                     }
-                    if (AnalyzeActivity.LASTAWARDNUM3 > 0 && mPoints.size() >= AnalyzeActivity.LASTAWARDNUM3) {
-                        point.award3 = point.win3 - mPoints.get(mPoints.size() - AnalyzeActivity.LASTAWARDNUM3).win3;
+                    if (AnalyzeActivity.LASTPOINTNUM3 > 0 && mPoints.size() >= AnalyzeActivity.LASTPOINTNUM3) {
+                        point.award3 = point.win3 - mPoints.get(mPoints.size() - AnalyzeActivity.LASTPOINTNUM3).win3;
                     } else {
                         point.award3 = point.win3;
                     }
@@ -248,20 +230,6 @@ public class MyService extends Service {
                     } else {
                         point.currentType = 3;
                     }
-                    if (mPoints.size() >= AnalyzeActivity.LASTWINNUM2) {
-                        int[] tempInts = new int[AnalyzeActivity.LASTWINNUM2];
-                        for (int i = 0; i < tempInts.length; i++) {
-                            tempInts[i] = ints[mPoints.size() - AnalyzeActivity.LASTWINNUM2 + i];
-                        }
-                        point.lastwin2 = CaluUtil.calu2(tempInts);
-                    }
-                    if (mPoints.size() >= AnalyzeActivity.LASTWINNUM3) {
-                        int[] tempInts = new int[AnalyzeActivity.LASTWINNUM3];
-                        for (int i = 0; i < tempInts.length; i++) {
-                            tempInts[i] = ints[mPoints.size() - AnalyzeActivity.LASTWINNUM3 + i];
-                        }
-                        point.lastwin3 = CaluUtil.calu3(tempInts);
-                    }
                 }
                 last = point;
                 mPoints.add(point);
@@ -269,12 +237,8 @@ public class MyService extends Service {
             if (last == null) {
                 return false;
             }
-            if (ints.length >= AnalyzeActivity.START
-                    && AnalyzeActivity.K21 * last.award2 * last.lastwin2 + AnalyzeActivity.K22 * last.award2 + AnalyzeActivity
-                    .K23 * last.lastwin2 + AnalyzeActivity.K24 >= 0
-                    && AnalyzeActivity.K31 * last.award3 * last.lastwin3 + AnalyzeActivity.K32 * last.award3 + AnalyzeActivity
-                    .K33 * last.lastwin3 + AnalyzeActivity.K34 >= 0
-                    && last.win2 > AnalyzeActivity.WHOLEWIN2
+            if (ints.length >= AnalyzeActivity.START && last.award2 >= AnalyzeActivity.LASTWIN2
+                    && last.award3 >= AnalyzeActivity.LASTWIN3 && last.win2 > AnalyzeActivity.WHOLEWIN2
                     && last.win3 > AnalyzeActivity.WHOLEWIN3) {
                 if (last.currentType == 2 && last.intention2 != GBData.VALUE_NONE) {
                     last.intention = last.intention2;

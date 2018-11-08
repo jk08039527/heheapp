@@ -29,22 +29,13 @@ import cn.bmob.v3.listener.FindListener;
 
 public class AnalyzeActivity extends AppCompatActivity {
 
-    public static int START = 5;
-    public static double WHOLEWIN2 = 4.8;
-    public static double WHOLEWIN3 = 8;
-    public static int LASTAWARDNUM2 = 12;
-    public static int LASTAWARDNUM3 = 19;
-    public static int LASTWINNUM2 = 9;
-    public static int LASTWINNUM3 = 7;
-
-    public static double K21 = -0.03;
-    public static double K22 = 1;
-    public static double K23 = -1;
-    public static double K24 = 12;
-    public static double K31 = 0.005;
-    public static double K32 = 1;
-    public static double K33 = -1;
-    public static double K34 = 12;
+    public static int START = 7;
+    public static double WHOLEWIN2 = 3.8;
+    public static double WHOLEWIN3 = 5.4;
+    public static int LASTPOINTNUM2 = 12;
+    public static double LASTWIN2 = -10.7;
+    public static int LASTPOINTNUM3 = 19;
+    public static double LASTWIN3 = -8;
 
     private List<MyLog> mMyLogs = new ArrayList<>();
     private ArrayList<LinkedList<Point>> pointss = new ArrayList<>();
@@ -82,111 +73,39 @@ public class AnalyzeActivity extends AppCompatActivity {
                 updateData();
             }
         });
-        EditText awardNum2 = findViewById(R.id.award_num2);
-        awardNum2.setText(String.valueOf(LASTAWARDNUM2));
-        awardNum2.addTextChangedListener(new MyTextWatcherListener() {
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                LASTAWARDNUM2 = ParseUtil.parseInt(s.toString());
-                updateData();
-            }
-        });
-        EditText k21Et = findViewById(R.id.k21);
-        k21Et.setText(String.valueOf(K21));
-        k21Et.addTextChangedListener(new MyTextWatcherListener() {
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                K21 = ParseUtil.parseDouble(s.toString());
-                updateData();
-            }
-        });
-        EditText k22Et = findViewById(R.id.k22);
-        k22Et.setText(String.valueOf(K22));
-        k22Et.addTextChangedListener(new MyTextWatcherListener() {
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                K22 = ParseUtil.parseDouble(s.toString());
-                updateData();
-            }
-        });
-        EditText k23Et = findViewById(R.id.k23);
-        k23Et.setText(String.valueOf(K23));
-        k23Et.addTextChangedListener(new MyTextWatcherListener() {
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                K23 = ParseUtil.parseDouble(s.toString());
-                updateData();
-            }
-        });
-        EditText k24Et = findViewById(R.id.k24);
-        k24Et.setText(String.valueOf(K24));
-        k24Et.addTextChangedListener(new MyTextWatcherListener() {
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                K24 = ParseUtil.parseDouble(s.toString());
-                updateData();
-            }
-        });
-        EditText awardNum3 = findViewById(R.id.award_num3);
-        awardNum3.setText(String.valueOf(LASTAWARDNUM3));
-        awardNum3.addTextChangedListener(new MyTextWatcherListener() {
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                LASTAWARDNUM3 = ParseUtil.parseInt(s.toString());
-                updateData();
-            }
-        });
-        EditText k31Et = findViewById(R.id.k31);
-        k31Et.setText(String.valueOf(K31));
-        k31Et.addTextChangedListener(new MyTextWatcherListener() {
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                K31 = ParseUtil.parseDouble(s.toString());
-                updateData();
-            }
-        });
-        EditText k32Et = findViewById(R.id.k32);
-        k32Et.setText(String.valueOf(K32));
-        k32Et.addTextChangedListener(new MyTextWatcherListener() {
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                K32 = ParseUtil.parseDouble(s.toString());
-                updateData();
-            }
-        });
-        EditText k33Et = findViewById(R.id.k33);
-        k33Et.setText(String.valueOf(K33));
-        k33Et.addTextChangedListener(new MyTextWatcherListener() {
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                K33 = ParseUtil.parseDouble(s.toString());
-                updateData();
-            }
-        });
-        EditText k34Et = findViewById(R.id.k34);
-        k34Et.setText(String.valueOf(K34));
-        k34Et.addTextChangedListener(new MyTextWatcherListener() {
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                K34 = ParseUtil.parseDouble(s.toString());
-                updateData();
-            }
-        });
         EditText lastNum2 = findViewById(R.id.last_num2);
-        lastNum2.setText(String.valueOf(LASTWINNUM2));
+        lastNum2.setText(String.valueOf(LASTPOINTNUM2));
         lastNum2.addTextChangedListener(new MyTextWatcherListener() {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                LASTWINNUM2 = ParseUtil.parseInt(s.toString());
+                LASTPOINTNUM2 = ParseUtil.parseInt(s.toString());
+                updateData();
+            }
+        });
+        EditText lastWin2 = findViewById(R.id.last_win2);
+        lastWin2.setText(String.valueOf(LASTWIN2));
+        lastWin2.addTextChangedListener(new MyTextWatcherListener() {
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                LASTWIN2 = ParseUtil.parseDouble(s.toString());
                 updateData();
             }
         });
         EditText lastNum3 = findViewById(R.id.last_num3);
-        lastNum3.setText(String.valueOf(LASTWINNUM3));
+        lastNum3.setText(String.valueOf(LASTPOINTNUM3));
         lastNum3.addTextChangedListener(new MyTextWatcherListener() {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                LASTWINNUM3 = ParseUtil.parseInt(s.toString());
+                LASTPOINTNUM3 = ParseUtil.parseInt(s.toString());
+                updateData();
+            }
+        });
+        EditText lastWin3 = findViewById(R.id.last_win3);
+        lastWin3.setText(String.valueOf(LASTWIN3));
+        lastWin3.addTextChangedListener(new MyTextWatcherListener() {
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                LASTWIN3 = ParseUtil.parseDouble(s.toString());
                 updateData();
             }
         });
@@ -276,13 +195,13 @@ public class AnalyzeActivity extends AppCompatActivity {
                         point.win = lastP.win;
                     }
                 }
-                if (LASTAWARDNUM2 > 0 && points.size() >= LASTAWARDNUM2) {
-                    point.award2 = point.win2 - points.get(points.size() - LASTAWARDNUM2).win2;
+                if (LASTPOINTNUM2 > 0 && points.size() >= LASTPOINTNUM2) {
+                    point.award2 = point.win2 - points.get(points.size() - LASTPOINTNUM2).win2;
                 } else {
                     point.award2 = point.win2;
                 }
-                if (LASTAWARDNUM3 > 0 && points.size() >= LASTAWARDNUM3) {
-                    point.award3 = point.win3 - points.get(points.size() - LASTAWARDNUM3).win3;
+                if (LASTPOINTNUM3 > 0 && points.size() >= LASTPOINTNUM3) {
+                    point.award3 = point.win3 - points.get(points.size() - LASTPOINTNUM3).win3;
                 } else {
                     point.award3 = point.win3;
                 }
@@ -291,24 +210,8 @@ public class AnalyzeActivity extends AppCompatActivity {
                 } else {
                     point.currentType = 3;
                 }
-                if (points.size() >= LASTWINNUM2) {
-                    int[] tempInts = new int[LASTWINNUM2];
-                    for (int i = 0; i < tempInts.length; i++) {
-                        tempInts[i] = ints[points.size() - LASTWINNUM2 + i];
-                    }
-                    point.lastwin2 = CaluUtil.calu2(tempInts);
-                }
-                if (points.size() >= LASTWINNUM3) {
-                    int[] tempInts = new int[LASTWINNUM3];
-                    for (int i = 0; i < tempInts.length; i++) {
-                        tempInts[i] = ints[points.size() - LASTWINNUM3 + i];
-                    }
-                    point.lastwin3 = CaluUtil.calu3(tempInts);
-                }
                 if (lastP != null) {
-                    if (j > START
-                            && K21 * point.award2 * point.lastwin2 + K22 * point.award2 + K23 * point.lastwin2 + K24 >= 0
-                            && K31 * point.award3 * point.lastwin2 + K32 * point.award3 + point.award3 + K33 * point.lastwin3 + K34 >= 0
+                    if (j > START && point.award2 >= LASTWIN2 && point.award3 >= LASTWIN3
                             && point.win2 > WHOLEWIN2 && point.win3 > WHOLEWIN3) {
                         if (point.currentType == 2 && point.intention2 != GBData.VALUE_NONE) {
                             point.intention = point.intention2;
@@ -368,5 +271,37 @@ public class AnalyzeActivity extends AppCompatActivity {
                 .append("，最多输：").append(DeviceUtil.m2(oneMin))
                 .append("，峰值：").append(DeviceUtil.m2(totalMax))
                 .append("，谷值：").append(DeviceUtil.m2(totalMin)));
+    }
+
+    double[] calu(int[] ints) {
+        Point lastP = null;
+        LinkedList<Point> ps = new LinkedList<>();
+        for (int j = 0; j < ints.length; j++) {
+            Point point = CaluUtil.calulate(ints, j + 1, ps);
+            point.current = ints[j];
+            if (lastP != null) {
+                if (lastP.intention2 != GBData.VALUE_NONE) {
+                    if (lastP.intention2 == point.current) {
+                        point.win2 = lastP.win2 + 9.7 * Math.abs(lastP.multiple2);
+                    } else {
+                        point.win2 = lastP.win2 - 10 * Math.abs(lastP.multiple2);
+                    }
+                } else {
+                    point.win2 = lastP.win2;
+                }
+                if (lastP.intention3 != GBData.VALUE_NONE) {
+                    if (lastP.intention3 == point.current) {
+                        point.win3 = lastP.win3 + 9.7 * Math.abs(lastP.multiple3);
+                    } else {
+                        point.win3 = lastP.win3 - 10 * Math.abs(lastP.multiple3);
+                    }
+                } else {
+                    point.win3 = lastP.win3;
+                }
+            }
+            lastP = point;
+            ps.add(point);
+        }
+        return new double[]{lastP.win2, lastP.win3};
     }
 }
