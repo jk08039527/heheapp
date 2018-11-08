@@ -264,13 +264,28 @@ public class AnalyzeActivity extends AppCompatActivity {
                 }
             }
         }
-        double winRate = (double) winCount / (winCount + defeatCount);
+        double cart = 0;
+        double winRate = 0;
+        if (winCount > 0 || defeatCount > 0) {
+            double avg = win / (winCount + defeatCount);
+            int sum = 0;
+            for (LinkedList<Point> points : pointss) {
+                double oneWin = points.getLast().win;
+                if (oneWin == 0) {
+                    continue;
+                }
+                sum += (avg - oneWin) * (avg - oneWin);
+            }
+            cart = Math.sqrt(sum / (winCount + defeatCount));
+            winRate = (double) winCount / (winCount + defeatCount);
+        }
         text.setText(new StringBuilder("总净胜：").append(DeviceUtil.m2(win))
                 .append("，胜率：").append(DeviceUtil.m2p(winRate))
                 .append("，最多胜：").append(DeviceUtil.m2(oneMax))
                 .append("，最多输：").append(DeviceUtil.m2(oneMin))
                 .append("，峰值：").append(DeviceUtil.m2(totalMax))
-                .append("，谷值：").append(DeviceUtil.m2(totalMin)));
+                .append("，谷值：").append(DeviceUtil.m2(totalMin))
+                .append("，标准差：").append(DeviceUtil.m2(cart)));
     }
 
     double[] calu(int[] ints) {
