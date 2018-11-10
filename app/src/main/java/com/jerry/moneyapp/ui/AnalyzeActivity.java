@@ -162,7 +162,7 @@ public class AnalyzeActivity extends AppCompatActivity {
 
     private void getData() {
         BmobQuery<MyLog> query = new BmobQuery<>();
-        query.setLimit(500).order("-updatedAt").findObjects(new FindListener<MyLog>() {
+        query.setLimit(200).order("-updatedAt").findObjects(new FindListener<MyLog>() {
             @Override
             public void done(List<MyLog> list, BmobException e) {
                 if (e != null) {
@@ -302,7 +302,7 @@ public class AnalyzeActivity extends AppCompatActivity {
             if (i > 0) {
                 Record last = pointss.get(i - 1);
                 if (last.createTime.substring(0, 10).equals(record.createTime.substring(0, 10))) {
-                    dayWin += record.win;
+                    dayWin += last.win;
                 } else {
                     record.dayWin = dayWin;
                     dayWin = 0;
