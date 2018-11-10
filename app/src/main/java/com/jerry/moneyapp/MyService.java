@@ -32,7 +32,7 @@ import cn.bmob.v3.listener.FindListener;
 
 public class MyService extends Service {
 
-    private double winn = 0;//模拟净胜
+    private double winn;//模拟净胜
     private double win;//净胜
     private int intention;//净胜
     private static final int LEFT = 12;//17
@@ -98,6 +98,7 @@ public class MyService extends Service {
             }
             //0:找胜负，1：找孤岛，2：找连板
             int state = 0;
+            winn = 0;
             for (int i = 0; i < paint.size(); i++) {
                 int current = paint.get(i);
                 if (i + 1 < paint.size()) {
