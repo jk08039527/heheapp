@@ -132,7 +132,7 @@ public class MyService extends Service {
                     win -= 10;
                 }
             }
-            if (state == 0 && paint.get(paint.size() - 1) > 1) {
+            if (state == 0 && paint.size() > 0 && paint.get(paint.size() - 1) > 1) {
                 intention = data.getLast();
                 showJingsheng();
                 if (mBtnClickable) {
