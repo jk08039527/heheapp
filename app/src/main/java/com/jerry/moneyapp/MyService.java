@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
@@ -12,9 +13,6 @@ import java.util.Locale;
 
 import com.jerry.moneyapp.bean.GBData;
 import com.jerry.moneyapp.bean.MyLog;
-import com.jerry.moneyapp.bean.Point;
-import com.jerry.moneyapp.ui.AnalyzeActivity;
-import com.jerry.moneyapp.util.CaluUtil;
 import com.jerry.moneyapp.util.DeviceUtil;
 import com.jerry.moneyapp.util.WeakHandler;
 
@@ -34,7 +32,9 @@ import cn.bmob.v3.listener.FindListener;
 
 public class MyService extends Service {
 
+    private double winn = 0;//模拟净胜
     private double win;//净胜
+    private int intention;//净胜
     private static final int LEFT = 12;//17
     private static final int RIGHT = 1068;//144
     private static final int TOP = 470;//610
@@ -48,12 +48,10 @@ public class MyService extends Service {
 
     private int width;
     private int height;
-    private Point last;
 
     private int[] pointsX = new int[18];
     private int[] pointsY = new int[6];
     private LinkedList<Integer> data = new LinkedList<>();
-    private LinkedList<Point> mPoints = new LinkedList<>();
     private volatile int length;
     private boolean mBtnClickable;//点击生效
     private Callback mCallback;
@@ -82,187 +80,69 @@ public class MyService extends Service {
             //点击一下空白处
             length = data.size();
             execShellCmd("input tap " + 400 + " " + 400);
-            int[] ints = new int[length];
-            for (int i = 0; i < length; i++) {
-                ints[i] = data.get(i);
-            }
-            if (mPoints.size() == 0 || ints.length == 0) {
-                mPoints.clear();
-                sb.delete(0, sb.length());
-                last = null;
-                for (int j = 0; j < ints.length; j++) {
-                    Point point = CaluUtil.calulate(ints, j + 1, mPoints);
-                    point.current = ints[j];
-                    if (last != null) {
-                        if (last.intention2 != GBData.VALUE_NONE) {
-                            if (last.intention2 == point.current) {
-                                point.win2 = last.win2 + 9.7 * Math.abs(last.multiple2);
-                            } else {
-                                point.win2 = last.win2 - 10 * Math.abs(last.multiple2);
-                            }
-                        } else {
-                            point.win2 = last.win2;
-                        }
-                        if (last.intention3 != GBData.VALUE_NONE) {
-                            if (last.intention3 == point.current) {
-                                point.win3 = last.win3 + 9.7 * Math.abs(last.multiple3);
-                            } else {
-                                point.win3 = last.win3 - 10 * Math.abs(last.multiple3);
-                            }
-                        } else {
-                            point.win3 = last.win3;
-                        }
-                        if (last.intention != GBData.VALUE_NONE) {
-                            if (last.currentType == 2) {
-                                if (last.intention == point.current) {
-                                    point.win = last.win + 9.7 * Math.abs(last.multiple2);
-                                } else {
-                                    point.win = last.win - 10 * Math.abs(last.multiple2);
-                                }
-                            } else if (last.currentType == 3) {
-                                if (last.intention == point.current) {
-                                    point.win = last.win + 9.7 * Math.abs(last.multiple3);
-                                } else {
-                                    point.win = last.win - 10 * Math.abs(last.multiple3);
-                                }
-                            }
-                        } else {
-                            point.win = last.win;
-                        }
-                    }
-                    if (AnalyzeActivity.LASTPOINTNUM2 > 0 && mPoints.size() >= AnalyzeActivity.LASTPOINTNUM2) {
-                        point.award2 = point.win2 - mPoints.get(mPoints.size() - AnalyzeActivity.LASTPOINTNUM2).win2;
-                    } else {
-                        point.award2 = point.win2;
-                    }
-                    if (AnalyzeActivity.LASTPOINTNUM3 > 0 && mPoints.size() >= AnalyzeActivity.LASTPOINTNUM3) {
-                        point.award3 = point.win3 - mPoints.get(mPoints.size() - AnalyzeActivity.LASTPOINTNUM3).win3;
-                    } else {
-                        point.award3 = point.win3;
-                    }
-                    if (point.award2 >= point.award3) {
-                        point.currentType = 2;
-                    } else {
-                        point.currentType = 3;
-                    }
-
-                    if (j > AnalyzeActivity.START && point.award2 >= AnalyzeActivity.LASTWIN2
-                            && point.award3 >= AnalyzeActivity.LASTWIN3 && point.win2 > AnalyzeActivity.WHOLEWIN2
-                            && point.win3 > AnalyzeActivity.WHOLEWIN3) {
-                        if (point.currentType == 2 && point.intention2 != GBData.VALUE_NONE) {
-                            point.intention = point.intention2;
-                            point.multiple = point.multiple2;
-                        } else if (point.currentType == 3 && point.intention3 != GBData.VALUE_NONE) {
-                            point.intention = point.intention3;
-                            point.multiple = point.multiple3;
-                        } else {
-                            point.intention = GBData.VALUE_NONE;
-                        }
-                    } else {
-                        point.intention = GBData.VALUE_NONE;
-                    }
-                    mPoints.add(point);
-                    last = point;
-                }
-            } else {
-                Point point = CaluUtil.calulate(ints, ints.length, mPoints);
-                point.current = ints[ints.length - 1];
-                if (last != null) {
-                    if (last.intention2 != GBData.VALUE_NONE) {
-                        if (last.intention2 == point.current) {
-                            point.win2 = last.win2 + 9.7 * Math.abs(last.multiple2);
-                        } else {
-                            point.win2 = last.win2 - 10 * Math.abs(last.multiple2);
-                        }
-                    } else {
-                        point.win2 = last.win2;
-                    }
-                    if (last.intention3 != GBData.VALUE_NONE) {
-                        if (last.intention3 == point.current) {
-                            point.win3 = last.win3 + 9.7 * Math.abs(last.multiple3);
-                        } else {
-                            point.win3 = last.win3 - 10 * Math.abs(last.multiple3);
-                        }
-                    } else {
-                        point.win3 = last.win3;
-                    }
-                    if (last.intention != GBData.VALUE_NONE) {
-                        if (last.currentType == 2) {
-                            if (last.intention == point.current) {
-                                point.win = last.win + 9.7 * Math.abs(last.multiple2);
-                                if (mBtnClickable) {
-                                    win += 9.7 * Math.abs(last.multiple2);
-                                }
-                            } else {
-                                point.win = last.win - 10 * Math.abs(last.multiple2);
-                                if (mBtnClickable) {
-                                    win -= 10 * Math.abs(last.multiple3);
-                                }
-                            }
-                        } else if (last.currentType == 3) {
-                            if (last.intention == point.current) {
-                                point.win = last.win + 9.7 * Math.abs(last.multiple3);
-                                if (mBtnClickable) {
-                                    win += 9.7 * Math.abs(last.multiple3);
-                                }
-                            } else {
-                                point.win = last.win - 10 * Math.abs(last.multiple3);
-                                if (mBtnClickable) {
-                                    win -= 10 * Math.abs(last.multiple3);
-                                }
-                            }
-                        }
-                    } else {
-                        point.win = last.win;
-                    }
-                    if (AnalyzeActivity.LASTPOINTNUM2 > 0 && mPoints.size() >= AnalyzeActivity.LASTPOINTNUM2) {
-                        point.award2 = point.win2 - mPoints.get(mPoints.size() - AnalyzeActivity.LASTPOINTNUM2).win2;
-                    } else {
-                        point.award2 = point.win2;
-                    }
-                    if (AnalyzeActivity.LASTPOINTNUM3 > 0 && mPoints.size() >= AnalyzeActivity.LASTPOINTNUM3) {
-                        point.award3 = point.win3 - mPoints.get(mPoints.size() - AnalyzeActivity.LASTPOINTNUM3).win3;
-                    } else {
-                        point.award3 = point.win3;
-                    }
-                    if (point.award2 >= point.award3) {
-                        point.currentType = 2;
-                    } else {
-                        point.currentType = 3;
-                    }
-                }
-                last = point;
-                mPoints.add(point);
-            }
-            if (last == null) {
-                return false;
-            }
-            if (ints.length >= AnalyzeActivity.START && last.award2 >= AnalyzeActivity.LASTWIN2
-                    && last.award3 >= AnalyzeActivity.LASTWIN3 && last.win2 > AnalyzeActivity.WHOLEWIN2
-                    && last.win3 > AnalyzeActivity.WHOLEWIN3) {
-                if (last.currentType == 2 && last.intention2 != GBData.VALUE_NONE) {
-                    last.intention = last.intention2;
-                    last.multiple = last.multiple2;
-                    showJingsheng();
-                    if (mBtnClickable) {
-                        exeCall(last.intention2, last.multiple2);
-                    }
-                } else if (last.currentType == 3 && last.intention3 != GBData.VALUE_NONE) {
-                    last.intention = last.intention3;
-                    last.multiple = last.multiple3;
-                    showJingsheng();
-                    if (mBtnClickable) {
-                        exeCall(last.intention3, last.multiple3);
-                    }
+            ArrayList<Integer> paint = new ArrayList<>(data.size());
+            int index = 0;
+            int tempSize = 1;
+            while (index < data.size()) {
+                if (index == data.size() - 1) {
+                    paint.add(tempSize);
                 } else {
-                    last.intention = GBData.VALUE_NONE;
-                    showJingsheng();
+                    if (data.get(index).intValue() == data.get(index + 1).intValue()) {
+                        tempSize++;
+                    } else {
+                        paint.add(tempSize);
+                        tempSize = 1;
+                    }
+                }
+                index++;
+            }
+            //0:找胜负，1：找孤岛，2：找连板
+            int state = 0;
+            for (int i = 0; i < paint.size(); i++) {
+                int current = paint.get(i);
+                if (i + 1 < paint.size()) {
+                    int next = paint.get(i + 1);
+                    switch (state) {
+                        case 1:
+                            if (current == 1) {
+                                state = 0;
+                            }
+                            break;
+                        case 2:
+                            if (current > 1) {
+                                state = 0;
+                            }
+                            break;
+                        default:
+                            if (current > 1 && next > 1) {
+                                winn += 9.7;
+                                state = 1;
+                            } else if (current > 1 && next == 1) {
+                                winn -= 10;
+                                state = 2;
+                            }
+                            break;
+                    }
+                }
+            }
+            if (intention != GBData.VALUE_NONE) {
+                if (intention == data.getLast()) {
+                    win += 9.7;
+                } else {
+                    win -= 10;
+                }
+            }
+            if (state == 0 && paint.get(paint.size() - 1) > 1) {
+                intention = data.getLast();
+                showJingsheng();
+                if (mBtnClickable) {
+                    exeCall(intention, 1);
                 }
             } else {
-                last.intention = GBData.VALUE_NONE;
-                showJingsheng();
+                intention = GBData.VALUE_NONE;
             }
 
+            double finalWinn = winn;
             if (data.size() >= 69) {
                 BmobQuery<MyLog> query = new BmobQuery<>();
                 query.setLimit(1).order("-updatedAt").findObjects(new FindListener<MyLog>() {
@@ -287,19 +167,18 @@ public class MyService extends Service {
                             }
                         }
                         Calendar now = Calendar.getInstance();
-                        sb.append(now.getTime()).append(":").append(last.win).append("元").append("\n");
+                        sb.append(now.getTime()).append(":").append(finalWinn).append("元").append("\n");
                         MyLog myLog = new MyLog();
                         myLog.setLog(sb.toString());
                         myLog.setData(data);
                         myLog.setDeviceId(DeviceUtil.getDeviceId());
-                        myLog.setPoints(mPoints);
                         myLog.save();
                         sb.delete(0, sb.length());
                     }
                 });
             } else {
                 Calendar now = Calendar.getInstance();
-                sb.append(now.getTime()).append(":").append(last.win).append("元").append("\n");
+                sb.append(now.getTime()).append(":").append(finalWinn).append("元").append("\n");
             }
             return false;
         }
@@ -340,19 +219,8 @@ public class MyService extends Service {
     }
 
     public void showJingsheng() {
-        if (last == null) {
-            return;
-        }
-        StringBuilder sb = new StringBuilder();
-        sb.append("净胜2：").append(DeviceUtil.m2(last.win2)).append("，")
-                .append(DeviceUtil.m2(last.award2)).append("，")
-                .append(getIntentStr(last.intention2, Math.abs(last.multiple2)))
-                .append("\n净胜3：").append(DeviceUtil.m2(last.win3)).append("，")
-                .append(DeviceUtil.m2(last.award3)).append("，")
-                .append(getIntentStr(last.intention3, Math.abs(last.multiple3)))
-                .append("\n模拟净胜：").append(DeviceUtil.m2(last.win)).append("，").append(getIntentStr(last.intention, last.multiple))
-                .append("\n实净胜：").append(DeviceUtil.m2(win));
-        mCallback.showText(sb.toString());
+        mCallback.showText(new StringBuilder().append("\n模拟净胜：").append(DeviceUtil.m2(winn)).append("，")
+                .append("\n实净胜：").append(DeviceUtil.m2(win)).toString());
     }
 
     public class PlayBinder extends Binder {
@@ -364,7 +232,6 @@ public class MyService extends Service {
 
     public void startExe() {
         mWeakHandler.sendEmptyMessage(0);
-        mPoints.clear();
         showJingsheng();
     }
 
