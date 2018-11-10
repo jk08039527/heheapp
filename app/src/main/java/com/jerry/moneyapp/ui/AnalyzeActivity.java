@@ -144,7 +144,7 @@ public class AnalyzeActivity extends AppCompatActivity {
                 Record record = pointss.get(position);
                 date.setText(record.createTime);
                 daymoney.setText(record.dayWin == 0 ? "" : DeviceUtil.m2(record.dayWin));
-                double win = pointss.get(position).points.getLast().win;
+                double win = record.win;
                 if (win > 0) {
                     money.setTextColor(ContextCompat.getColor(AnalyzeActivity.this, android.R.color.holo_red_light));
                 } else if (win < 0) {
@@ -162,7 +162,7 @@ public class AnalyzeActivity extends AppCompatActivity {
 
     private void getData() {
         BmobQuery<MyLog> query = new BmobQuery<>();
-        query.setLimit(200).order("-updatedAt").findObjects(new FindListener<MyLog>() {
+        query.setLimit(500).order("-updatedAt").findObjects(new FindListener<MyLog>() {
             @Override
             public void done(List<MyLog> list, BmobException e) {
                 if (e != null) {
@@ -186,91 +186,63 @@ public class AnalyzeActivity extends AppCompatActivity {
         int winCount = 0;//胜场数
         int defeatCount = 0;//负场数
         for (MyLog log : mMyLogs) {
-            LinkedList<Point> points = new LinkedList<>();
             LinkedList<Integer> integers = log.getData();
-            int[] ints = new int[integers.size()];
-            for (int i = 0; i < ints.length; i++) {
-                ints[i] = integers.get(i);
+            ArrayList<Integer> paint = new ArrayList<>(integers.size());
+            int index = 0;
+            int tempSize = 1;
+            while (index < integers.size()) {
+                if (index == integers.size() - 1) {
+                    paint.add(tempSize);
+                } else {
+                    if (integers.get(index).intValue() == integers.get(index + 1).intValue()) {
+                        tempSize++;
+                    } else {
+                        paint.add(tempSize);
+                        tempSize = 1;
+                    }
+                }
+                index++;
             }
-            Point lastP = null;
-            for (int j = 0; j < ints.length; j++) {
-                Point point = CaluUtil.calulate(ints, j + 1, points);
-                point.current = ints[j];
-                if (lastP != null) {
-                    if (lastP.intention2 != GBData.VALUE_NONE) {
-                        if (lastP.intention2 == point.current) {
-                            point.win2 = lastP.win2 + 9.7 * Math.abs(lastP.multiple2);
-                        } else {
-                            point.win2 = lastP.win2 - 10 * Math.abs(lastP.multiple2);
-                        }
-                    } else {
-                        point.win2 = lastP.win2;
-                    }
-                    if (lastP.intention3 != GBData.VALUE_NONE) {
-                        if (lastP.intention3 == point.current) {
-                            point.win3 = lastP.win3 + 9.7 * Math.abs(lastP.multiple3);
-                        } else {
-                            point.win3 = lastP.win3 - 10 * Math.abs(lastP.multiple3);
-                        }
-                    } else {
-                        point.win3 = lastP.win3;
-                    }
-                    if (lastP.intention != GBData.VALUE_NONE) {
-                        if (lastP.currentType == 2) {
-                            if (lastP.intention == point.current) {
-                                point.win = lastP.win + 9.7 * Math.abs(lastP.multiple2);
-                            } else {
-                                point.win = lastP.win - 10 * Math.abs(lastP.multiple2);
+            //0:找胜负，1：找孤岛，2：找连板
+            int state = 0;
+            double winn = 0;
+            for (int i = 0; i < paint.size(); i++) {
+                int current = paint.get(i);
+                if (i + 1 < paint.size()) {
+                    int next = paint.get(i + 1);
+                    switch (state) {
+                        case 1:
+                            if (current == 1) {
+                                state = 0;
                             }
-                        } else if (lastP.currentType == 3) {
-                            if (lastP.intention == point.current) {
-                                point.win = lastP.win + 9.7 * Math.abs(lastP.multiple3);
-                            } else {
-                                point.win = lastP.win - 10 * Math.abs(lastP.multiple3);
+                            break;
+                        case 2:
+                            if (current > 1) {
+                                state = 0;
                             }
-                        }
-                    } else {
-                        point.win = lastP.win;
+                            break;
+                        default:
+                            if (current > 1 && next > 1) {
+                                winn += 9.7;
+                                state = 1;
+                            } else if (current > 1 && next == 1) {
+                                winn -= 10;
+                                state = 2;
+                            }
+                            break;
                     }
                 }
-                if (LASTPOINTNUM2 > 0 && points.size() >= LASTPOINTNUM2) {
-                    point.award2 = point.win2 - points.get(points.size() - LASTPOINTNUM2).win2;
-                } else {
-                    point.award2 = point.win2;
+                if (winn > totalMax) {
+                    totalMax = winn;
                 }
-                if (LASTPOINTNUM3 > 0 && points.size() >= LASTPOINTNUM3) {
-                    point.award3 = point.win3 - points.get(points.size() - LASTPOINTNUM3).win3;
-                } else {
-                    point.award3 = point.win3;
+                if (winn < totalMin) {
+                    totalMin = winn;
                 }
-                if (point.award2 >= point.award3) {
-                    point.currentType = 2;
-                } else {
-                    point.currentType = 3;
-                }
-                if (lastP != null) {
-                    if (j > START && point.award2 >= LASTWIN2 && point.award3 >= LASTWIN3
-                            && point.win2 > WHOLEWIN2 && point.win3 > WHOLEWIN3) {
-                        if (point.currentType == 2 && point.intention2 != GBData.VALUE_NONE) {
-                            point.intention = point.intention2;
-                            point.multiple = point.multiple2;
-                        } else if (point.currentType == 3 && point.intention3 != GBData.VALUE_NONE) {
-                            point.intention = point.intention3;
-                            point.multiple = point.multiple3;
-                        } else {
-                            point.intention = GBData.VALUE_NONE;
-                        }
-                    } else {
-                        point.intention = GBData.VALUE_NONE;
-                    }
-                }
+            }
+            win += winn;
 
-                lastP = point;
-                points.add(point);
-            }
             Record record = new Record();
-            record.win = points.getLast().win;
-            record.points = points;
+            record.win = winn;
             record.createTime = log.getCreatedAt();
             pointss.add(record);
 
@@ -285,14 +257,6 @@ public class AnalyzeActivity extends AppCompatActivity {
             }
             if (record.win < oneMin) {
                 oneMin = record.win;
-            }
-            for (Point point : points) {
-                if (point.win > totalMax) {
-                    totalMax = point.win;
-                }
-                if (point.win < totalMin) {
-                    totalMin = point.win;
-                }
             }
         }
 
@@ -319,7 +283,7 @@ public class AnalyzeActivity extends AppCompatActivity {
             double avg = win / (winCount + defeatCount);
             int sum = 0;
             for (Record record : pointss) {
-                double oneWin = record.points.getLast().win;
+                double oneWin = record.win;
                 if (oneWin == 0) {
                     continue;
                 }
@@ -374,6 +338,5 @@ public class AnalyzeActivity extends AppCompatActivity {
         String createTime;
         double win;
         double dayWin;
-        LinkedList<Point> points;
     }
 }
