@@ -11,6 +11,7 @@ import com.jerry.moneyapp.MyApplication;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.res.Resources;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 
@@ -96,4 +97,17 @@ public class DeviceUtil {
         return nf.format(doub);
     }
 
+    /**
+     * 获取屏幕密度
+     */
+    public static float getDisplayDensity() {
+        return Resources.getSystem().getDisplayMetrics().density;
+    }
+
+    /**
+     * 根据手机的分辨率从 dp 的单位 转成为 px(像素)
+     */
+    public static int dip2px(double dipValue) {
+        return (int) (dipValue * getDisplayDensity() + 0.5f);
+    }
 }

@@ -8,19 +8,18 @@ import com.jerry.moneyapp.R;
 import com.jerry.moneyapp.bean.GBData;
 import com.jerry.moneyapp.bean.MyLog;
 import com.jerry.moneyapp.bean.Point;
+import com.jerry.moneyapp.ptrlib.widget.BaseRecyclerAdapter;
+import com.jerry.moneyapp.ptrlib.widget.PtrRecyclerView;
+import com.jerry.moneyapp.ptrlib.widget.RecyclerViewHolder;
 import com.jerry.moneyapp.util.CaluUtil;
 import com.jerry.moneyapp.util.DeviceUtil;
 import com.jerry.moneyapp.util.MyTextWatcherListener;
 import com.jerry.moneyapp.util.ParseUtil;
-import com.jerry.moneyapp.util.ViewHolder;
 
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.view.View;
-import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import cn.bmob.v3.BmobQuery;
@@ -40,9 +39,10 @@ public class AnalyzeActivity extends AppCompatActivity {
     public static int OPPOSIT_NUM = 7;
 
     private List<MyLog> mMyLogs = new ArrayList<>();
-    private ArrayList<LinkedList<Point>> pointss = new ArrayList<>();
-    private CommonAdapter<LinkedList<Point>> mAdapter;
+    private ArrayList<Record> pointss = new ArrayList<>();
+    private BaseRecyclerAdapter<Record> mAdapter;
     private TextView text;
+    private PtrRecyclerView mPtrRecyclerView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -129,16 +129,22 @@ public class AnalyzeActivity extends AppCompatActivity {
                 updateData();
             }
         });
-        ListView listView = findViewById(R.id.listView);
-        mAdapter = new CommonAdapter<LinkedList<Point>>(this, pointss) {
+        mPtrRecyclerView = findViewById(R.id.ptrRecyclerView);
+        mAdapter = new BaseRecyclerAdapter<Record>(this, pointss) {
             @Override
-            public View getView(int position, View convertView, ViewGroup parent) {
-                ViewHolder holder = ViewHolder.get(mContext, convertView, R.layout.item_text);
+            public int getItemLayoutId(final int viewType) {
+                return R.layout.item_text;
+            }
+
+            @Override
+            public void convert(final RecyclerViewHolder holder, final int position, final int viewType, final Record bean) {
                 TextView date = holder.getView(R.id.date);
                 TextView money = holder.getView(R.id.money);
-                Point record = pointss.get(position).getLast();
-                date.setText(mMyLogs.get(position).getCreatedAt());
-                double win = pointss.get(position).getLast().win;
+                TextView daymoney = holder.getView(R.id.daymoney);
+                Record record = pointss.get(position);
+                date.setText(record.createTime);
+                daymoney.setText(record.dayWin == 0 ? "" : DeviceUtil.m2(record.dayWin));
+                double win = pointss.get(position).points.getLast().win;
                 if (win > 0) {
                     money.setTextColor(ContextCompat.getColor(AnalyzeActivity.this, android.R.color.holo_red_light));
                 } else if (win < 0) {
@@ -147,12 +153,16 @@ public class AnalyzeActivity extends AppCompatActivity {
                     money.setTextColor(ContextCompat.getColor(AnalyzeActivity.this, android.R.color.black));
                 }
                 money.setText(DeviceUtil.m2(win));
-                return holder.getConvertView();
             }
         };
-        listView.setAdapter(mAdapter);
+        mPtrRecyclerView.setOnRefreshListener(this::getData);
+        mPtrRecyclerView.setAdapter(mAdapter);
+        getData();
+    }
+
+    private void getData() {
         BmobQuery<MyLog> query = new BmobQuery<>();
-        query.setLimit(200).order("-updatedAt").findObjects(new FindListener<MyLog>() {
+        query.setLimit(500).order("-updatedAt").findObjects(new FindListener<MyLog>() {
             @Override
             public void done(List<MyLog> list, BmobException e) {
                 if (e != null) {
@@ -161,12 +171,20 @@ public class AnalyzeActivity extends AppCompatActivity {
                 mMyLogs.clear();
                 mMyLogs.addAll(list);
                 updateData();
+                mPtrRecyclerView.onRefreshComplete();
             }
         });
     }
 
     private void updateData() {
         pointss.clear();
+        double win = 0;
+        double oneMax = -99999;
+        double oneMin = 99999;
+        double totalMax = -99999;
+        double totalMin = 99999;
+        int winCount = 0;//胜场数
+        int defeatCount = 0;//负场数
         for (MyLog log : mMyLogs) {
             LinkedList<Point> points = new LinkedList<>();
             LinkedList<Integer> integers = log.getData();
@@ -250,30 +268,23 @@ public class AnalyzeActivity extends AppCompatActivity {
                 lastP = point;
                 points.add(point);
             }
-            LinkedList<Point> fsf = log.getPoints();
-            pointss.add(points);
-        }
-        mAdapter.notifyDataSetChanged();
-        double win = 0;
-        double oneMax = -99999;
-        double oneMin = 99999;
-        double totalMax = -99999;
-        double totalMin = 99999;
-        int winCount = 0;//胜场数
-        int defeatCount = 0;//负场数
-        for (LinkedList<Point> points : pointss) {
-            double oneWin = points.getLast().win;
-            win += oneWin;
-            if (oneWin > 0) {
+            Record record = new Record();
+            record.win = points.getLast().win;
+            record.points = points;
+            record.createTime = log.getCreatedAt();
+            pointss.add(record);
+
+            win += record.win;
+            if (record.win > 0) {
                 winCount++;
-            } else if (oneWin < 0) {
+            } else if (record.win < 0) {
                 defeatCount++;
             }
-            if (oneWin > oneMax) {
-                oneMax = oneWin;
+            if (record.win > oneMax) {
+                oneMax = record.win;
             }
-            if (oneWin < oneMin) {
-                oneMin = oneWin;
+            if (record.win < oneMin) {
+                oneMin = record.win;
             }
             for (Point point : points) {
                 if (point.win > totalMax) {
@@ -284,13 +295,31 @@ public class AnalyzeActivity extends AppCompatActivity {
                 }
             }
         }
+
+        double dayWin = 0;
+        for (int i = pointss.size() - 1; i >= 0; i--) {
+            Record record = pointss.get(i);
+            if (i > 0) {
+                Record last = pointss.get(i - 1);
+                if (last.createTime.substring(0, 10).equals(record.createTime.substring(0, 10))) {
+                    dayWin += record.win;
+                } else {
+                    record.dayWin = dayWin;
+                    dayWin = 0;
+                }
+            } else {
+                record.dayWin = dayWin;
+            }
+        }
+        mAdapter.notifyDataSetChanged();
+
         double cart = 0;
         double winRate = 0;
         if (winCount > 0 || defeatCount > 0) {
             double avg = win / (winCount + defeatCount);
             int sum = 0;
-            for (LinkedList<Point> points : pointss) {
-                double oneWin = points.getLast().win;
+            for (Record record : pointss) {
+                double oneWin = record.points.getLast().win;
                 if (oneWin == 0) {
                     continue;
                 }
@@ -338,5 +367,13 @@ public class AnalyzeActivity extends AppCompatActivity {
             ps.add(point);
         }
         return new double[]{lastP.win2, lastP.win3};
+    }
+
+    class Record {
+
+        String createTime;
+        double win;
+        double dayWin;
+        LinkedList<Point> points;
     }
 }

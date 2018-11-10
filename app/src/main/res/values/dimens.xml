@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="_13sp">13sp</dimen>
+    <dimen name="sixty_dp">60dp</dimen>
+    <dimen name="header_footer_top_bottom_padding">12dp</dimen>
+</resources>
