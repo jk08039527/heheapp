@@ -239,7 +239,6 @@ public class AnalyzeActivity extends AppCompatActivity {
                     totalMin = winn;
                 }
             }
-            win += winn;
 
             Record record = new Record();
             record.win = winn;
