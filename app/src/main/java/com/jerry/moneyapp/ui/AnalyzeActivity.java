@@ -28,10 +28,10 @@ import cn.bmob.v3.listener.FindListener;
 
 public class AnalyzeActivity extends AppCompatActivity {
 
-    public static int START = 14;
+    public static int START = 12;
     public static double WHOLEWIN2 = 4.8;
     public static double WHOLEWIN3 = 5.4;
-    public static int LASTPOINTNUM2 = 13;
+    public static int LASTPOINTNUM2 = 14;
     public static double LASTWIN2 = -10.7;
     public static int LASTPOINTNUM3 = 19;
     public static double LASTWIN3 = -8;
@@ -43,6 +43,7 @@ public class AnalyzeActivity extends AppCompatActivity {
     private BaseRecyclerAdapter<Record> mAdapter;
     private TextView text;
     private PtrRecyclerView mPtrRecyclerView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -187,61 +188,117 @@ public class AnalyzeActivity extends AppCompatActivity {
         int defeatCount = 0;//负场数
         for (MyLog log : mMyLogs) {
             LinkedList<Integer> integers = log.getData();
-            ArrayList<Integer> paint = new ArrayList<>(integers.size());
-            int index = 0;
-            int tempSize = 1;
-            while (index < integers.size()) {
-                if (index == integers.size() - 1) {
-                    paint.add(tempSize);
-                } else {
-                    if (integers.get(index).intValue() == integers.get(index + 1).intValue()) {
-                        tempSize++;
-                    } else {
-                        paint.add(tempSize);
-                        tempSize = 1;
-                    }
-                }
-                index++;
+            LinkedList<Integer> paint = new LinkedList<>();
+            LinkedList<Point> points = new LinkedList<>();
+            int[] ints = new int[integers.size()];
+            for (int i = 0; i < ints.length; i++) {
+                ints[i] = integers.get(i);
             }
-            //0:找胜负，1：找孤岛，2：找连板
-            int state = 0;
-            double winn = 0;
-            for (int i = 0; i < paint.size(); i++) {
-                int current = paint.get(i);
-                if (i + 1 < paint.size()) {
-                    int next = paint.get(i + 1);
-                    switch (state) {
-                        case 1:
-                            if (current == 1) {
-                                state = 0;
-                            }
-                            break;
-                        case 2:
-                            if (current > 1) {
-                                state = 0;
-                            }
-                            break;
-                        default:
-                            if (current > 1 && next > 1) {
-                                winn += 9.7;
-                                state = 1;
-                            } else if (current > 1 && next == 1) {
-                                winn -= 10;
-                                state = 2;
-                            }
-                            break;
+            Point lastP = null;
+            for (int j = 0; j < ints.length; j++) {
+                Point point = CaluUtil.calulate(ints, j + 1, points);
+                point.current = ints[j];
+                if (lastP != null) {
+                    if (lastP.current == point.current && paint.size() > 0) {
+                        int temp = paint.getLast();
+                        paint.removeLast();
+                        paint.addLast(++temp);
+                    } else {
+                        paint.add(1);
+                    }
+                    if (lastP.intention2 != GBData.VALUE_NONE) {
+                        if (lastP.intention2 == point.current) {
+                            point.win2 = lastP.win2 + 9.7 * Math.abs(lastP.multiple2);
+                        } else {
+                            point.win2 = lastP.win2 - 10 * Math.abs(lastP.multiple2);
+                        }
+                    } else {
+                        point.win2 = lastP.win2;
+                    }
+                    if (lastP.intention3 != GBData.VALUE_NONE) {
+                        if (lastP.intention3 == point.current) {
+                            point.win3 = lastP.win3 + 9.7 * Math.abs(lastP.multiple3);
+                        } else {
+                            point.win3 = lastP.win3 - 10 * Math.abs(lastP.multiple3);
+                        }
+                    } else {
+                        point.win3 = lastP.win3;
+                    }
+                    if (lastP.intention != GBData.VALUE_NONE) {
+                        if (lastP.intention == point.current) {
+                            point.win = lastP.win + 9.7 * Math.abs(lastP.multiple);
+                        } else {
+                            point.win = lastP.win - 10 * Math.abs(lastP.multiple);
+                        }
+                    } else {
+                        point.win = lastP.win;
+                    }
+                    if (lastP.intentionX != GBData.VALUE_NONE) {
+                        if (lastP.intentionX == point.current) {
+                            point.state = 1;
+                        } else {
+                            point.state = 2;
+                        }
+                    } else {
+                        point.state = lastP.state;
                     }
                 }
-                if (winn > totalMax) {
-                    totalMax = winn;
+                if (LASTPOINTNUM2 > 0 && points.size() >= LASTPOINTNUM2) {
+                    point.award2 = point.win2 - points.get(points.size() - LASTPOINTNUM2).win2;
+                } else {
+                    point.award2 = point.win2;
                 }
-                if (winn < totalMin) {
-                    totalMin = winn;
+                if (LASTPOINTNUM3 > 0 && points.size() >= LASTPOINTNUM3) {
+                    point.award3 = point.win3 - points.get(points.size() - LASTPOINTNUM3).win3;
+                } else {
+                    point.award3 = point.win3;
                 }
+                if (point.award2 >= point.award3) {
+                    point.currentType = 2;
+                } else {
+                    point.currentType = 3;
+                }
+                if (lastP != null) {
+                    if (j > START && point.award2 >= LASTWIN2 && point.award3 >= LASTWIN3
+                            && point.win2 > WHOLEWIN2 && point.win3 > WHOLEWIN3) {
+                        if (point.currentType == 2 && point.intention2 != GBData.VALUE_NONE) {
+                            point.intention = point.intention2;
+                            point.multiple = point.multiple2;
+                        } else if (point.currentType == 3 && point.intention3 != GBData.VALUE_NONE) {
+                            point.intention = point.intention3;
+                            point.multiple = point.multiple3;
+                        } else {
+                            point.intention = GBData.VALUE_NONE;
+                        }
+                    } else {
+                        point.intention = GBData.VALUE_NONE;
+                    }
+                }
+
+                if (point.state == 0 && paint.size() > 1 && paint.get(paint.size() - 1) == 1 && paint.get(paint.size() - 2) > 1) {
+                    point.intentionX = point.current;
+                    if (point.intention == point.current) {
+                        point.multiple++;
+                    } else if (point.intention != 0) {
+                        point.multiple--;
+                    } else {
+                        point.intention = point.current;
+                        point.multiple = 1;
+                    }
+                } else if (point.state == 1 && paint.size() > 1 && paint.get(paint.size() - 1) == 1 && paint.get(paint.size() - 2) == 1) {
+                    point.state = 0;
+                } else if (point.state == 2 && paint.size() > 1 && paint.get(paint.size() - 1) > 1 && paint.get(paint.size() - 2) == 1) {
+                    point.state = 0;
+                }
+                if (point.multiple == 0) {
+                    point.intention = 0;
+                }
+                lastP = point;
+                points.add(point);
             }
 
             Record record = new Record();
-            record.win = winn;
+            record.win = lastP.win;
             record.createTime = log.getCreatedAt();
             pointss.add(record);
 
