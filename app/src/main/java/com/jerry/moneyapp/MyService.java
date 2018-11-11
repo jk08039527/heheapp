@@ -126,7 +126,7 @@ public class MyService extends Service {
                     }
                 }
             }
-            if (intention != GBData.VALUE_NONE) {
+            if (intention != GBData.VALUE_NONE && mBtnClickable) {
                 if (intention == data.getLast()) {
                     win += 9.7;
                 } else {
