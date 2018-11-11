@@ -105,6 +105,7 @@ public class CaluUtil {
                 }
             } else {
                 point.intention2 = ints[position - 2];
+                point.multiple2 = -point.multiple2;
             }
             // 记录当前数到第几个
             gd = 0;
@@ -123,6 +124,7 @@ public class CaluUtil {
                     point.intention3 = GBData.VALUE_NONE;
                 } else {
                     point.intention3 = ints[position - 1];
+                    point.multiple3 = -point.multiple3;
                 }
             } else {
                 point.intention3 = ints[position - 2];
@@ -143,9 +145,9 @@ public class CaluUtil {
             if (lastP != null) {
                 if (lastP.intention2 != GBData.VALUE_NONE) {
                     if (lastP.intention2 == point.current) {
-                        point.win2 = lastP.win2 + 9.7 * Math.abs(lastP.multiple2);
+                        point.win2 = lastP.win2 + 9.7 * lastP.multiple2;
                     } else {
-                        point.win2 = lastP.win2 - 10 * Math.abs(lastP.multiple2);
+                        point.win2 = lastP.win2 - 10 * lastP.multiple2;
                     }
                 } else {
                     point.win2 = lastP.win2;
@@ -169,9 +171,9 @@ public class CaluUtil {
             if (lastP != null) {
                 if (lastP.intention3 != GBData.VALUE_NONE) {
                     if (lastP.intention3 == point.current) {
-                        point.win3 = lastP.win3 + 9.7 * Math.abs(lastP.multiple3);
+                        point.win3 = lastP.win3 + 9.7 * lastP.multiple3;
                     } else {
-                        point.win3 = lastP.win3 - 10 * Math.abs(lastP.multiple3);
+                        point.win3 = lastP.win3 - 10 * lastP.multiple3;
                     }
                 } else {
                     point.win3 = lastP.win3;
