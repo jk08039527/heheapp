@@ -163,7 +163,7 @@ public class AnalyzeActivity extends AppCompatActivity {
 
     private void getData() {
         BmobQuery<MyLog> query = new BmobQuery<>();
-        query.setLimit(500).order("-updatedAt").findObjects(new FindListener<MyLog>() {
+        query.setLimit(200).order("-updatedAt").findObjects(new FindListener<MyLog>() {
             @Override
             public void done(List<MyLog> list, BmobException e) {
                 if (e != null) {
@@ -233,6 +233,9 @@ public class AnalyzeActivity extends AppCompatActivity {
                     } else {
                         point.win = lastP.win;
                     }
+                    if (point.win < -30) {
+                        break;
+                    }
                     if (lastP.intentionX != GBData.VALUE_NONE) {
                         if (lastP.intentionX == point.current) {
                             point.state = 1;
@@ -242,6 +245,8 @@ public class AnalyzeActivity extends AppCompatActivity {
                     } else {
                         point.state = lastP.state;
                     }
+                } else {
+                    paint.add(1);
                 }
                 if (LASTPOINTNUM2 > 0 && points.size() >= LASTPOINTNUM2) {
                     point.award2 = point.win2 - points.get(points.size() - LASTPOINTNUM2).win2;
