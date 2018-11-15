@@ -5,7 +5,6 @@ import java.util.LinkedList;
 
 import com.jerry.moneyapp.bean.GBData;
 import com.jerry.moneyapp.bean.Point;
-import com.jerry.moneyapp.ui.AnalyzeActivity;
 
 /**
  * Created by wzl on 2018/10/1.
@@ -92,13 +91,12 @@ public class CaluUtil {
             gd = 0;
             // 记录当前索引
             gdIndex = 0;
-            while (gd < AnalyzeActivity.OPPOSIT_COUNT && gdIndex < paint.size() - 1) {
-                point.fanzhuan++;
+            while (gdIndex < paint.size() - 1) {
                 gd += paint.get(gdIndex);
                 gdIndex++;
             }
             if (point.multiple2 > 0) {
-                if (point.gudao2 >= GUDAOLINIT2 || point.fanzhuan >= AnalyzeActivity.OPPOSIT_NUM) {
+                if (point.gudao2 >= GUDAOLINIT2) {
                     point.intention2 = GBData.VALUE_NONE;
                 } else {
                     point.intention2 = ints[position - 1];
@@ -120,7 +118,7 @@ public class CaluUtil {
                 gdIndex++;
             }
             if (point.multiple3 > 0) {
-                if (point.gudao3 >= GUDAOLINIT3 || point.fanzhuan >= AnalyzeActivity.OPPOSIT_NUM) {
+                if (point.gudao3 >= GUDAOLINIT3) {
                     point.intention3 = GBData.VALUE_NONE;
                 } else {
                     point.intention3 = ints[position - 1];

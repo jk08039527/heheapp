@@ -28,22 +28,20 @@ import cn.bmob.v3.listener.FindListener;
 
 public class AnalyzeActivity extends AppCompatActivity {
 
-    public static int START = 12;
+    public static int START = 14;
     public static double WHOLEWIN2 = 4.8;
     public static double WHOLEWIN3 = 5.4;
     public static int LASTPOINTNUM2 = 14;
     public static double LASTWIN2 = -10.7;
     public static int LASTPOINTNUM3 = 19;
     public static double LASTWIN3 = -8;
-    public static int OPPOSIT_COUNT = 10;
-    public static int OPPOSIT_NUM = 7;
+    public static double GIVEUPCOUNT = -42;
 
     private List<MyLog> mMyLogs = new ArrayList<>();
-    private ArrayList<Record> pointss = new ArrayList<>();
+    private ArrayList<Record> records = new ArrayList<>();
     private BaseRecyclerAdapter<Record> mAdapter;
     private TextView text;
     private PtrRecyclerView mPtrRecyclerView;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -112,26 +110,17 @@ public class AnalyzeActivity extends AppCompatActivity {
                 updateData();
             }
         });
-        EditText oppositCount = findViewById(R.id.opposit_count);
-        oppositCount.setText(String.valueOf(OPPOSIT_COUNT));
-        oppositCount.addTextChangedListener(new MyTextWatcherListener() {
+        EditText giveUpCount = findViewById(R.id.give_up_count);
+        giveUpCount.setText(String.valueOf(GIVEUPCOUNT));
+        giveUpCount.addTextChangedListener(new MyTextWatcherListener() {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                OPPOSIT_COUNT = ParseUtil.parseInt(s.toString());
-                updateData();
-            }
-        });
-        EditText oppositNum = findViewById(R.id.opposit_num);
-        oppositNum.setText(String.valueOf(OPPOSIT_NUM));
-        oppositNum.addTextChangedListener(new MyTextWatcherListener() {
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                OPPOSIT_NUM = ParseUtil.parseInt(s.toString());
+                GIVEUPCOUNT = ParseUtil.parseDouble(s.toString());
                 updateData();
             }
         });
         mPtrRecyclerView = findViewById(R.id.ptrRecyclerView);
-        mAdapter = new BaseRecyclerAdapter<Record>(this, pointss) {
+        mAdapter = new BaseRecyclerAdapter<Record>(this, records) {
             @Override
             public int getItemLayoutId(final int viewType) {
                 return R.layout.item_text;
@@ -142,7 +131,7 @@ public class AnalyzeActivity extends AppCompatActivity {
                 TextView date = holder.getView(R.id.date);
                 TextView money = holder.getView(R.id.money);
                 TextView daymoney = holder.getView(R.id.daymoney);
-                Record record = pointss.get(position);
+                Record record = records.get(position);
                 date.setText(record.createTime);
                 daymoney.setText(record.dayWin == 0 ? "" : DeviceUtil.m2(record.dayWin));
                 double win = record.win;
@@ -163,7 +152,7 @@ public class AnalyzeActivity extends AppCompatActivity {
 
     private void getData() {
         BmobQuery<MyLog> query = new BmobQuery<>();
-        query.setLimit(200).order("-updatedAt").findObjects(new FindListener<MyLog>() {
+        query.setLimit(500).order("-updatedAt").findObjects(new FindListener<MyLog>() {
             @Override
             public void done(List<MyLog> list, BmobException e) {
                 if (e != null) {
@@ -178,7 +167,7 @@ public class AnalyzeActivity extends AppCompatActivity {
     }
 
     private void updateData() {
-        pointss.clear();
+        records.clear();
         double win = 0;
         double oneMax = -99999;
         double oneMin = 99999;
@@ -233,20 +222,27 @@ public class AnalyzeActivity extends AppCompatActivity {
                     } else {
                         point.win = lastP.win;
                     }
-                    if (point.win < -30) {
-                        break;
-                    }
                     if (lastP.intentionX != GBData.VALUE_NONE) {
                         if (lastP.intentionX == point.current) {
-                            point.state = 1;
+                            if (lastP.state == 0) {
+                                point.state = 1;
+                            } else if (lastP.state == 2) {
+                                point.state = 2;
+                            }
                         } else {
-                            point.state = 2;
+                            if (lastP.state == 0) {
+                                point.state = 2;
+                            } else if (lastP.state == 2) {
+                                point.state = 1;
+                            }
                         }
                     } else {
                         point.state = lastP.state;
                     }
-                } else {
-                    paint.add(1);
+                }
+                if (point.win <= -42) {
+                    lastP = point;
+                    break;
                 }
                 if (LASTPOINTNUM2 > 0 && points.size() >= LASTPOINTNUM2) {
                     point.award2 = point.win2 - points.get(points.size() - LASTPOINTNUM2).win2;
@@ -282,7 +278,7 @@ public class AnalyzeActivity extends AppCompatActivity {
 
                 if (point.state == 0 && paint.size() > 1 && paint.get(paint.size() - 1) == 1 && paint.get(paint.size() - 2) > 1) {
                     point.intentionX = point.current;
-                    if (point.intention == point.current) {
+                    if (point.intention == point.intentionX) {
                         point.multiple++;
                     } else if (point.intention != 0) {
                         point.multiple--;
@@ -290,10 +286,18 @@ public class AnalyzeActivity extends AppCompatActivity {
                         point.intention = point.current;
                         point.multiple = 1;
                     }
-                } else if (point.state == 1 && paint.size() > 1 && paint.get(paint.size() - 1) == 1 && paint.get(paint.size() - 2) == 1) {
+                } else if (point.state == 1 && paint.size() > 1 && paint.get(paint.size() - 2) == 1) {
                     point.state = 0;
-                } else if (point.state == 2 && paint.size() > 1 && paint.get(paint.size() - 1) > 1 && paint.get(paint.size() - 2) == 1) {
-                    point.state = 0;
+                } else if (point.state == 2 && paint.size() > 1 && paint.get(paint.size() - 1) == 1 && paint.get(paint.size() - 2) > 1) {
+                    point.intentionX = point.current == GBData.VALUE_LONG ? GBData.VALUE_FENG : GBData.VALUE_LONG;
+                    if (point.intention == point.intentionX) {
+                        point.multiple++;
+                    } else if (point.intention != 0) {
+                        point.multiple--;
+                    } else {
+                        point.intention = point.current;
+                        point.multiple = 1;
+                    }
                 }
                 if (point.multiple == 0) {
                     point.intention = 0;
@@ -305,7 +309,7 @@ public class AnalyzeActivity extends AppCompatActivity {
             Record record = new Record();
             record.win = lastP.win;
             record.createTime = log.getCreatedAt();
-            pointss.add(record);
+            records.add(record);
 
             win += record.win;
             if (record.win > 0) {
@@ -319,15 +323,23 @@ public class AnalyzeActivity extends AppCompatActivity {
             if (record.win < oneMin) {
                 oneMin = record.win;
             }
+            for (Point point : points) {
+                if (point.win > totalMax) {
+                    totalMax = point.win;
+                }
+                if (point.win < totalMin) {
+                    totalMin = point.win;
+                }
+            }
         }
 
         double dayWin = 0;
-        for (int i = pointss.size() - 1; i >= 0; i--) {
-            Record record = pointss.get(i);
+        for (int i = records.size() - 1; i >= 0; i--) {
+            Record record = records.get(i);
             if (i > 0) {
-                Record last = pointss.get(i - 1);
+                Record last = records.get(i - 1);
                 if (last.createTime.substring(0, 10).equals(record.createTime.substring(0, 10))) {
-                    dayWin += last.win;
+                    dayWin += record.win;
                 } else {
                     record.dayWin = dayWin;
                     dayWin = 0;
@@ -343,7 +355,7 @@ public class AnalyzeActivity extends AppCompatActivity {
         if (winCount > 0 || defeatCount > 0) {
             double avg = win / (winCount + defeatCount);
             int sum = 0;
-            for (Record record : pointss) {
+            for (Record record : records) {
                 double oneWin = record.win;
                 if (oneWin == 0) {
                     continue;
