@@ -31,15 +31,14 @@ public class AnalyzeActivity extends AppCompatActivity {
     public static int START = 14;
     public static double WHOLEWIN2 = 4.8;
     public static double WHOLEWIN3 = 5.4;
-    public static int LASTPOINTNUM2 = 13;
+    public static int LASTPOINTNUM2 = 14;
     public static double LASTWIN2 = -10.7;
     public static int LASTPOINTNUM3 = 19;
     public static double LASTWIN3 = -8;
-    public static int OPPOSIT_COUNT = 10;
-    public static int OPPOSIT_NUM = 7;
+    public static double GIVEUPCOUNT = -42;
 
     private List<MyLog> mMyLogs = new ArrayList<>();
-    private ArrayList<Record> pointss = new ArrayList<>();
+    private ArrayList<Record> records = new ArrayList<>();
     private BaseRecyclerAdapter<Record> mAdapter;
     private TextView text;
     private PtrRecyclerView mPtrRecyclerView;
@@ -111,26 +110,17 @@ public class AnalyzeActivity extends AppCompatActivity {
                 updateData();
             }
         });
-        EditText oppositCount = findViewById(R.id.opposit_count);
-        oppositCount.setText(String.valueOf(OPPOSIT_COUNT));
-        oppositCount.addTextChangedListener(new MyTextWatcherListener() {
+        EditText giveUpCount = findViewById(R.id.give_up_count);
+        giveUpCount.setText(String.valueOf(GIVEUPCOUNT));
+        giveUpCount.addTextChangedListener(new MyTextWatcherListener() {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                OPPOSIT_COUNT = ParseUtil.parseInt(s.toString());
-                updateData();
-            }
-        });
-        EditText oppositNum = findViewById(R.id.opposit_num);
-        oppositNum.setText(String.valueOf(OPPOSIT_NUM));
-        oppositNum.addTextChangedListener(new MyTextWatcherListener() {
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                OPPOSIT_NUM = ParseUtil.parseInt(s.toString());
+                GIVEUPCOUNT = ParseUtil.parseDouble(s.toString());
                 updateData();
             }
         });
         mPtrRecyclerView = findViewById(R.id.ptrRecyclerView);
-        mAdapter = new BaseRecyclerAdapter<Record>(this, pointss) {
+        mAdapter = new BaseRecyclerAdapter<Record>(this, records) {
             @Override
             public int getItemLayoutId(final int viewType) {
                 return R.layout.item_text;
@@ -141,10 +131,10 @@ public class AnalyzeActivity extends AppCompatActivity {
                 TextView date = holder.getView(R.id.date);
                 TextView money = holder.getView(R.id.money);
                 TextView daymoney = holder.getView(R.id.daymoney);
-                Record record = pointss.get(position);
+                Record record = records.get(position);
                 date.setText(record.createTime);
                 daymoney.setText(record.dayWin == 0 ? "" : DeviceUtil.m2(record.dayWin));
-                double win = pointss.get(position).points.getLast().win;
+                double win = record.win;
                 if (win > 0) {
                     money.setTextColor(ContextCompat.getColor(AnalyzeActivity.this, android.R.color.holo_red_light));
                 } else if (win < 0) {
@@ -162,7 +152,7 @@ public class AnalyzeActivity extends AppCompatActivity {
 
     private void getData() {
         BmobQuery<MyLog> query = new BmobQuery<>();
-        query.setLimit(500).order("-updatedAt").findObjects(new FindListener<MyLog>() {
+        query.setLimit(100).order("-updatedAt").findObjects(new FindListener<MyLog>() {
             @Override
             public void done(List<MyLog> list, BmobException e) {
                 if (e != null) {
@@ -177,7 +167,7 @@ public class AnalyzeActivity extends AppCompatActivity {
     }
 
     private void updateData() {
-        pointss.clear();
+        records.clear();
         double win = 0;
         double oneMax = -99999;
         double oneMin = 99999;
@@ -233,6 +223,10 @@ public class AnalyzeActivity extends AppCompatActivity {
                         point.win = lastP.win;
                     }
                 }
+                if (point.win <= GIVEUPCOUNT) {
+                    lastP = point;
+                    break;
+                }
                 if (LASTPOINTNUM2 > 0 && points.size() >= LASTPOINTNUM2) {
                     point.award2 = point.win2 - points.get(points.size() - LASTPOINTNUM2).win2;
                 } else {
@@ -269,10 +263,9 @@ public class AnalyzeActivity extends AppCompatActivity {
                 points.add(point);
             }
             Record record = new Record();
-            record.win = points.getLast().win;
-            record.points = points;
+            record.win = lastP.win;
             record.createTime = log.getCreatedAt();
-            pointss.add(record);
+            records.add(record);
 
             win += record.win;
             if (record.win > 0) {
@@ -297,10 +290,10 @@ public class AnalyzeActivity extends AppCompatActivity {
         }
 
         double dayWin = 0;
-        for (int i = pointss.size() - 1; i >= 0; i--) {
-            Record record = pointss.get(i);
+        for (int i = records.size() - 1; i >= 0; i--) {
+            Record record = records.get(i);
             if (i > 0) {
-                Record last = pointss.get(i - 1);
+                Record last = records.get(i - 1);
                 if (last.createTime.substring(0, 10).equals(record.createTime.substring(0, 10))) {
                     dayWin += record.win;
                 } else {
@@ -318,8 +311,8 @@ public class AnalyzeActivity extends AppCompatActivity {
         if (winCount > 0 || defeatCount > 0) {
             double avg = win / (winCount + defeatCount);
             int sum = 0;
-            for (Record record : pointss) {
-                double oneWin = record.points.getLast().win;
+            for (Record record : records) {
+                double oneWin = record.win;
                 if (oneWin == 0) {
                     continue;
                 }
@@ -374,6 +367,5 @@ public class AnalyzeActivity extends AppCompatActivity {
         String createTime;
         double win;
         double dayWin;
-        LinkedList<Point> points;
     }
 }
