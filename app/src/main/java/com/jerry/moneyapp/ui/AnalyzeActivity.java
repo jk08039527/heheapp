@@ -295,7 +295,7 @@ public class AnalyzeActivity extends AppCompatActivity {
                     } else if (point.intention != 0) {
                         point.multiple--;
                     } else {
-                        point.intention = point.current;
+                        point.intention = point.intentionX;
                         point.multiple = 1;
                     }
                 }
