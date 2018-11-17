@@ -239,6 +239,8 @@ public class AnalyzeActivity extends AppCompatActivity {
                     } else {
                         point.state = lastP.state;
                     }
+                } else {
+                    paint.add(1);
                 }
                 if (point.win <= -42) {
                     lastP = point;
