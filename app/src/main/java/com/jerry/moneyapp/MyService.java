@@ -148,9 +148,15 @@ public class MyService extends Service {
                     }
                     if (lastP.intention != GBData.VALUE_NONE) {
                         if (lastP.intention == point.current) {
+                            if (mBtnClickable) {
+                                win += 9.7;
+                            }
                             point.win = lastP.win + 9.7 * Math.abs(lastP.multiple);
                         } else {
                             point.win = lastP.win - 10 * Math.abs(lastP.multiple);
+                            if (mBtnClickable) {
+                                win -= 10;
+                            }
                         }
                     } else {
                         point.win = lastP.win;
@@ -229,6 +235,7 @@ public class MyService extends Service {
             if (mBtnClickable) {
                 exeCall(lastP.intentionn, lastP.multiplen);
             }
+            showJingsheng();
             if (data.size() >= 69) {
                 BmobQuery<MyLog> query = new BmobQuery<>();
                 query.setLimit(1).order("-updatedAt").findObjects(new FindListener<MyLog>() {
@@ -308,7 +315,7 @@ public class MyService extends Service {
         if (lastP == null) {
             return;
         }
-        mCallback.showText(new StringBuilder().append("\n模拟净胜：").append(DeviceUtil.m2(lastP.winn)).append("，")
+        mCallback.showText(new StringBuilder().append("\n模拟净胜：").append(DeviceUtil.m2(lastP.win)).append("，")
                 .append("\n实净胜：").append(DeviceUtil.m2(win))
                 .append("\n下一局：").append(getIntentStr(lastP.intentionn, lastP.multiplen)).toString());
     }
