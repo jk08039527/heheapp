@@ -226,7 +226,7 @@ public class MyService extends Service {
             if (lastP == null) {
                 return false;
             }
-            if (mBtnClickable && lastP.winn >= -30) {
+            if (mBtnClickable) {
                 exeCall(lastP.intentionn, lastP.multiplen);
             }
             if (data.size() >= 69) {
