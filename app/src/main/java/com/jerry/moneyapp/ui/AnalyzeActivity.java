@@ -186,6 +186,8 @@ public class AnalyzeActivity extends AppCompatActivity {
         double totalMin = 99999;
         int winCount = 0;//胜场数
         int defeatCount = 0;//负场数
+        int dayWinCount = 0;//负场数
+        int dayDefeatCount = 0;//负场数
         for (MyLog log : mMyLogs) {
             LinkedList<Integer> integers = log.getData();
             LinkedList<Integer> paint = new LinkedList<>();
@@ -366,16 +368,27 @@ public class AnalyzeActivity extends AppCompatActivity {
                     dayWin += record.win;
                 } else {
                     record.dayWin = dayWin;
+                    if (dayWin > 0) {
+                        dayWinCount++;
+                    } else if (dayWin < 0) {
+                        dayDefeatCount++;
+                    }
                     dayWin = 0;
                 }
             } else {
                 record.dayWin = dayWin;
+                if (dayWin > 0) {
+                    dayWinCount++;
+                } else if (dayWin < 0) {
+                    dayDefeatCount++;
+                }
             }
         }
         mAdapter.notifyDataSetChanged();
 
         double cart = 0;
         double winRate = 0;
+        double dayWinRate = 0;
         if (winCount > 0 || defeatCount > 0) {
             double avg = win / (winCount + defeatCount);
             int sum = 0;
@@ -389,8 +402,12 @@ public class AnalyzeActivity extends AppCompatActivity {
             cart = Math.sqrt(sum / (winCount + defeatCount));
             winRate = (double) winCount / (winCount + defeatCount);
         }
+        if (dayWinCount > 0 || dayDefeatCount > 0) {
+            dayWinRate = (double) dayWinCount / (dayWinCount + dayDefeatCount);
+        }
         text.setText(new StringBuilder("总净胜：").append(DeviceUtil.m2(win))
                 .append("，胜率：").append(DeviceUtil.m2p(winRate))
+                .append("，日胜率：").append(DeviceUtil.m2p(dayWinRate))
                 .append("，最多胜：").append(DeviceUtil.m2(oneMax))
                 .append("，最多输：").append(DeviceUtil.m2(oneMin))
                 .append("，峰值：").append(DeviceUtil.m2(totalMax))
