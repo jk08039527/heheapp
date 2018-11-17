@@ -30,11 +30,6 @@
             android:id="@+id/et_totlewin3"
             style="@style/et"
             android:hint="总净胜3" />
-
-        <EditText
-            android:id="@+id/give_up_count"
-            style="@style/et"
-            android:hint="输多少弃板" />
     </LinearLayout>
 
     <LinearLayout
@@ -63,6 +58,23 @@
             style="@style/et"
             android:hint="近净胜3" />
 
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="35dp"
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/give_up_count"
+            style="@style/et"
+            android:hint="输多少弃板" />
+
+
+        <EditText
+            android:id="@+id/give_up_countx"
+            style="@style/et"
+            android:hint="输多少弃板X" />
     </LinearLayout>
 
     <com.jerry.moneyapp.ptrlib.widget.PtrRecyclerView

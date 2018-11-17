@@ -117,16 +117,16 @@ public class MyService extends Service {
                     } else {
                         point.win3 = lastP.win3;
                     }
-                    if (lastP.intention != GBData.VALUE_NONE) {
-                        if (lastP.intention == point.current) {
-                            point.win = lastP.win + 9.7 * Math.abs(lastP.multiple);
+                    if (lastP.intentionn != GBData.VALUE_NONE) {
+                        if (lastP.intentionn == point.current) {
+                            point.winn = lastP.winn + 9.7 * Math.abs(lastP.multiplen);
                         } else {
-                            point.win = lastP.win - 10 * Math.abs(lastP.multiple);
+                            point.winn = lastP.winn - 10 * Math.abs(lastP.multiplen);
                         }
                     } else {
-                        point.win = lastP.win;
+                        point.winn = lastP.winn;
                     }
-                    if (point.win < -30) {
+                    if (point.winn < -30) {
                         break;
                     }
                     if (lastP.intentionX != GBData.VALUE_NONE) {
@@ -160,36 +160,36 @@ public class MyService extends Service {
                     if (j > AnalyzeActivity.START && point.award2 >= AnalyzeActivity.LASTWIN2 && point.award3 >= AnalyzeActivity.LASTWIN3
                             && point.win2 > AnalyzeActivity.WHOLEWIN2 && point.win3 > AnalyzeActivity.WHOLEWIN3) {
                         if (point.currentType == 2 && point.intention2 != GBData.VALUE_NONE) {
-                            point.intention = point.intention2;
-                            point.multiple = point.multiple2;
+                            point.intentionn = point.intention2;
+                            point.multiplen = point.multiple2;
                         } else if (point.currentType == 3 && point.intention3 != GBData.VALUE_NONE) {
-                            point.intention = point.intention3;
-                            point.multiple = point.multiple3;
+                            point.intentionn = point.intention3;
+                            point.multiplen = point.multiple3;
                         } else {
-                            point.intention = GBData.VALUE_NONE;
+                            point.intentionn = GBData.VALUE_NONE;
                         }
                     } else {
-                        point.intention = GBData.VALUE_NONE;
+                        point.intentionn = GBData.VALUE_NONE;
                     }
                 }
 
                 if (point.state == 0 && paint.size() > 1 && paint.get(paint.size() - 1) == 1 && paint.get(paint.size() - 2) > 1) {
                     point.intentionX = point.current;
-                    if (point.intention == point.current) {
-                        point.multiple++;
-                    } else if (point.intention != 0) {
-                        point.multiple--;
+                    if (point.intentionn == point.current) {
+                        point.multiplen++;
+                    } else if (point.intentionn != 0) {
+                        point.multiplen--;
                     } else {
-                        point.intention = point.current;
-                        point.multiple = 1;
+                        point.intentionn = point.current;
+                        point.multiplen = 1;
                     }
                 } else if (point.state == 1 && paint.size() > 1 && paint.get(paint.size() - 1) == 1 && paint.get(paint.size() - 2) == 1) {
                     point.state = 0;
                 } else if (point.state == 2 && paint.size() > 1 && paint.get(paint.size() - 1) > 1 && paint.get(paint.size() - 2) == 1) {
                     point.state = 0;
                 }
-                if (point.multiple == 0) {
-                    point.intention = 0;
+                if (point.multiplen == 0) {
+                    point.intentionn = 0;
                 }
                 lastP = point;
                 points.add(point);
@@ -197,8 +197,8 @@ public class MyService extends Service {
             if (lastP == null) {
                 return false;
             }
-            if (mBtnClickable && lastP.win >= -30) {
-                exeCall(lastP.intention, lastP.multiple);
+            if (mBtnClickable && lastP.winn >= -30) {
+                exeCall(lastP.intentionn, lastP.multiplen);
             }
             if (data.size() >= 69) {
                 BmobQuery<MyLog> query = new BmobQuery<>();
@@ -224,7 +224,7 @@ public class MyService extends Service {
                             }
                         }
                         Calendar now = Calendar.getInstance();
-                        sb.append(now.getTime()).append(":").append(lastP.win).append("元").append("\n");
+                        sb.append(now.getTime()).append(":").append(lastP.winn).append("元").append("\n");
                         MyLog myLog = new MyLog();
                         myLog.setLog(sb.toString());
                         myLog.setData(data);
@@ -235,7 +235,7 @@ public class MyService extends Service {
                 });
             } else {
                 Calendar now = Calendar.getInstance();
-                sb.append(now.getTime()).append(":").append(lastP.win).append("元").append("\n");
+                sb.append(now.getTime()).append(":").append(lastP.winn).append("元").append("\n");
             }
             return false;
         }
@@ -279,9 +279,9 @@ public class MyService extends Service {
         if (lastP == null) {
             return;
         }
-        mCallback.showText(new StringBuilder().append("\n模拟净胜：").append(DeviceUtil.m2(lastP.win)).append("，")
+        mCallback.showText(new StringBuilder().append("\n模拟净胜：").append(DeviceUtil.m2(lastP.winn)).append("，")
                 .append("\n实净胜：").append(DeviceUtil.m2(win))
-                .append("\n下一局：").append(getIntentStr(lastP.intention, lastP.multiple)).toString());
+                .append("\n下一局：").append(getIntentStr(lastP.intentionn, lastP.multiplen)).toString());
     }
 
     public void reset() {

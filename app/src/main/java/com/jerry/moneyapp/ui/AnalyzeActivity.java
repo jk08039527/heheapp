@@ -36,12 +36,14 @@ public class AnalyzeActivity extends AppCompatActivity {
     public static int LASTPOINTNUM3 = 19;
     public static double LASTWIN3 = -8;
     public static double GIVEUPCOUNT = -42;
+    public static double GIVEUPCOUNTX = -30;
 
     private List<MyLog> mMyLogs = new ArrayList<>();
     private ArrayList<Record> records = new ArrayList<>();
     private BaseRecyclerAdapter<Record> mAdapter;
     private TextView text;
     private PtrRecyclerView mPtrRecyclerView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -116,6 +118,15 @@ public class AnalyzeActivity extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 GIVEUPCOUNT = ParseUtil.parseDouble(s.toString());
+                updateData();
+            }
+        });
+        EditText giveUpCountX = findViewById(R.id.give_up_countx);
+        giveUpCountX.setText(String.valueOf(GIVEUPCOUNTX));
+        giveUpCountX.addTextChangedListener(new MyTextWatcherListener() {
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                GIVEUPCOUNTX = ParseUtil.parseDouble(s.toString());
                 updateData();
             }
         });
@@ -213,6 +224,35 @@ public class AnalyzeActivity extends AppCompatActivity {
                     } else {
                         point.win3 = lastP.win3;
                     }
+                    if (lastP.intentionn != GBData.VALUE_NONE) {
+                        if (lastP.intentionn == point.current) {
+                            point.winn = lastP.winn + 9.7 * Math.abs(lastP.multiplen);
+                        } else {
+                            point.winn = lastP.winn - 10 * Math.abs(lastP.multiplen);
+                        }
+                    } else {
+                        point.winn = lastP.winn;
+                    }
+                    if (lastP.intentionX != GBData.VALUE_NONE) {
+                        if (lastP.intentionX == point.current) {
+                            point.winX = lastP.winX + 9.7;
+                            if (lastP.state == 0) {
+                                point.state = 1;
+                            } else if (lastP.state == 2) {
+                                point.state = 2;
+                            }
+                        } else {
+                            point.winX = lastP.winX - 10;
+                            if (lastP.state == 0) {
+                                point.state = 2;
+                            } else if (lastP.state == 2) {
+                                point.state = 1;
+                            }
+                        }
+                    } else {
+                        point.winX = lastP.winX;
+                        point.state = lastP.state;
+                    }
                     if (lastP.intention != GBData.VALUE_NONE) {
                         if (lastP.intention == point.current) {
                             point.win = lastP.win + 9.7 * Math.abs(lastP.multiple);
@@ -222,83 +262,65 @@ public class AnalyzeActivity extends AppCompatActivity {
                     } else {
                         point.win = lastP.win;
                     }
-                    if (lastP.intentionX != GBData.VALUE_NONE) {
-                        if (lastP.intentionX == point.current) {
-                            if (lastP.state == 0) {
-                                point.state = 1;
-                            } else if (lastP.state == 2) {
-                                point.state = 2;
-                            }
-                        } else {
-                            if (lastP.state == 0) {
-                                point.state = 2;
-                            } else if (lastP.state == 2) {
-                                point.state = 1;
-                            }
-                        }
-                    } else {
-                        point.state = lastP.state;
-                    }
                 } else {
                     paint.add(1);
                 }
-                if (point.win <= -42) {
-                    lastP = point;
-                    break;
-                }
-                if (LASTPOINTNUM2 > 0 && points.size() >= LASTPOINTNUM2) {
-                    point.award2 = point.win2 - points.get(points.size() - LASTPOINTNUM2).win2;
-                } else {
-                    point.award2 = point.win2;
-                }
-                if (LASTPOINTNUM3 > 0 && points.size() >= LASTPOINTNUM3) {
-                    point.award3 = point.win3 - points.get(points.size() - LASTPOINTNUM3).win3;
-                } else {
-                    point.award3 = point.win3;
-                }
-                if (point.award2 >= point.award3) {
-                    point.currentType = 2;
-                } else {
-                    point.currentType = 3;
-                }
-                if (lastP != null) {
-                    if (j > START && point.award2 >= LASTWIN2 && point.award3 >= LASTWIN3
-                            && point.win2 > WHOLEWIN2 && point.win3 > WHOLEWIN3) {
-                        if (point.currentType == 2 && point.intention2 != GBData.VALUE_NONE) {
-                            point.intention = point.intention2;
-                            point.multiple = point.multiple2;
-                        } else if (point.currentType == 3 && point.intention3 != GBData.VALUE_NONE) {
-                            point.intention = point.intention3;
-                            point.multiple = point.multiple3;
-                        } else {
-                            point.intention = GBData.VALUE_NONE;
-                        }
+                if (point.winn > GIVEUPCOUNT) {
+                    if (LASTPOINTNUM2 > 0 && points.size() >= LASTPOINTNUM2) {
+                        point.award2 = point.win2 - points.get(points.size() - LASTPOINTNUM2).win2;
                     } else {
-                        point.intention = GBData.VALUE_NONE;
+                        point.award2 = point.win2;
+                    }
+                    if (LASTPOINTNUM3 > 0 && points.size() >= LASTPOINTNUM3) {
+                        point.award3 = point.win3 - points.get(points.size() - LASTPOINTNUM3).win3;
+                    } else {
+                        point.award3 = point.win3;
+                    }
+                    if (point.award2 >= point.award3) {
+                        point.currentType = 2;
+                    } else {
+                        point.currentType = 3;
+                    }
+                    if (lastP != null) {
+                        if (j > START && point.award2 >= LASTWIN2 && point.award3 >= LASTWIN3
+                                && point.win2 > WHOLEWIN2 && point.win3 > WHOLEWIN3) {
+                            if (point.currentType == 2 && point.intention2 != GBData.VALUE_NONE) {
+                                point.intentionn = point.intention2;
+                                point.multiplen = point.multiple2;
+                            } else if (point.currentType == 3 && point.intention3 != GBData.VALUE_NONE) {
+                                point.intentionn = point.intention3;
+                                point.multiplen = point.multiple3;
+                            } else {
+                                point.intentionn = GBData.VALUE_NONE;
+                            }
+                        } else {
+                            point.intentionn = GBData.VALUE_NONE;
+                        }
                     }
                 }
 
-                if (point.state == 0 && paint.size() > 1 && paint.get(paint.size() - 1) == 1 && paint.get(paint.size() - 2) > 1) {
-                    point.intentionX = point.current;
-                    if (point.intention == point.intentionX) {
-                        point.multiple++;
-                    } else if (point.intention != 0) {
-                        point.multiple--;
-                    } else {
-                        point.intention = point.current;
-                        point.multiple = 1;
+                if (point.winX > GIVEUPCOUNTX){
+                    if (point.state == 0 && paint.size() > 1 && paint.get(paint.size() - 1) == 1 && paint.get(paint.size() - 2) > 1) {
+                        point.intentionX = point.current;
+                    } else if (point.state == 1 && paint.size() > 1 && paint.get(paint.size() - 2) == 1) {
+                        point.state = 0;
+                    } else if (point.state == 2 && paint.size() > 1 && paint.get(paint.size() - 1) == 1 && paint.get(paint.size() - 2) > 1) {
+                        point.intentionX = point.current == GBData.VALUE_LONG ? GBData.VALUE_FENG : GBData.VALUE_LONG;
                     }
-                } else if (point.state == 1 && paint.size() > 1 && paint.get(paint.size() - 2) == 1) {
-                    point.state = 0;
-                } else if (point.state == 2 && paint.size() > 1 && paint.get(paint.size() - 1) == 1 && paint.get(paint.size() - 2) > 1) {
-                    point.intentionX = point.current == GBData.VALUE_LONG ? GBData.VALUE_FENG : GBData.VALUE_LONG;
-                    if (point.intention == point.intentionX) {
-                        point.multiple++;
-                    } else if (point.intention != 0) {
-                        point.multiple--;
+                }
+                if (point.intentionn != GBData.VALUE_NONE && point.intentionX != GBData.VALUE_NONE) {
+                    point.intention = point.intentionn;
+                    if (point.intentionn == point.intentionX) {
+                        point.multiple = point.multiplen + 1;
                     } else {
-                        point.intention = point.intentionX;
+                        point.multiple = point.multiplen - 1;
+                    }
+                } else {
+                    point.intention = point.intentionn + point.intentionX;
+                    if (point.intentionn == GBData.VALUE_NONE) {
                         point.multiple = 1;
+                    } else {
+                        point.multiple = point.multiplen;
                     }
                 }
                 if (point.multiple == 0) {
