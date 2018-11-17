@@ -36,7 +36,7 @@ public class AnalyzeActivity extends AppCompatActivity {
     public static int LASTPOINTNUM3 = 19;
     public static double LASTWIN3 = -8;
     public static double GIVEUPCOUNT = -42;
-    public static double GIVEUPCOUNTX = -30;
+    public static double GIVEUPCOUNTX = -42;
 
     private List<MyLog> mMyLogs = new ArrayList<>();
     private ArrayList<Record> records = new ArrayList<>();
