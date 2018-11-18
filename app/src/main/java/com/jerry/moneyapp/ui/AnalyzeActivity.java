@@ -189,18 +189,18 @@ public class AnalyzeActivity extends AppCompatActivity {
                 if (lastP != null) {
                     if (lastP.intention2 != GBData.VALUE_NONE) {
                         if (lastP.intention2 == point.current) {
-                            point.win2 = lastP.win2 + 9.7 * Math.abs(lastP.multiple2);
+                            point.win2 = lastP.win2 + 9.7 * lastP.multiple2;
                         } else {
-                            point.win2 = lastP.win2 - 10 * Math.abs(lastP.multiple2);
+                            point.win2 = lastP.win2 - 10 * lastP.multiple2;
                         }
                     } else {
                         point.win2 = lastP.win2;
                     }
                     if (lastP.intention3 != GBData.VALUE_NONE) {
                         if (lastP.intention3 == point.current) {
-                            point.win3 = lastP.win3 + 9.7 * Math.abs(lastP.multiple3);
+                            point.win3 = lastP.win3 + 9.7 * lastP.multiple3;
                         } else {
-                            point.win3 = lastP.win3 - 10 * Math.abs(lastP.multiple3);
+                            point.win3 = lastP.win3 - 10 * lastP.multiple3;
                         }
                     } else {
                         point.win3 = lastP.win3;
@@ -208,15 +208,15 @@ public class AnalyzeActivity extends AppCompatActivity {
                     if (lastP.intention != GBData.VALUE_NONE) {
                         if (lastP.currentType == 2) {
                             if (lastP.intention == point.current) {
-                                point.win = lastP.win + 9.7 * Math.abs(lastP.multiple2);
+                                point.win = lastP.win + 9.7 * lastP.multiple2;
                             } else {
-                                point.win = lastP.win - 10 * Math.abs(lastP.multiple2);
+                                point.win = lastP.win - 10 * lastP.multiple2;
                             }
                         } else if (lastP.currentType == 3) {
                             if (lastP.intention == point.current) {
-                                point.win = lastP.win + 9.7 * Math.abs(lastP.multiple3);
+                                point.win = lastP.win + 9.7 * lastP.multiple3;
                             } else {
-                                point.win = lastP.win - 10 * Math.abs(lastP.multiple3);
+                                point.win = lastP.win - 10 * lastP.multiple3;
                             }
                         }
                     } else {
@@ -339,18 +339,18 @@ public class AnalyzeActivity extends AppCompatActivity {
             if (lastP != null) {
                 if (lastP.intention2 != GBData.VALUE_NONE) {
                     if (lastP.intention2 == point.current) {
-                        point.win2 = lastP.win2 + 9.7 * Math.abs(lastP.multiple2);
+                        point.win2 = lastP.win2 + 9.7 * lastP.multiple2;
                     } else {
-                        point.win2 = lastP.win2 - 10 * Math.abs(lastP.multiple2);
+                        point.win2 = lastP.win2 - 10 * lastP.multiple2;
                     }
                 } else {
                     point.win2 = lastP.win2;
                 }
                 if (lastP.intention3 != GBData.VALUE_NONE) {
                     if (lastP.intention3 == point.current) {
-                        point.win3 = lastP.win3 + 9.7 * Math.abs(lastP.multiple3);
+                        point.win3 = lastP.win3 + 9.7 * lastP.multiple3;
                     } else {
-                        point.win3 = lastP.win3 - 10 * Math.abs(lastP.multiple3);
+                        point.win3 = lastP.win3 - 10 * lastP.multiple3;
                     }
                 } else {
                     point.win3 = lastP.win3;

@@ -103,6 +103,7 @@ public class CaluUtil {
                 }
             } else {
                 point.intention2 = ints[position - 2];
+                point.multiple2 = -point.multiple2;
             }
             // 记录当前数到第几个
             gd = 0;
@@ -124,6 +125,7 @@ public class CaluUtil {
                 }
             } else {
                 point.intention3 = ints[position - 2];
+                point.multiple3 = -point.multiple3;
             }
         } else {
             point.intention2 = GBData.VALUE_NONE;
