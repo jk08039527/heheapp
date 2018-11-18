@@ -198,7 +198,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.btn2:
                 if (isBind) {
-                    myService.reset();
                     return;
                 }
                 bindService(new Intent(this, MyService.class), mServiceConnection, BIND_AUTO_CREATE);

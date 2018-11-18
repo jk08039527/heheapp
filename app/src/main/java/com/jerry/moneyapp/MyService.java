@@ -76,7 +76,6 @@ public class MyService extends Service {
                 return false;
             }
             if (data.size() == 0 && length < 68) {
-                reset();
                 return false;
             }
             //点击一下空白处
@@ -88,6 +87,7 @@ public class MyService extends Service {
             for (int i = 0; i < ints.length; i++) {
                 ints[i] = data.get(i);
             }
+            lastP = null;
             for (int j = 0; j < ints.length; j++) {
                 Point point = CaluUtil.calulate(ints, j + 1, points);
                 point.current = ints[j];
@@ -195,7 +195,11 @@ public class MyService extends Service {
                         } else {
                             point.intentionn = GBData.VALUE_NONE;
                         }
+                    } else {
+                        point.intentionn = GBData.VALUE_NONE;
                     }
+                } else {
+                    point.intentionn = GBData.VALUE_NONE;
                 }
 
                 if (point.winX > AnalyzeActivity.GIVEUPCOUNTX) {
@@ -203,10 +207,13 @@ public class MyService extends Service {
                         point.intentionX = point.current;
                     } else if (point.state == 1 && paint.size() > 1 && paint.get(paint.size() - 2) == 1) {
                         point.state = 0;
-                    } else if (point.state == 2 && paint.size() > 1 && paint.get(paint.size() - 1) == 1 && paint.get(paint.size() - 2) >
-                            1) {
+                    } else if (point.state == 2 && paint.size() > 1 && paint.get(paint.size() - 1) == 1 && paint.get(paint.size() - 2) > 1) {
                         point.intentionX = point.current == GBData.VALUE_LONG ? GBData.VALUE_FENG : GBData.VALUE_LONG;
+                    } else {
+                        point.intentionX = GBData.VALUE_NONE;
                     }
+                } else {
+                    point.intentionX = GBData.VALUE_NONE;
                 }
                 if (point.intentionn != GBData.VALUE_NONE && point.intentionX != GBData.VALUE_NONE) {
                     point.intention = point.intentionn;
@@ -260,7 +267,7 @@ public class MyService extends Service {
                             }
                         }
                         Calendar now = Calendar.getInstance();
-                        sb.append(now.getTime()).append(":").append(lastP.winn).append("元").append("\n");
+                        sb.append(now.getTime()).append(":").append(lastP.win).append("元").append("\n");
                         MyLog myLog = new MyLog();
                         myLog.setLog(sb.toString());
                         myLog.setData(data);
@@ -271,7 +278,7 @@ public class MyService extends Service {
                 });
             } else {
                 Calendar now = Calendar.getInstance();
-                sb.append(now.getTime()).append(":").append(lastP.winn).append("元").append("\n");
+                sb.append(now.getTime()).append(":").append(lastP.win).append("元").append("\n");
             }
             return false;
         }
@@ -315,13 +322,12 @@ public class MyService extends Service {
         if (lastP == null) {
             return;
         }
-        mCallback.showText(new StringBuilder().append("\n模拟净胜：").append(DeviceUtil.m2(lastP.win)).append("，")
+        mCallback.showText(new StringBuilder()
+                .append("Jerry打法：").append(DeviceUtil.m2(lastP.winn)).append("，").append(getIntentStr(lastP.intentionn, lastP.multiplen))
+                .append("\nsj打法：").append(DeviceUtil.m2(lastP.winX)).append("，").append(getIntentStr(lastP.intentionX, 1))
+                .append("\n模拟净胜：").append(DeviceUtil.m2(lastP.win))
                 .append("\n实净胜：").append(DeviceUtil.m2(win))
-                .append("\n下一局：").append(getIntentStr(lastP.intentionn, lastP.multiplen)).toString());
-    }
-
-    public void reset() {
-        lastP = null;
+                .append("\t下一局：").append(getIntentStr(lastP.intention, lastP.multiple)).toString());
     }
 
     public class PlayBinder extends Binder {

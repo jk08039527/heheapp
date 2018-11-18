@@ -126,6 +126,7 @@ public class CaluUtil {
                 }
             } else {
                 point.intention3 = ints[position - 2];
+                point.intention3 = -point.intention3;
             }
         } else {
             point.intention2 = GBData.VALUE_NONE;
