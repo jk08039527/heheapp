@@ -42,6 +42,7 @@ public class AnalyzeActivity extends AppCompatActivity {
     private BaseRecyclerAdapter<Record> mAdapter;
     private TextView text;
     private PtrRecyclerView mPtrRecyclerView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -223,42 +224,39 @@ public class AnalyzeActivity extends AppCompatActivity {
                         point.win = lastP.win;
                     }
                 }
-                if (point.win <= GIVEUPCOUNT) {
-                    lastP = point;
-                    break;
-                }
-                if (LASTPOINTNUM2 > 0 && points.size() >= LASTPOINTNUM2) {
-                    point.award2 = point.win2 - points.get(points.size() - LASTPOINTNUM2).win2;
-                } else {
-                    point.award2 = point.win2;
-                }
-                if (LASTPOINTNUM3 > 0 && points.size() >= LASTPOINTNUM3) {
-                    point.award3 = point.win3 - points.get(points.size() - LASTPOINTNUM3).win3;
-                } else {
-                    point.award3 = point.win3;
-                }
-                if (point.award2 >= point.award3) {
-                    point.currentType = 2;
-                } else {
-                    point.currentType = 3;
-                }
-                if (lastP != null) {
-                    if (j > START && point.award2 >= LASTWIN2 && point.award3 >= LASTWIN3
-                            && point.win2 > WHOLEWIN2 && point.win3 > WHOLEWIN3) {
-                        if (point.currentType == 2 && point.intention2 != GBData.VALUE_NONE) {
-                            point.intention = point.intention2;
-                            point.multiple = point.multiple2;
-                        } else if (point.currentType == 3 && point.intention3 != GBData.VALUE_NONE) {
-                            point.intention = point.intention3;
-                            point.multiple = point.multiple3;
+                if (point.win > GIVEUPCOUNT) {
+                    if (LASTPOINTNUM2 > 0 && points.size() >= LASTPOINTNUM2) {
+                        point.award2 = point.win2 - points.get(points.size() - LASTPOINTNUM2).win2;
+                    } else {
+                        point.award2 = point.win2;
+                    }
+                    if (LASTPOINTNUM3 > 0 && points.size() >= LASTPOINTNUM3) {
+                        point.award3 = point.win3 - points.get(points.size() - LASTPOINTNUM3).win3;
+                    } else {
+                        point.award3 = point.win3;
+                    }
+                    if (point.award2 >= point.award3) {
+                        point.currentType = 2;
+                    } else {
+                        point.currentType = 3;
+                    }
+                    if (lastP != null) {
+                        if (j > START && point.award2 >= LASTWIN2 && point.award3 >= LASTWIN3
+                                && point.win2 > WHOLEWIN2 && point.win3 > WHOLEWIN3) {
+                            if (point.currentType == 2 && point.intention2 != GBData.VALUE_NONE) {
+                                point.intention = point.intention2;
+                                point.multiple = point.multiple2;
+                            } else if (point.currentType == 3 && point.intention3 != GBData.VALUE_NONE) {
+                                point.intention = point.intention3;
+                                point.multiple = point.multiple3;
+                            } else {
+                                point.intention = GBData.VALUE_NONE;
+                            }
                         } else {
                             point.intention = GBData.VALUE_NONE;
                         }
-                    } else {
-                        point.intention = GBData.VALUE_NONE;
                     }
                 }
-
                 lastP = point;
                 points.add(point);
             }
