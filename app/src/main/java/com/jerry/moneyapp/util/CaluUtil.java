@@ -122,7 +122,6 @@ public class CaluUtil {
                     point.intention3 = GBData.VALUE_NONE;
                 } else {
                     point.intention3 = ints[position - 1];
-                    point.multiple3 = -point.multiple3;
                 }
             } else {
                 point.intention3 = ints[position - 2];
