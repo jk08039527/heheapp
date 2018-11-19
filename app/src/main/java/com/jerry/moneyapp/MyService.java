@@ -240,7 +240,7 @@ public class MyService extends Service {
                 return false;
             }
             if (mBtnClickable) {
-                exeCall(lastP.intentionn, lastP.multiplen);
+                exeCall(lastP.intention, lastP.multiple);
             }
             showJingsheng();
             if (data.size() >= 69) {
