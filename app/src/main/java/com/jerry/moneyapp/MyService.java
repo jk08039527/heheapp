@@ -34,7 +34,6 @@ import cn.bmob.v3.listener.FindListener;
 
 public class MyService extends Service {
 
-    private double win;//净胜
     private static final int LEFT = 12;//17
     private static final int RIGHT = 1068;//144
     private static final int TOP = 470;//610
@@ -148,15 +147,9 @@ public class MyService extends Service {
                     }
                     if (lastP.intention != GBData.VALUE_NONE) {
                         if (lastP.intention == point.current) {
-                            if (mBtnClickable) {
-                                win += 9.7;
-                            }
                             point.win = lastP.win + 9.7 * Math.abs(lastP.multiple);
                         } else {
                             point.win = lastP.win - 10 * Math.abs(lastP.multiple);
-                            if (mBtnClickable) {
-                                win -= 10;
-                            }
                         }
                     } else {
                         point.win = lastP.win;
@@ -239,7 +232,7 @@ public class MyService extends Service {
             if (lastP == null) {
                 return false;
             }
-            if (mBtnClickable) {
+            if (mBtnClickable && lastP.intention != GBData.VALUE_NONE) {
                 exeCall(lastP.intention, lastP.multiple);
             }
             showJingsheng();
@@ -326,7 +319,6 @@ public class MyService extends Service {
                 .append("Jerry打法：").append(DeviceUtil.m2(lastP.winn)).append("，").append(getIntentStr(lastP.intentionn, lastP.multiplen))
                 .append("\nsj打法：").append(DeviceUtil.m2(lastP.winX)).append("，").append(getIntentStr(lastP.intentionX, 1))
                 .append("\n模拟净胜：").append(DeviceUtil.m2(lastP.win))
-                .append("\n实净胜：").append(DeviceUtil.m2(win))
                 .append("\t下一局：").append(getIntentStr(lastP.intention, lastP.multiple)).toString());
     }
 
