@@ -22,7 +22,6 @@ import android.app.Service;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Binder;
-import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
@@ -364,18 +363,10 @@ public class MyService extends Service {
     private void exeCall(int type, int mutiple) {
         int clickX = type == GBData.VALUE_LONG ? (int) (width * 0.25) : (int) (width * 0.75);
         int clickY = (int) (height * 0.9);
-        new CountDownTimer(500 * (Math.abs(mutiple) + 1), 500) {
-
-            @Override
-            public void onTick(final long millisUntilFinished) {
-                execShellCmd("input tap " + clickX + " " + clickY);
-            }
-
-            @Override
-            public void onFinish() {
-                execShellCmd("input tap " + ASSIABLEX + " " + ASSIABLEY);
-            }
-        }.start();
+        for (int i = 0; i < mutiple; i++) {
+            mWeakHandler.postDelayed(() -> execShellCmd("input tap " + clickX + " " + clickY), 500 * i);
+        }
+        mWeakHandler.postDelayed(() -> execShellCmd("input tap " + ASSIABLEX + " " + ASSIABLEY), 500 * mutiple);
     }
 
 
