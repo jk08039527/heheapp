@@ -231,7 +231,7 @@ public class MyService extends Service {
             if (lastP == null) {
                 return false;
             }
-            if (mBtnClickable && lastP.intention != GBData.VALUE_NONE) {
+            if (mBtnClickable && lastP.intention != GBData.VALUE_NONE && data.size() < 69) {
                 exeCall(lastP.intention, lastP.multiple);
             }
             showJingsheng();
