@@ -362,24 +362,23 @@ public class AnalyzeActivity extends AppCompatActivity {
         double dayWin = 0;
         for (int i = records.size() - 1; i >= 0; i--) {
             Record record = records.get(i);
+            dayWin += record.win;
             if (i > 0) {
                 Record last = records.get(i - 1);
-                if (last.createTime.substring(0, 10).equals(record.createTime.substring(0, 10))) {
-                    dayWin += record.win;
-                } else {
+                if (!last.createTime.substring(0, 10).equals(record.createTime.substring(0, 10))) {
                     record.dayWin = dayWin;
-                    if (dayWin > 0) {
+                    if (record.dayWin > 0) {
                         dayWinCount++;
-                    } else if (dayWin < 0) {
+                    } else if (record.dayWin < 0) {
                         dayDefeatCount++;
                     }
                     dayWin = 0;
                 }
             } else {
                 record.dayWin = dayWin;
-                if (dayWin > 0) {
+                if (record.dayWin > 0) {
                     dayWinCount++;
-                } else if (dayWin < 0) {
+                } else if (record.dayWin < 0) {
                     dayDefeatCount++;
                 }
             }
