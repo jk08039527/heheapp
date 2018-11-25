@@ -82,6 +82,25 @@
             android:hint="输多少弃板S" />
     </LinearLayout>
 
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="35dp"
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/stop_count"
+            style="@style/et"
+            android:hint="连输多少次弃板" />
+
+
+        <EditText
+            android:id="@+id/stop_countx"
+            style="@style/et"
+            android:hint="连输多少次弃板X" />
+
+    </LinearLayout>
+
     <com.jerry.moneyapp.ptrlib.widget.PtrRecyclerView
         android:id="@+id/ptrRecyclerView"
         android:layout_width="match_parent"

@@ -55,6 +55,8 @@ public class MyService extends Service {
     private Callback mCallback;
     private StringBuilder sb = new StringBuilder();
     private Point lastP;
+    private int stopCount = 0;
+    private int stopCountx = 0;
 
     protected WeakHandler mWeakHandler = new WeakHandler(new Handler.Callback() {
 
@@ -118,8 +120,10 @@ public class MyService extends Service {
                     if (lastP.intentionn != GBData.VALUE_NONE) {
                         if (lastP.intentionn == point.current) {
                             point.winn = lastP.winn + 9.7 * Math.abs(lastP.multiplen);
+                            stopCount = 0;
                         } else {
                             point.winn = lastP.winn - 10 * Math.abs(lastP.multiplen);
+                            stopCount++;
                         }
                     } else {
                         point.winn = lastP.winn;
@@ -132,6 +136,7 @@ public class MyService extends Service {
                             } else if (lastP.state == 2) {
                                 point.state = 2;
                             }
+                            stopCountx = 0;
                         } else {
                             point.winX = lastP.winX - 10;
                             if (lastP.state == 0) {
@@ -139,6 +144,7 @@ public class MyService extends Service {
                             } else if (lastP.state == 2) {
                                 point.state = 1;
                             }
+                            stopCountx++;
                         }
                     } else {
                         point.winX = lastP.winX;
@@ -156,7 +162,7 @@ public class MyService extends Service {
                 } else {
                     paint.add(1);
                 }
-                if (point.winn > AnalyzeActivity.GIVEUPCOUNT) {
+                if (point.winn > AnalyzeActivity.GIVEUPCOUNT && stopCount < AnalyzeActivity.STOPCOUNT) {
                     if (AnalyzeActivity.LASTPOINTNUM2 > 0 && points.size() >= AnalyzeActivity.LASTPOINTNUM2) {
                         point.award2 = point.win2 - points.get(points.size() - AnalyzeActivity.LASTPOINTNUM2).win2;
                     } else {
@@ -193,8 +199,11 @@ public class MyService extends Service {
                 } else {
                     point.intentionn = GBData.VALUE_NONE;
                 }
+                if (point.multiplen > 1 && point.winn - 10 * point.multiplen < AnalyzeActivity.GIVEUPCOUNT) {
+                    point.multiplen = 1;
+                }
 
-                if (point.winX > AnalyzeActivity.GIVEUPCOUNTX) {
+                if (point.winX > AnalyzeActivity.GIVEUPCOUNTX && stopCount < AnalyzeActivity.STOPCOUNT) {
                     if (point.state == 0 && paint.size() > 1 && paint.get(paint.size() - 1) == 1 && paint.get(paint.size() - 2) > 1) {
                         point.intentionX = point.current;
                     } else if (point.state == 1 && paint.size() > 1 && paint.get(paint.size() - 2) == 1) {
@@ -224,6 +233,8 @@ public class MyService extends Service {
                 }
                 if (point.multiple == 0) {
                     point.intention = 0;
+                } else if (point.multiple > 1 && point.win - 10 * point.multiple < AnalyzeActivity.GIVEUPCOUNTS) {
+                    point.multiple = 1;
                 }
                 lastP = point;
                 points.add(point);

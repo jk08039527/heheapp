@@ -38,6 +38,8 @@ public class AnalyzeActivity extends AppCompatActivity {
     public static double GIVEUPCOUNT = -42;
     public static double GIVEUPCOUNTX = -42;
     public static double GIVEUPCOUNTS = -61;
+    public static int STOPCOUNT = 4;
+    public static int STOPCOUNTX = 5;
 
     private List<MyLog> mMyLogs = new ArrayList<>();
     private ArrayList<Record> records = new ArrayList<>();
@@ -140,6 +142,24 @@ public class AnalyzeActivity extends AppCompatActivity {
                 updateData();
             }
         });
+        EditText stopCount = findViewById(R.id.stop_count);
+        stopCount.setText(String.valueOf(STOPCOUNT));
+        stopCount.addTextChangedListener(new MyTextWatcherListener() {
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                STOPCOUNT = ParseUtil.parseInt(s.toString());
+                updateData();
+            }
+        });
+        EditText stopCountx = findViewById(R.id.stop_countx);
+        stopCountx.setText(String.valueOf(STOPCOUNTX));
+        stopCountx.addTextChangedListener(new MyTextWatcherListener() {
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                STOPCOUNTX = ParseUtil.parseInt(s.toString());
+                updateData();
+            }
+        });
         mPtrRecyclerView = findViewById(R.id.ptrRecyclerView);
         mAdapter = new BaseRecyclerAdapter<Record>(this, records) {
             @Override
@@ -207,6 +227,8 @@ public class AnalyzeActivity extends AppCompatActivity {
                 ints[i] = integers.get(i);
             }
             Point lastP = null;
+            int stopCount = 0;
+            int stopCountx = 0;
             for (int j = 0; j < ints.length; j++) {
                 Point point = CaluUtil.calulate(ints, j + 1, points);
                 point.current = ints[j];
@@ -239,8 +261,10 @@ public class AnalyzeActivity extends AppCompatActivity {
                     if (lastP.intentionn != GBData.VALUE_NONE) {
                         if (lastP.intentionn == point.current) {
                             point.winn = lastP.winn + 9.7 * Math.abs(lastP.multiplen);
+                            stopCount = 0;
                         } else {
                             point.winn = lastP.winn - 10 * Math.abs(lastP.multiplen);
+                            stopCount++;
                         }
                     } else {
                         point.winn = lastP.winn;
@@ -253,6 +277,7 @@ public class AnalyzeActivity extends AppCompatActivity {
                             } else if (lastP.state == 2) {
                                 point.state = 2;
                             }
+                            stopCountx = 0;
                         } else {
                             point.winX = lastP.winX - 10;
                             if (lastP.state == 0) {
@@ -260,6 +285,7 @@ public class AnalyzeActivity extends AppCompatActivity {
                             } else if (lastP.state == 2) {
                                 point.state = 1;
                             }
+                            stopCountx++;
                         }
                     } else {
                         point.winX = lastP.winX;
@@ -277,7 +303,7 @@ public class AnalyzeActivity extends AppCompatActivity {
                 } else {
                     paint.add(1);
                 }
-                if (point.winn > GIVEUPCOUNT) {
+                if (point.winn > GIVEUPCOUNT && stopCount < STOPCOUNT) {
                     if (LASTPOINTNUM2 > 0 && points.size() >= LASTPOINTNUM2) {
                         point.award2 = point.win2 - points.get(points.size() - LASTPOINTNUM2).win2;
                     } else {
@@ -314,7 +340,7 @@ public class AnalyzeActivity extends AppCompatActivity {
                     }
                 }
 
-                if (point.winX > GIVEUPCOUNTX){
+                if (point.winX > GIVEUPCOUNTX && stopCountx < STOPCOUNTX) {
                     if (point.state == 0 && paint.size() > 1 && paint.get(paint.size() - 1) == 1 && paint.get(paint.size() - 2) > 1) {
                         point.intentionX = point.current;
                     } else if (point.state == 1 && paint.size() > 1 && paint.get(paint.size() - 2) == 1) {
