@@ -364,7 +364,7 @@ public class MyService extends Service {
         int clickX = type == GBData.VALUE_LONG ? (int) (width * 0.25) : (int) (width * 0.75);
         int clickY = (int) (height * 0.9);
         for (int i = 0; i < mutiple; i++) {
-            mWeakHandler.postDelayed(() -> execShellCmd("input tap " + clickX + " " + clickY), 500);
+            execShellCmd("input tap " + clickX + " " + clickY);
         }
         mWeakHandler.postDelayed(() -> execShellCmd("input tap " + ASSIABLEX + " " + ASSIABLEY), 2000);
     }
