@@ -37,6 +37,7 @@ public class AnalyzeActivity extends AppCompatActivity {
     public static double LASTWIN3 = -8;
     public static double GIVEUPCOUNT = -42;
     public static double GIVEUPCOUNTX = -42;
+    public static double GIVEUPCOUNTS = -61;
 
     private List<MyLog> mMyLogs = new ArrayList<>();
     private ArrayList<Record> records = new ArrayList<>();
@@ -127,6 +128,15 @@ public class AnalyzeActivity extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 GIVEUPCOUNTX = ParseUtil.parseDouble(s.toString());
+                updateData();
+            }
+        });
+        EditText giveUpCountS = findViewById(R.id.give_up_counts);
+        giveUpCountS.setText(String.valueOf(GIVEUPCOUNTS));
+        giveUpCountS.addTextChangedListener(new MyTextWatcherListener() {
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                GIVEUPCOUNTS = ParseUtil.parseDouble(s.toString());
                 updateData();
             }
         });
@@ -298,6 +308,9 @@ public class AnalyzeActivity extends AppCompatActivity {
                         } else {
                             point.intentionn = GBData.VALUE_NONE;
                         }
+                        if (point.multiplen > 1 && point.winn - 10 * point.multiplen < GIVEUPCOUNT) {
+                            point.multiplen = 1;
+                        }
                     }
                 }
 
@@ -327,6 +340,8 @@ public class AnalyzeActivity extends AppCompatActivity {
                 }
                 if (point.multiple == 0) {
                     point.intention = 0;
+                } else if (point.multiple > 1 && point.win - 10 * point.multiple < GIVEUPCOUNTS) {
+                    point.multiple = 1;
                 }
                 lastP = point;
                 points.add(point);
