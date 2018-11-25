@@ -55,8 +55,8 @@ public class MyService extends Service {
     private Callback mCallback;
     private StringBuilder sb = new StringBuilder();
     private Point lastP;
-    private int stopCount = 0;
-    private int stopCountx = 0;
+    private int stopCount;
+    private int stopCountx;
 
     protected WeakHandler mWeakHandler = new WeakHandler(new Handler.Callback() {
 
@@ -203,7 +203,7 @@ public class MyService extends Service {
                     point.multiplen = 1;
                 }
 
-                if (point.winX > AnalyzeActivity.GIVEUPCOUNTX && stopCount < AnalyzeActivity.STOPCOUNT) {
+                if (point.winX > AnalyzeActivity.GIVEUPCOUNTX && stopCountx < AnalyzeActivity.STOPCOUNTX) {
                     if (point.state == 0 && paint.size() > 1 && paint.get(paint.size() - 1) == 1 && paint.get(paint.size() - 2) > 1) {
                         point.intentionX = point.current;
                     } else if (point.state == 1 && paint.size() > 1 && paint.get(paint.size() - 2) == 1) {
