@@ -55,8 +55,6 @@ public class MyService extends Service {
     private Callback mCallback;
     private StringBuilder sb = new StringBuilder();
     private Point lastP;
-    private int stopCount;
-    private int stopCountx;
 
     protected WeakHandler mWeakHandler = new WeakHandler(new Handler.Callback() {
 
@@ -88,6 +86,8 @@ public class MyService extends Service {
                 ints[i] = data.get(i);
             }
             lastP = null;
+            int stopCount = 0;
+            int stopCountx = 0;
             for (int j = 0; j < ints.length; j++) {
                 Point point = CaluUtil.calulate(ints, j + 1, points);
                 point.current = ints[j];
