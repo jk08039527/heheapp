@@ -31,9 +31,9 @@ public class AnalyzeActivity extends AppCompatActivity {
     public static int START = 14;
     public static double WHOLEWIN2 = 4.8;
     public static double WHOLEWIN3 = 5.4;
-    public static int LASTPOINTNUM2 = 14;
+    public static int LASTPOINTNUM2 = 14;//13
     public static double LASTWIN2 = -10.7;
-    public static int LASTPOINTNUM3 = 19;
+    public static int LASTPOINTNUM3 = 19;//6
     public static double LASTWIN3 = -8;
     public static double GIVEUPCOUNT = -42;
     public static double GIVEUPCOUNTX = -42;
@@ -228,7 +228,6 @@ public class AnalyzeActivity extends AppCompatActivity {
             }
             Point lastP = null;
             int stopCount = 0;
-            int stopCountx = 0;
             for (int j = 0; j < ints.length; j++) {
                 Point point = CaluUtil.calulate(ints, j + 1, points);
                 point.current = ints[j];
@@ -258,44 +257,13 @@ public class AnalyzeActivity extends AppCompatActivity {
                     } else {
                         point.win3 = lastP.win3;
                     }
-                    if (lastP.intentionn != GBData.VALUE_NONE) {
-                        if (lastP.intentionn == point.current) {
-                            point.winn = lastP.winn + 9.7 * Math.abs(lastP.multiplen);
-                            stopCount = 0;
-                        } else {
-                            point.winn = lastP.winn - 10 * Math.abs(lastP.multiplen);
-                            stopCount++;
-                        }
-                    } else {
-                        point.winn = lastP.winn;
-                    }
-                    if (lastP.intentionX != GBData.VALUE_NONE) {
-                        if (lastP.intentionX == point.current) {
-                            point.winX = lastP.winX + 9.7;
-                            if (lastP.state == 0) {
-                                point.state = 1;
-                            } else if (lastP.state == 2) {
-                                point.state = 2;
-                            }
-                            stopCountx = 0;
-                        } else {
-                            point.winX = lastP.winX - 10;
-                            if (lastP.state == 0) {
-                                point.state = 2;
-                            } else if (lastP.state == 2) {
-                                point.state = 1;
-                            }
-                            stopCountx++;
-                        }
-                    } else {
-                        point.winX = lastP.winX;
-                        point.state = lastP.state;
-                    }
                     if (lastP.intention != GBData.VALUE_NONE) {
                         if (lastP.intention == point.current) {
                             point.win = lastP.win + 9.7 * Math.abs(lastP.multiple);
+                            stopCount = 0;
                         } else {
                             point.win = lastP.win - 10 * Math.abs(lastP.multiple);
+                            stopCount++;
                         }
                     } else {
                         point.win = lastP.win;
@@ -303,7 +271,7 @@ public class AnalyzeActivity extends AppCompatActivity {
                 } else {
                     paint.add(1);
                 }
-                if (point.winn > GIVEUPCOUNT && stopCount < STOPCOUNT) {
+                if (point.win > GIVEUPCOUNT && stopCount < STOPCOUNT) {
                     if (LASTPOINTNUM2 > 0 && points.size() >= LASTPOINTNUM2) {
                         point.award2 = point.win2 - points.get(points.size() - LASTPOINTNUM2).win2;
                     } else {
@@ -323,50 +291,20 @@ public class AnalyzeActivity extends AppCompatActivity {
                         if (j > START && point.award2 >= LASTWIN2 && point.award3 >= LASTWIN3
                                 && point.win2 > WHOLEWIN2 && point.win3 > WHOLEWIN3) {
                             if (point.currentType == 2 && point.intention2 != GBData.VALUE_NONE) {
-                                point.intentionn = point.intention2;
-                                point.multiplen = point.multiple2;
+                                point.intention = point.intention2;
+                                point.multiple = point.multiple2;
                             } else if (point.currentType == 3 && point.intention3 != GBData.VALUE_NONE) {
-                                point.intentionn = point.intention3;
-                                point.multiplen = point.multiple3;
+                                point.intention = point.intention3;
+                                point.multiple = point.multiple3;
                             } else {
-                                point.intentionn = GBData.VALUE_NONE;
+                                point.intention = GBData.VALUE_NONE;
                             }
                         } else {
-                            point.intentionn = GBData.VALUE_NONE;
-                        }
-                        if (point.multiplen > 1 && point.winn - 10 * point.multiplen < GIVEUPCOUNT) {
-                            point.multiplen = 1;
+                            point.intention = GBData.VALUE_NONE;
                         }
                     }
                 }
-
-                if (point.winX > GIVEUPCOUNTX && stopCountx < STOPCOUNTX) {
-                    if (point.state == 0 && paint.size() > 1 && paint.get(paint.size() - 1) == 1 && paint.get(paint.size() - 2) > 1) {
-                        point.intentionX = point.current;
-                    } else if (point.state == 1 && paint.size() > 1 && paint.get(paint.size() - 2) == 1) {
-                        point.state = 0;
-                    } else if (point.state == 2 && paint.size() > 1 && paint.get(paint.size() - 1) == 1 && paint.get(paint.size() - 2) > 1) {
-                        point.intentionX = point.current == GBData.VALUE_LONG ? GBData.VALUE_FENG : GBData.VALUE_LONG;
-                    }
-                }
-                if (point.intentionn != GBData.VALUE_NONE && point.intentionX != GBData.VALUE_NONE) {
-                    point.intention = point.intentionn;
-                    if (point.intentionn == point.intentionX) {
-                        point.multiple = point.multiplen + 1;
-                    } else {
-                        point.multiple = point.multiplen - 1;
-                    }
-                } else {
-                    point.intention = point.intentionn + point.intentionX;
-                    if (point.intentionn == GBData.VALUE_NONE) {
-                        point.multiple = 1;
-                    } else {
-                        point.multiple = point.multiplen;
-                    }
-                }
-                if (point.multiple == 0) {
-                    point.intention = 0;
-                } else if (point.multiple > 1 && point.win - 10 * point.multiple < GIVEUPCOUNTS) {
+                if (point.multiple > 1 && point.win - 10 * point.multiple < GIVEUPCOUNTS) {
                     point.multiple = 1;
                 }
                 lastP = point;
