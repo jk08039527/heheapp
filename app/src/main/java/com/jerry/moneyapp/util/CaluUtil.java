@@ -185,4 +185,76 @@ public class CaluUtil {
         }
         return lastP.win3;
     }
+
+    /**
+     * int 数组的最大值
+     */
+    public static int maxOfArray(int[] arr) {
+        if (arr == null) {
+            return 0;
+        }
+
+        if (arr.length == 1) {
+            return arr[0];
+        }
+
+        int size = arr.length;
+        int max = arr[0];
+        for (int i = 1; i < size; i++) {
+            max = Math.max(max, arr[i]);
+        }
+        return max;
+    }
+
+    /**
+     * double 数组的最大值
+     */
+    public static double maxOfArray(double[] arr) {
+        if (arr == null) {
+            return 0;
+        }
+
+        if (arr.length == 1) {
+            return arr[0];
+        }
+
+        int size = arr.length;
+        double max = arr[0];
+        for (int i = 1; i < size; i++) {
+            max = Math.max(max, arr[i]);
+        }
+        return max;
+    }
+
+    /**
+     * double 数组的最小值
+     */
+    public static double minOfArray(final double[] arr) {
+        return minOfArray(arr, false);
+    }
+
+    /**
+     * double 数组的最小值
+     *
+     * @param outZero 是否求非零最小值
+     */
+    public static double minOfArray(double[] arr, boolean outZero) {
+        if (arr == null) {
+            return 0;
+        }
+        double min = Double.MAX_VALUE;
+        if (outZero) {
+            for (double anArr : arr) {
+                if (anArr == 0) {
+                    continue;
+                }
+                min = Math.min(min, anArr);
+            }
+        } else {
+            for (double anArr : arr) {
+                min = Math.min(min, anArr);
+            }
+        }
+        return min == Double.MAX_VALUE ? 0 : min;
+    }
 }

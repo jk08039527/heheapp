@@ -29,11 +29,11 @@ import cn.bmob.v3.listener.FindListener;
 public class AnalyzeActivity extends AppCompatActivity {
 
     public static int START = 14;
-    public static double WHOLEWIN2 = 4.8;
-    public static double WHOLEWIN3 = 5.4;
-    public static int LASTPOINTNUM2 = 14;//13
+    public static double WHOLEWIN2 = 4;
+    public static double WHOLEWIN3 = 4;
+    public static int LASTPOINTNUM2 = 14;
     public static double LASTWIN2 = -10.7;
-    public static int LASTPOINTNUM3 = 19;//6
+    public static int LASTPOINTNUM3 = 19;
     public static double LASTWIN3 = -8;
     public static double GIVEUPCOUNT = -42;
     public static double GIVEUPCOUNTX = -42;
@@ -218,10 +218,13 @@ public class AnalyzeActivity extends AppCompatActivity {
         int defeatCount = 0;//负场数
         int dayWinCount = 0;//负场数
         int dayDefeatCount = 0;//负场数
+        int state = 0;
+        LinkedList<ArrayList<Double>> ddd = new LinkedList<>();
         for (MyLog log : mMyLogs) {
             LinkedList<Integer> integers = log.getData();
             LinkedList<Integer> paint = new LinkedList<>();
             LinkedList<Point> points = new LinkedList<>();
+            ArrayList<Double> dd = new ArrayList<>();
             int[] ints = new int[integers.size()];
             for (int i = 0; i < ints.length; i++) {
                 ints[i] = integers.get(i);
@@ -272,13 +275,13 @@ public class AnalyzeActivity extends AppCompatActivity {
                     paint.add(1);
                 }
                 if (point.win > GIVEUPCOUNT && stopCount < STOPCOUNT) {
-                    if (LASTPOINTNUM2 > 0 && points.size() >= LASTPOINTNUM2) {
-                        point.award2 = point.win2 - points.get(points.size() - LASTPOINTNUM2).win2;
+                    if (points.size() >= 14) {
+                        point.award2 = point.win2 - points.get(points.size() - 14).win2;
                     } else {
                         point.award2 = point.win2;
                     }
-                    if (LASTPOINTNUM3 > 0 && points.size() >= LASTPOINTNUM3) {
-                        point.award3 = point.win3 - points.get(points.size() - LASTPOINTNUM3).win3;
+                    if (points.size() >= 19) {
+                        point.award3 = point.win3 - points.get(points.size() - 19).win3;
                     } else {
                         point.award3 = point.win3;
                     }
@@ -310,9 +313,178 @@ public class AnalyzeActivity extends AppCompatActivity {
                 lastP = point;
                 points.add(point);
             }
+            dd.add(lastP.win);
+            lastP = null;
+            for (int j = 0; j < ints.length; j++) {
+                Point point = CaluUtil.calulate(ints, j + 1, points);
+                point.current = ints[j];
+                if (lastP != null) {
+                    if (lastP.current == point.current && paint.size() > 0) {
+                        int temp = paint.getLast();
+                        paint.removeLast();
+                        paint.addLast(++temp);
+                    } else {
+                        paint.add(1);
+                    }
+                    if (lastP.intention2 != GBData.VALUE_NONE) {
+                        if (lastP.intention2 == point.current) {
+                            point.win2 = lastP.win2 + 9.7 * Math.abs(lastP.multiple2);
+                        } else {
+                            point.win2 = lastP.win2 - 10 * Math.abs(lastP.multiple2);
+                        }
+                    } else {
+                        point.win2 = lastP.win2;
+                    }
+                    if (lastP.intention3 != GBData.VALUE_NONE) {
+                        if (lastP.intention3 == point.current) {
+                            point.win3 = lastP.win3 + 9.7 * Math.abs(lastP.multiple3);
+                        } else {
+                            point.win3 = lastP.win3 - 10 * Math.abs(lastP.multiple3);
+                        }
+                    } else {
+                        point.win3 = lastP.win3;
+                    }
+                    if (lastP.intention != GBData.VALUE_NONE) {
+                        if (lastP.intention == point.current) {
+                            point.win = lastP.win + 9.7 * Math.abs(lastP.multiple);
+                            stopCount = 0;
+                        } else {
+                            point.win = lastP.win - 10 * Math.abs(lastP.multiple);
+                            stopCount++;
+                        }
+                    } else {
+                        point.win = lastP.win;
+                    }
+                } else {
+                    paint.add(1);
+                }
+                if (point.win > GIVEUPCOUNT && stopCount < STOPCOUNT) {
+                    if (points.size() >= 13) {
+                        point.award2 = point.win2 - points.get(points.size() - 13).win2;
+                    } else {
+                        point.award2 = point.win2;
+                    }
+                    if (points.size() >= 6) {
+                        point.award3 = point.win3 - points.get(points.size() - 6).win3;
+                    } else {
+                        point.award3 = point.win3;
+                    }
+                    if (point.award2 >= point.award3) {
+                        point.currentType = 2;
+                    } else {
+                        point.currentType = 3;
+                    }
+                    if (lastP != null) {
+                        if (j > START && point.award2 >= LASTWIN2 && point.award3 >= LASTWIN3
+                                && point.win2 > WHOLEWIN2 && point.win3 > WHOLEWIN3) {
+                            if (point.currentType == 2 && point.intention2 != GBData.VALUE_NONE) {
+                                point.intention = point.intention2;
+                                point.multiple = point.multiple2;
+                            } else if (point.currentType == 3 && point.intention3 != GBData.VALUE_NONE) {
+                                point.intention = point.intention3;
+                                point.multiple = point.multiple3;
+                            } else {
+                                point.intention = GBData.VALUE_NONE;
+                            }
+                        } else {
+                            point.intention = GBData.VALUE_NONE;
+                        }
+                    }
+                }
+                if (point.multiple > 1 && point.win - 10 * point.multiple < GIVEUPCOUNTS) {
+                    point.multiple = 1;
+                }
+                lastP = point;
+                points.add(point);
+            }
+            dd.add(lastP.win);
+            lastP = null;
+            for (int j = 0; j < ints.length; j++) {
+                Point point = CaluUtil.calulate(ints, j + 1, points);
+                point.current = ints[j];
+                if (lastP != null) {
+                    if (lastP.current == point.current && paint.size() > 0) {
+                        int temp = paint.getLast();
+                        paint.removeLast();
+                        paint.addLast(++temp);
+                    } else {
+                        paint.add(1);
+                    }
+                    if (lastP.intention2 != GBData.VALUE_NONE) {
+                        if (lastP.intention2 == point.current) {
+                            point.win2 = lastP.win2 + 9.7 * Math.abs(lastP.multiple2);
+                        } else {
+                            point.win2 = lastP.win2 - 10 * Math.abs(lastP.multiple2);
+                        }
+                    } else {
+                        point.win2 = lastP.win2;
+                    }
+                    if (lastP.intention3 != GBData.VALUE_NONE) {
+                        if (lastP.intention3 == point.current) {
+                            point.win3 = lastP.win3 + 9.7 * Math.abs(lastP.multiple3);
+                        } else {
+                            point.win3 = lastP.win3 - 10 * Math.abs(lastP.multiple3);
+                        }
+                    } else {
+                        point.win3 = lastP.win3;
+                    }
+                    if (lastP.intention != GBData.VALUE_NONE) {
+                        if (lastP.intention == point.current) {
+                            point.win = lastP.win + 9.7 * Math.abs(lastP.multiple);
+                            stopCount = 0;
+                        } else {
+                            point.win = lastP.win - 10 * Math.abs(lastP.multiple);
+                            stopCount++;
+                        }
+                    } else {
+                        point.win = lastP.win;
+                    }
+                } else {
+                    paint.add(1);
+                }
+                if (point.win > GIVEUPCOUNT && stopCount < STOPCOUNT) {
+                    if (points.size() >= 14) {
+                        point.award2 = point.win2 - points.get(points.size() - 13).win2;
+                    } else {
+                        point.award2 = point.win2;
+                    }
+                    if (points.size() >= 6) {
+                        point.award3 = point.win3 - points.get(points.size() - 6).win3;
+                    } else {
+                        point.award3 = point.win3;
+                    }
+                    if (point.award2 >= point.award3) {
+                        point.currentType = 2;
+                    } else {
+                        point.currentType = 3;
+                    }
+                    if (lastP != null) {
+                        if (j > START && point.award2 >= LASTWIN2 && point.award3 >= LASTWIN3
+                                && point.win2 > WHOLEWIN2 && point.win3 > 55.4) {
+                            if (point.currentType == 2 && point.intention2 != GBData.VALUE_NONE) {
+                                point.intention = point.intention2;
+                                point.multiple = point.multiple2;
+                            } else if (point.currentType == 3 && point.intention3 != GBData.VALUE_NONE) {
+                                point.intention = point.intention3;
+                                point.multiple = point.multiple3;
+                            } else {
+                                point.intention = GBData.VALUE_NONE;
+                            }
+                        } else {
+                            point.intention = GBData.VALUE_NONE;
+                        }
+                    }
+                }
+                if (point.multiple > 1 && point.win - 10 * point.multiple < GIVEUPCOUNTS) {
+                    point.multiple = 1;
+                }
+                lastP = point;
+                points.add(point);
+            }
+            dd.add(lastP.win);
 
             Record record = new Record();
-            record.win = lastP.win;
+            record.win = state == 0 ? dd.get(0) : (state == 1 ? dd.get(1) : dd.get(2));
             record.createTime = log.getCreatedAt();
             records.add(record);
 
@@ -334,6 +506,26 @@ public class AnalyzeActivity extends AppCompatActivity {
                 }
                 if (point.win < totalMin) {
                     totalMin = point.win;
+                }
+            }
+
+            ddd.addFirst(dd);
+            if (ddd.size() > STOPCOUNTX) {
+                ddd.removeLast();
+            }
+            double[] sums = new double[3];
+            for (ArrayList<Double> doubles : ddd) {
+                sums[0] += doubles.get(0);
+                sums[1] += doubles.get(1);
+                sums[2] += doubles.get(2);
+            }
+            double max = CaluUtil.maxOfArray(sums);
+            double min = CaluUtil.minOfArray(sums);
+            state = 0;
+            for (int i = 0; i < sums.length; i++) {
+                if (sums[i] != max && sums[i] != min) {
+                    state = i;
+                    break;
                 }
             }
         }
