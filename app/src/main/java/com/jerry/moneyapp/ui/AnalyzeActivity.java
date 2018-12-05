@@ -455,38 +455,6 @@ public class AnalyzeActivity extends AppCompatActivity {
                 .append("，标准差：").append(DeviceUtil.m2(cart)));
     }
 
-    double[] calu(int[] ints) {
-        Point lastP = null;
-        LinkedList<Point> ps = new LinkedList<>();
-        for (int j = 0; j < ints.length; j++) {
-            Point point = CaluUtil.calulate(ints, j + 1, ps);
-            point.current = ints[j];
-            if (lastP != null) {
-                if (lastP.intention2 != GBData.VALUE_NONE) {
-                    if (lastP.intention2 == point.current) {
-                        point.win2 = lastP.win2 + 9.7 * Math.abs(lastP.multiple2);
-                    } else {
-                        point.win2 = lastP.win2 - 10 * Math.abs(lastP.multiple2);
-                    }
-                } else {
-                    point.win2 = lastP.win2;
-                }
-                if (lastP.intention3 != GBData.VALUE_NONE) {
-                    if (lastP.intention3 == point.current) {
-                        point.win3 = lastP.win3 + 9.7 * Math.abs(lastP.multiple3);
-                    } else {
-                        point.win3 = lastP.win3 - 10 * Math.abs(lastP.multiple3);
-                    }
-                } else {
-                    point.win3 = lastP.win3;
-                }
-            }
-            lastP = point;
-            ps.add(point);
-        }
-        return new double[]{lastP.win2, lastP.win3};
-    }
-
     class Record {
 
         String createTime;
