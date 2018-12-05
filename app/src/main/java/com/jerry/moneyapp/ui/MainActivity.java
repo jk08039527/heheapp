@@ -120,7 +120,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         });
 
-        mWebView.loadUrl("http://12ab88.com/");
+        mWebView.loadUrl("http://www.3122e.com/");
         rootCmd();
     }
 
