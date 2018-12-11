@@ -31,15 +31,15 @@ public class AnalyzeActivity extends AppCompatActivity {
     public static int START = 14;
     public static double WHOLEWIN2 = 4.8;
     public static double WHOLEWIN3 = 5.4;
-    public static int LASTPOINTNUM2 = 14;
+    public static int LASTPOINTNUM2 = 13;
     public static double LASTWIN2 = -10.7;
-    public static int LASTPOINTNUM3 = 19;
+    public static int LASTPOINTNUM3 = 6;
     public static double LASTWIN3 = -8;
     public static double GIVEUPCOUNT = -42;
     public static double GIVEUPCOUNTX = -42;
     public static double GIVEUPCOUNTS = -61;
-    public static int STOPCOUNT = 4;
-    public static int STOPCOUNTX = 5;
+    public static int STOPCOUNT = 3;
+    public static int STOPCOUNTX = 2;
 
     private List<MyLog> mMyLogs = new ArrayList<>();
     private ArrayList<Record> records = new ArrayList<>();
@@ -193,7 +193,7 @@ public class AnalyzeActivity extends AppCompatActivity {
 
     private void getData() {
         BmobQuery<MyLog> query = new BmobQuery<>();
-        query.setLimit(500).order("-updatedAt").findObjects(new FindListener<MyLog>() {
+        query.setSkip(0).setLimit(100).order("-updatedAt").findObjects(new FindListener<MyLog>() {
             @Override
             public void done(List<MyLog> list, BmobException e) {
                 if (e != null) {
