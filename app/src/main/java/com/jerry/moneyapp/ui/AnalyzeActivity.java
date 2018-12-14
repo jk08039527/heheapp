@@ -4,10 +4,20 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.FrameLayout;
+import android.widget.TextView;
+
 import com.jerry.moneyapp.R;
 import com.jerry.moneyapp.bean.GBData;
 import com.jerry.moneyapp.bean.MyLog;
 import com.jerry.moneyapp.bean.Point;
+import com.jerry.moneyapp.bean.Record;
 import com.jerry.moneyapp.ptrlib.widget.BaseRecyclerAdapter;
 import com.jerry.moneyapp.ptrlib.widget.PtrRecyclerView;
 import com.jerry.moneyapp.ptrlib.widget.RecyclerViewHolder;
@@ -15,12 +25,6 @@ import com.jerry.moneyapp.util.CaluUtil;
 import com.jerry.moneyapp.util.DeviceUtil;
 import com.jerry.moneyapp.util.MyTextWatcherListener;
 import com.jerry.moneyapp.util.ParseUtil;
-
-import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
-import android.widget.EditText;
-import android.widget.TextView;
 
 import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.exception.BmobException;
@@ -172,6 +176,7 @@ public class AnalyzeActivity extends AppCompatActivity {
                 TextView date = holder.getView(R.id.date);
                 TextView money = holder.getView(R.id.money);
                 TextView daymoney = holder.getView(R.id.daymoney);
+                FrameLayout content = holder.getView(R.id.info_content);
                 Record record = records.get(position);
                 date.setText(record.createTime);
                 daymoney.setText(record.dayWin == 0 ? "" : DeviceUtil.m2(record.dayWin));
@@ -184,8 +189,35 @@ public class AnalyzeActivity extends AppCompatActivity {
                     money.setTextColor(ContextCompat.getColor(AnalyzeActivity.this, android.R.color.black));
                 }
                 money.setText(DeviceUtil.m2(win));
+                if (bean.visible) {
+                    if (content.getChildCount() == 0) {
+                        DetailView detailView = new DetailView(AnalyzeActivity.this, bean.count, bean.point);
+                        detailView.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+                        content.addView(detailView);
+                    }
+                    content.setVisibility(View.VISIBLE);
+                } else {
+                    content.setVisibility(View.GONE);
+                }
             }
         };
+        mAdapter.setOnItemClickListener((itemView, position) -> {
+            FrameLayout content = itemView.findViewById(R.id.info_content);
+            Record bean = records.get(position);
+            if (content.getVisibility() == View.GONE) {
+                if (content.getChildCount() == 0) {
+                    DetailView detailView = new DetailView(this, bean.count, bean.point);
+                    detailView.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams
+                            .MATCH_PARENT));
+                    content.addView(detailView);
+                }
+                content.setVisibility(View.VISIBLE);
+                bean.visible = true;
+            } else {
+                content.setVisibility(View.GONE);
+                bean.visible = false;
+            }
+        });
         mPtrRecyclerView.setOnRefreshListener(this::getData);
         mPtrRecyclerView.setAdapter(mAdapter);
         getData();
@@ -376,6 +408,8 @@ public class AnalyzeActivity extends AppCompatActivity {
             Record record = new Record();
             record.win = lastP.win;
             record.createTime = log.getCreatedAt();
+            record.point = integers;
+            record.count = paint.size();
             records.add(record);
 
             win += record.win;
@@ -453,12 +487,5 @@ public class AnalyzeActivity extends AppCompatActivity {
                 .append("，峰值：").append(DeviceUtil.m2(totalMax))
                 .append("，谷值：").append(DeviceUtil.m2(totalMin))
                 .append("，标准差：").append(DeviceUtil.m2(cart)));
-    }
-
-    class Record {
-
-        String createTime;
-        double win;
-        double dayWin;
     }
 }

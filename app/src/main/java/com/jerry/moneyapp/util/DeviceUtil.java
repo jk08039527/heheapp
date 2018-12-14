@@ -7,13 +7,13 @@ import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.jerry.moneyapp.MyApplication;
-
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.Resources;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
+
+import com.jerry.moneyapp.MyApplication;
 
 /**
  * Created by th on 16/5/17. 类说明:
@@ -23,6 +23,13 @@ public class DeviceUtil {
     private static DecimalFormat df = new DecimalFormat("#.0");
 
     private DeviceUtil() {
+    }
+
+    /**
+     * 获取手机屏幕的像素宽
+     */
+    public static int getDisplayWidth() {
+        return Resources.getSystem().getDisplayMetrics().widthPixels;
     }
 
     /**
