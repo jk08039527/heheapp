@@ -177,10 +177,19 @@ public class AnalyzeActivity extends AppCompatActivity {
                 TextView money = holder.getView(R.id.money);
                 TextView daymoney = holder.getView(R.id.daymoney);
                 FrameLayout content = holder.getView(R.id.info_content);
-                Record record = records.get(position);
-                date.setText(record.createTime);
-                daymoney.setText(record.dayWin == 0 ? "" : DeviceUtil.m2(record.dayWin));
-                double win = record.win;
+                content.removeAllViews();
+                if (bean.visible) {
+                    DetailView detailView = new DetailView(AnalyzeActivity.this, bean.count, bean.point);
+                    detailView.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup
+                            .LayoutParams.MATCH_PARENT));
+                    content.addView(detailView);
+                    content.setVisibility(View.VISIBLE);
+                } else {
+                    content.setVisibility(View.GONE);
+                }
+                date.setText(bean.createTime);
+                daymoney.setText(bean.dayWin == 0 ? "" : DeviceUtil.m2(bean.dayWin));
+                double win = bean.win;
                 if (win > 0) {
                     money.setTextColor(ContextCompat.getColor(AnalyzeActivity.this, android.R.color.holo_red_light));
                 } else if (win < 0) {
@@ -189,35 +198,24 @@ public class AnalyzeActivity extends AppCompatActivity {
                     money.setTextColor(ContextCompat.getColor(AnalyzeActivity.this, android.R.color.black));
                 }
                 money.setText(DeviceUtil.m2(win));
-                if (bean.visible) {
-                    if (content.getChildCount() == 0) {
-                        DetailView detailView = new DetailView(AnalyzeActivity.this, bean.count, bean.point);
-                        detailView.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-                        content.addView(detailView);
+                holder.getView(R.id.root).setOnClickListener(v -> {
+                    if (content.getVisibility() == View.GONE) {
+                        if (content.getChildCount() == 0) {
+                            DetailView detailView = new DetailView(AnalyzeActivity.this, bean.count, bean.point);
+                            detailView.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup
+                                    .LayoutParams
+                                    .MATCH_PARENT));
+                            content.addView(detailView);
+                        }
+                        content.setVisibility(View.VISIBLE);
+                        bean.visible = true;
+                    } else {
+                        content.setVisibility(View.GONE);
+                        bean.visible = false;
                     }
-                    content.setVisibility(View.VISIBLE);
-                } else {
-                    content.setVisibility(View.GONE);
-                }
+                });
             }
         };
-        mAdapter.setOnItemClickListener((itemView, position) -> {
-            FrameLayout content = itemView.findViewById(R.id.info_content);
-            Record bean = records.get(position);
-            if (content.getVisibility() == View.GONE) {
-                if (content.getChildCount() == 0) {
-                    DetailView detailView = new DetailView(this, bean.count, bean.point);
-                    detailView.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams
-                            .MATCH_PARENT));
-                    content.addView(detailView);
-                }
-                content.setVisibility(View.VISIBLE);
-                bean.visible = true;
-            } else {
-                content.setVisibility(View.GONE);
-                bean.visible = false;
-            }
-        });
         mPtrRecyclerView.setOnRefreshListener(this::getData);
         mPtrRecyclerView.setAdapter(mAdapter);
         getData();
@@ -377,7 +375,8 @@ public class AnalyzeActivity extends AppCompatActivity {
                         point.intentionX = point.current;
                     } else if (point.state == 1 && paint.size() > 1 && paint.get(paint.size() - 2) == 1) {
                         point.state = 0;
-                    } else if (point.state == 2 && paint.size() > 1 && paint.get(paint.size() - 1) == 1 && paint.get(paint.size() - 2) > 1) {
+                    } else if (point.state == 2 && paint.size() > 1 && paint.get(paint.size() - 1) == 1 && paint.get(paint.size() - 2) >
+                            1) {
                         point.intentionX = point.current == GBData.VALUE_LONG ? GBData.VALUE_FENG : GBData.VALUE_LONG;
                     }
                 }
