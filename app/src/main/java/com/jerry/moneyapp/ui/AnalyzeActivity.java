@@ -32,18 +32,18 @@ import cn.bmob.v3.listener.FindListener;
 
 public class AnalyzeActivity extends AppCompatActivity {
 
-    public static int START = 14;
-    public static double WHOLEWIN2 = 4.8;
-    public static double WHOLEWIN3 = 5.4;
+    public static int START = 9;
+    public static double WHOLEWIN2 = 9;
+    public static double WHOLEWIN3 = 6;
     public static int LASTPOINTNUM2 = 13;
-    public static double LASTWIN2 = -10.7;
+    public static double LASTWIN2 = -10;
     public static int LASTPOINTNUM3 = 6;
     public static double LASTWIN3 = -8;
     public static double GIVEUPCOUNT = -42;
-    public static double GIVEUPCOUNTX = -42;
+    public static double GIVEUPCOUNTX = -31;
     public static double GIVEUPCOUNTS = -61;
     public static int STOPCOUNT = 3;
-    public static int STOPCOUNTX = 2;
+    public static int STOPCOUNTX = 0;
 
     private List<MyLog> mMyLogs = new ArrayList<>();
     private ArrayList<Record> records = new ArrayList<>();

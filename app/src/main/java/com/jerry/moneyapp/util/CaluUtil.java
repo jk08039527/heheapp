@@ -49,8 +49,7 @@ public class CaluUtil {
                 point.multiple2 = 2;
                 point.multiple3 = 2;
                 good = true;
-            } else if (paint.size() > 2 && paint.get(0) > 1 && paint.get(1) > 1 && paint.get(2) > 1 && paint.get(0) + paint.get(1) +
-                    paint.get(2) > 6) {
+            } else if (paint.size() > 2 && paint.get(0) > 1 && paint.get(2) > 1 && paint.get(0) + paint.get(2) > 4) {
                 point.multiple2 = 2;
                 point.multiple3 = 2;
                 good = true;
