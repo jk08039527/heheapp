@@ -10,6 +10,7 @@ import android.view.View;
 
 import com.jerry.moneyapp.R;
 import com.jerry.moneyapp.bean.GBData;
+import com.jerry.moneyapp.bean.Point;
 import com.jerry.moneyapp.util.DeviceUtil;
 
 /**
@@ -20,12 +21,14 @@ import com.jerry.moneyapp.util.DeviceUtil;
 public class DetailView extends View {
 
     private int count;
-    private LinkedList<Integer> points;
+    private LinkedList<Point> points;
     private Paint mPaint;
     private int fengC;
     private int longC;
+    private int victoryC;
+    private int defeatC;
 
-    public DetailView(Context context, int count, LinkedList<Integer> points) {
+    public DetailView(Context context, int count, LinkedList<Point> points) {
         super(context);
         this.count = count;
         this.points = points;
@@ -34,6 +37,8 @@ public class DetailView extends View {
         mPaint.setStyle(Paint.Style.FILL);
         fengC = ContextCompat.getColor(context, R.color.red_primary);
         longC = ContextCompat.getColor(context, R.color.blue_primary);
+        victoryC = ContextCompat.getColor(context, R.color.white);
+        defeatC = ContextCompat.getColor(context, R.color.black);
     }
 
     @Override
@@ -43,24 +48,31 @@ public class DetailView extends View {
             return;
         }
         final int radias = DeviceUtil.getDisplayWidth() / (count + 3) / 2;
+        final int inRaias = radias - 10;
         final int distance = radias * 2 + 2;
         int x = radias;
         int y = radias;
-        int last = 0;
+        Point last = null;
         for (int i = 0; i < points.size(); i++) {
-            int temp = points.get(i);
-            if (last == GBData.VALUE_NONE) {
-                mPaint.setColor(temp == GBData.VALUE_FENG ? fengC : longC);
-            } else {
-                if (last == temp) {
+            Point temp = points.get(i);
+            if (last != null) {
+                if (last.current == temp.current) {
                     y += distance;
                 } else {
                     x += distance;
                     y = radias;
-                    mPaint.setColor(temp == GBData.VALUE_FENG ? fengC : longC);
                 }
             }
+            mPaint.setColor(temp.current == GBData.VALUE_FENG ? fengC : longC);
             canvas.drawCircle(x, y, radias, mPaint);
+            if (last != null && last.intention != GBData.VALUE_NONE) {
+                if (last.intention == temp.current) {
+                    mPaint.setColor(victoryC);
+                } else {
+                    mPaint.setColor(defeatC);
+                }
+                canvas.drawCircle(x, y, inRaias, mPaint);
+            }
             last = temp;
         }
     }

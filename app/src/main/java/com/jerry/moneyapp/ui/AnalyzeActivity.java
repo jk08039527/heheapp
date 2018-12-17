@@ -40,10 +40,7 @@ public class AnalyzeActivity extends AppCompatActivity {
     public static int LASTPOINTNUM3 = 6;
     public static double LASTWIN3 = -8;
     public static double GIVEUPCOUNT = -42;
-    public static double GIVEUPCOUNTX = -31;
-    public static double GIVEUPCOUNTS = -61;
     public static int STOPCOUNT = 3;
-    public static int STOPCOUNTX = 0;
 
     private List<MyLog> mMyLogs = new ArrayList<>();
     private ArrayList<Record> records = new ArrayList<>();
@@ -128,39 +125,12 @@ public class AnalyzeActivity extends AppCompatActivity {
                 updateData();
             }
         });
-        EditText giveUpCountX = findViewById(R.id.give_up_countx);
-        giveUpCountX.setText(String.valueOf(GIVEUPCOUNTX));
-        giveUpCountX.addTextChangedListener(new MyTextWatcherListener() {
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                GIVEUPCOUNTX = ParseUtil.parseDouble(s.toString());
-                updateData();
-            }
-        });
-        EditText giveUpCountS = findViewById(R.id.give_up_counts);
-        giveUpCountS.setText(String.valueOf(GIVEUPCOUNTS));
-        giveUpCountS.addTextChangedListener(new MyTextWatcherListener() {
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                GIVEUPCOUNTS = ParseUtil.parseDouble(s.toString());
-                updateData();
-            }
-        });
         EditText stopCount = findViewById(R.id.stop_count);
         stopCount.setText(String.valueOf(STOPCOUNT));
         stopCount.addTextChangedListener(new MyTextWatcherListener() {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 STOPCOUNT = ParseUtil.parseInt(s.toString());
-                updateData();
-            }
-        });
-        EditText stopCountx = findViewById(R.id.stop_countx);
-        stopCountx.setText(String.valueOf(STOPCOUNTX));
-        stopCountx.addTextChangedListener(new MyTextWatcherListener() {
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                STOPCOUNTX = ParseUtil.parseInt(s.toString());
                 updateData();
             }
         });
@@ -179,7 +149,7 @@ public class AnalyzeActivity extends AppCompatActivity {
                 FrameLayout content = holder.getView(R.id.info_content);
                 content.removeAllViews();
                 if (bean.visible) {
-                    DetailView detailView = new DetailView(AnalyzeActivity.this, bean.count, bean.point);
+                    DetailView detailView = new DetailView(AnalyzeActivity.this, bean.count, bean.points);
                     detailView.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup
                             .LayoutParams.MATCH_PARENT));
                     content.addView(detailView);
@@ -201,7 +171,7 @@ public class AnalyzeActivity extends AppCompatActivity {
                 holder.getView(R.id.root).setOnClickListener(v -> {
                     if (content.getVisibility() == View.GONE) {
                         if (content.getChildCount() == 0) {
-                            DetailView detailView = new DetailView(AnalyzeActivity.this, bean.count, bean.point);
+                            DetailView detailView = new DetailView(AnalyzeActivity.this, bean.count, bean.points);
                             detailView.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup
                                     .LayoutParams
                                     .MATCH_PARENT));
@@ -223,7 +193,7 @@ public class AnalyzeActivity extends AppCompatActivity {
 
     private void getData() {
         BmobQuery<MyLog> query = new BmobQuery<>();
-        query.setSkip(0).setLimit(100).order("-updatedAt").findObjects(new FindListener<MyLog>() {
+        query.setSkip(0).setLimit(500).order("-updatedAt").findObjects(new FindListener<MyLog>() {
             @Override
             public void done(List<MyLog> list, BmobException e) {
                 if (e != null) {
@@ -299,28 +269,6 @@ public class AnalyzeActivity extends AppCompatActivity {
                     } else {
                         point.winn = lastP.winn;
                     }
-                    if (lastP.intentionX != GBData.VALUE_NONE) {
-                        if (lastP.intentionX == point.current) {
-                            point.winX = lastP.winX + 9.7;
-                            if (lastP.state == 0) {
-                                point.state = 1;
-                            } else if (lastP.state == 2) {
-                                point.state = 2;
-                            }
-                            stopCountx = 0;
-                        } else {
-                            point.winX = lastP.winX - 10;
-                            if (lastP.state == 0) {
-                                point.state = 2;
-                            } else if (lastP.state == 2) {
-                                point.state = 1;
-                            }
-                            stopCountx++;
-                        }
-                    } else {
-                        point.winX = lastP.winX;
-                        point.state = lastP.state;
-                    }
                     if (lastP.intention != GBData.VALUE_NONE) {
                         if (lastP.intention == point.current) {
                             point.win = lastP.win + 9.7 * Math.abs(lastP.multiple);
@@ -369,26 +317,8 @@ public class AnalyzeActivity extends AppCompatActivity {
                         }
                     }
                 }
-
-                if (point.winX > GIVEUPCOUNTX && stopCountx < STOPCOUNTX) {
-                    if (point.state == 0 && paint.size() > 1 && paint.get(paint.size() - 1) == 1 && paint.get(paint.size() - 2) > 1) {
-                        point.intentionX = point.current;
-                    } else if (point.state == 1 && paint.size() > 1 && paint.get(paint.size() - 2) == 1) {
-                        point.state = 0;
-                    } else if (point.state == 2 && paint.size() > 1 && paint.get(paint.size() - 1) == 1 && paint.get(paint.size() - 2) >
-                            1) {
-                        point.intentionX = point.current == GBData.VALUE_LONG ? GBData.VALUE_FENG : GBData.VALUE_LONG;
-                    }
-                }
-                if (point.intentionn != GBData.VALUE_NONE && point.intentionX != GBData.VALUE_NONE) {
+                if (point.intentionn != GBData.VALUE_NONE) {
                     point.intention = point.intentionn;
-                    if (point.intentionn == point.intentionX) {
-                        point.multiple = point.multiplen + 1;
-                    } else {
-                        point.multiple = point.multiplen - 1;
-                    }
-                } else {
-                    point.intention = point.intentionn + point.intentionX;
                     if (point.intentionn == GBData.VALUE_NONE) {
                         point.multiple = 1;
                     } else {
@@ -397,7 +327,7 @@ public class AnalyzeActivity extends AppCompatActivity {
                 }
                 if (point.multiple == 0) {
                     point.intention = 0;
-                } else if (point.multiple > 1 && point.win - 10 * point.multiple < GIVEUPCOUNTS) {
+                } else if (point.multiple > 1 && point.win - 10 * point.multiple < GIVEUPCOUNT) {
                     point.multiple = 1;
                 }
                 lastP = point;
@@ -407,7 +337,7 @@ public class AnalyzeActivity extends AppCompatActivity {
             Record record = new Record();
             record.win = lastP.win;
             record.createTime = log.getCreatedAt();
-            record.point = integers;
+            record.points = points;
             record.count = paint.size();
             records.add(record);
 

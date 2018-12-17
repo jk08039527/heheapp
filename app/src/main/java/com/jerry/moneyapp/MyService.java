@@ -10,14 +10,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
-import com.jerry.moneyapp.bean.GBData;
-import com.jerry.moneyapp.bean.MyLog;
-import com.jerry.moneyapp.bean.Point;
-import com.jerry.moneyapp.ui.AnalyzeActivity;
-import com.jerry.moneyapp.util.CaluUtil;
-import com.jerry.moneyapp.util.DeviceUtil;
-import com.jerry.moneyapp.util.WeakHandler;
-
 import android.app.Service;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -26,6 +18,14 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.widget.Toast;
+
+import com.jerry.moneyapp.bean.GBData;
+import com.jerry.moneyapp.bean.MyLog;
+import com.jerry.moneyapp.bean.Point;
+import com.jerry.moneyapp.ui.AnalyzeActivity;
+import com.jerry.moneyapp.util.CaluUtil;
+import com.jerry.moneyapp.util.DeviceUtil;
+import com.jerry.moneyapp.util.WeakHandler;
 
 import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.exception.BmobException;
@@ -128,28 +128,6 @@ public class MyService extends Service {
                     } else {
                         point.winn = lastP.winn;
                     }
-                    if (lastP.intentionX != GBData.VALUE_NONE) {
-                        if (lastP.intentionX == point.current) {
-                            point.winX = lastP.winX + 9.7;
-                            if (lastP.state == 0) {
-                                point.state = 1;
-                            } else if (lastP.state == 2) {
-                                point.state = 2;
-                            }
-                            stopCountx = 0;
-                        } else {
-                            point.winX = lastP.winX - 10;
-                            if (lastP.state == 0) {
-                                point.state = 2;
-                            } else if (lastP.state == 2) {
-                                point.state = 1;
-                            }
-                            stopCountx++;
-                        }
-                    } else {
-                        point.winX = lastP.winX;
-                        point.state = lastP.state;
-                    }
                     if (lastP.intention != GBData.VALUE_NONE) {
                         if (lastP.intention == point.current) {
                             point.win = lastP.win + 9.7 * Math.abs(lastP.multiple);
@@ -202,38 +180,13 @@ public class MyService extends Service {
                 if (point.multiplen > 1 && point.winn - 10 * point.multiplen < AnalyzeActivity.GIVEUPCOUNT) {
                     point.multiplen = 1;
                 }
-
-                if (point.winX > AnalyzeActivity.GIVEUPCOUNTX && stopCountx < AnalyzeActivity.STOPCOUNTX) {
-                    if (point.state == 0 && paint.size() > 1 && paint.get(paint.size() - 1) == 1 && paint.get(paint.size() - 2) > 1) {
-                        point.intentionX = point.current;
-                    } else if (point.state == 1 && paint.size() > 1 && paint.get(paint.size() - 2) == 1) {
-                        point.state = 0;
-                    } else if (point.state == 2 && paint.size() > 1 && paint.get(paint.size() - 1) == 1 && paint.get(paint.size() - 2) > 1) {
-                        point.intentionX = point.current == GBData.VALUE_LONG ? GBData.VALUE_FENG : GBData.VALUE_LONG;
-                    } else {
-                        point.intentionX = GBData.VALUE_NONE;
-                    }
-                } else {
-                    point.intentionX = GBData.VALUE_NONE;
-                }
-                if (point.intentionn != GBData.VALUE_NONE && point.intentionX != GBData.VALUE_NONE) {
+                if (point.intentionn != GBData.VALUE_NONE) {
                     point.intention = point.intentionn;
-                    if (point.intentionn == point.intentionX) {
-                        point.multiple = point.multiplen + 1;
-                    } else {
-                        point.multiple = point.multiplen - 1;
-                    }
-                } else {
-                    point.intention = point.intentionn + point.intentionX;
-                    if (point.intentionn == GBData.VALUE_NONE) {
-                        point.multiple = 1;
-                    } else {
-                        point.multiple = point.multiplen;
-                    }
+                    point.multiple = point.multiplen;
                 }
                 if (point.multiple == 0) {
                     point.intention = 0;
-                } else if (point.multiple > 1 && point.win - 10 * point.multiple < AnalyzeActivity.GIVEUPCOUNTS) {
+                } else if (point.multiple > 1 && point.win - 10 * point.multiple < AnalyzeActivity.GIVEUPCOUNT) {
                     point.multiple = 1;
                 }
                 lastP = point;
@@ -327,7 +280,6 @@ public class MyService extends Service {
         }
         mCallback.showText(new StringBuilder()
                 .append("Jerry打法：").append(DeviceUtil.m2(lastP.winn)).append("，").append(getIntentStr(lastP.intentionn, lastP.multiplen))
-                .append("\nsj打法：").append(DeviceUtil.m2(lastP.winX)).append("，").append(getIntentStr(lastP.intentionX, 1))
                 .append("\n模拟净胜：").append(DeviceUtil.m2(lastP.win))
                 .append("\t下一局：").append(getIntentStr(lastP.intention, lastP.multiple)).toString());
     }

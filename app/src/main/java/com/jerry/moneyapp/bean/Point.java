@@ -22,14 +22,9 @@ public class Point implements Serializable {
     public int gudao3;
     public double win;
     public double winn;
-    public double winX;
     public double win2;
     public double win3;
     public double award2;
     public double award3;
     public int currentType;
-
-    //0:找胜负，1：找孤岛，2：找连板
-    public int state;
-    public int intentionX;
 }

@@ -8,6 +8,6 @@ public class Record {
     public String createTime;
     public double win;
     public double dayWin;
-    public LinkedList<Integer> point;
+    public LinkedList<Point> points;
     public int count;
 }
