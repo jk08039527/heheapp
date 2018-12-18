@@ -20,7 +20,13 @@ import com.jerry.moneyapp.util.DeviceUtil;
  */
 public class DetailView extends View {
 
+    /**
+     * 数据集数量
+     */
     private int count;
+    /**
+     * 原始数据
+     */
     private LinkedList<Point> points;
     private Paint mPaint;
     private int fengC;

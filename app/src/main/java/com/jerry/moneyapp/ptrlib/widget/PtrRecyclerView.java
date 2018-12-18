@@ -1,14 +1,6 @@
 package com.jerry.moneyapp.ptrlib.widget;
 
 
-import com.jerry.moneyapp.R;
-import com.jerry.moneyapp.ptrlib.OnLoadMoreListener;
-import com.jerry.moneyapp.ptrlib.OnRefreshListener;
-import com.jerry.moneyapp.ptrlib.PtrDefaultHandler;
-import com.jerry.moneyapp.ptrlib.PtrFrameLayout;
-import com.jerry.moneyapp.ptrlib.header.PtrSimpleHeader;
-import com.jerry.moneyapp.util.WeakHandler;
-
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
@@ -19,6 +11,14 @@ import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.FrameLayout;
+
+import com.jerry.moneyapp.R;
+import com.jerry.moneyapp.ptrlib.OnLoadMoreListener;
+import com.jerry.moneyapp.ptrlib.OnRefreshListener;
+import com.jerry.moneyapp.ptrlib.PtrDefaultHandler;
+import com.jerry.moneyapp.ptrlib.PtrFrameLayout;
+import com.jerry.moneyapp.ptrlib.header.PtrSimpleHeader;
+import com.jerry.moneyapp.util.WeakHandler;
 /**
  * Created by wzl on 2018/8/10.
  *
@@ -26,6 +26,7 @@ import android.widget.FrameLayout;
  */
 public class PtrRecyclerView extends FrameLayout {
 
+    private static final int REFRESH_LOADING_TIME = 300;
     protected RecyclerView mRecyclerView;
     protected BaseRecyclerAdapter mAdapter;
     private View mFooterView;
@@ -137,7 +138,7 @@ public class PtrRecyclerView extends FrameLayout {
             if (mPtrFrameLayout != null) {
                 mPtrFrameLayout.refreshComplete();
             }
-        }, PtrSimpleView.REFRESH_LOADING_TIME);
+        }, REFRESH_LOADING_TIME);
     }
 
     public void disableWhenHorizontalMove(boolean disable) {

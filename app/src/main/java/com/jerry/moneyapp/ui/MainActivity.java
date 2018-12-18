@@ -3,10 +3,6 @@ package com.jerry.moneyapp.ui;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-import com.jerry.moneyapp.MyService;
-import com.jerry.moneyapp.R;
-import com.jerry.moneyapp.bean.GBData;
-
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ComponentName;
@@ -33,6 +29,10 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.jerry.moneyapp.MyService;
+import com.jerry.moneyapp.R;
+import com.jerry.moneyapp.bean.GBData;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, MyService.Callback {
 

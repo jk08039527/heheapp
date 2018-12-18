@@ -3,20 +3,19 @@ package com.jerry.moneyapp.bean;
 import java.nio.ByteBuffer;
 import java.util.LinkedList;
 
-import com.jerry.moneyapp.MyService;
-
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.media.Image;
 import android.media.ImageReader;
 import android.util.Log;
 
+import com.jerry.moneyapp.MyService;
+
 public class GBData {
 
     private static final String TAG = "GBData";
     private static final int VALUE_MAX = 235;//阈值
     private static final int MIN1 = 55;//阈值1
-    private static final int MIN2 = 65;//阈值2
     public static final int VALUE_NONE = 0;
     public static final int VALUE_FENG = 1;
     public static final int VALUE_LONG = 2;

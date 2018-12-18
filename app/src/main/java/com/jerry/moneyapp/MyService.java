@@ -33,17 +33,32 @@ import cn.bmob.v3.listener.FindListener;
 
 public class MyService extends Service {
 
+    /**
+     * 边界
+     */
     private static final int LEFT = 12;//17
     private static final int RIGHT = 1068;//144
     private static final int TOP = 470;//610
     private static final int BOTTOM = 805;//1080
+    /**
+     * 确定按键的坐标
+     */
     public static final int ASSIABLEX = 990;//1320
     public static final int ASSIABLEY = 900;//1180
 
     public static final int MIDDELX = 500;//1180
+    /**
+     * 空白处点击一下激活活动区的y坐标
+     */
     public static final int ENTERY = 930;//1180
+    /**
+     * 是否需要重进的y坐标
+     */
     public static final int JUDGEY = 1240;//1180
 
+    /**
+     * 屏幕宽高
+     */
     private int width;
     private int height;
 
@@ -87,7 +102,6 @@ public class MyService extends Service {
             }
             lastP = null;
             int stopCount = 0;
-            int stopCountx = 0;
             for (int j = 0; j < ints.length; j++) {
                 Point point = CaluUtil.calulate(ints, j + 1, points);
                 point.current = ints[j];
@@ -279,8 +293,7 @@ public class MyService extends Service {
             return;
         }
         mCallback.showText(new StringBuilder()
-                .append("Jerry打法：").append(DeviceUtil.m2(lastP.winn)).append("，").append(getIntentStr(lastP.intentionn, lastP.multiplen))
-                .append("\n模拟净胜：").append(DeviceUtil.m2(lastP.win))
+                .append("模拟净胜：").append(DeviceUtil.m2(lastP.win)).append("，").append(getIntentStr(lastP.intentionn, lastP.multiplen))
                 .append("\t下一局：").append(getIntentStr(lastP.intention, lastP.multiple)).toString());
     }
 
