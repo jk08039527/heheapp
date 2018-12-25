@@ -54,10 +54,10 @@ public class DetailView extends View {
             return;
         }
         final int radias = DeviceUtil.getDisplayWidth() / (count + 3) / 2;
-        final int inRaias = radias - 10;
+        final int inRaias = 8;
         final int distance = radias * 2 + 2;
-        int x = radias;
-        int y = radias;
+        float x = radias;
+        float y = radias;
         Point last = null;
         for (int i = 0; i < points.size(); i++) {
             Point temp = points.get(i);
