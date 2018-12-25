@@ -1,7 +1,6 @@
 package com.jerry.moneyapp.util;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 
 import com.jerry.moneyapp.bean.GBData;
 import com.jerry.moneyapp.bean.Point;
@@ -21,7 +20,7 @@ public class CaluUtil {
      * @param ints 原始数据
      * @return 第一个参数表示投什么，第二个参数表示投多少
      */
-    public static Point calulate(int[] ints, int position, LinkedList<Point> points) {
+    public static Point calulate(int[] ints, int position) {
         Point point = new Point();
         if (position > ints.length) {
             return point;
@@ -131,57 +130,5 @@ public class CaluUtil {
             point.intention3 = GBData.VALUE_NONE;
         }
         return point;
-    }
-
-    public static double calu2(int[] ints) {
-        Point lastP = null;
-        LinkedList<Point> ps = new LinkedList<>();
-        for (int j = 0; j < ints.length; j++) {
-            Point point = CaluUtil.calulate(ints, j + 1, ps);
-            point.current = ints[j];
-            if (lastP != null) {
-                if (lastP.intention2 != GBData.VALUE_NONE) {
-                    if (lastP.intention2 == point.current) {
-                        point.win2 = lastP.win2 + 9.7 * lastP.multiple2;
-                    } else {
-                        point.win2 = lastP.win2 - 10 * lastP.multiple2;
-                    }
-                } else {
-                    point.win2 = lastP.win2;
-                }
-            }
-            lastP = point;
-            ps.add(point);
-        }
-        if (lastP == null) {
-            return 0;
-        }
-        return lastP.win2;
-    }
-
-    public static double calu3(int[] ints) {
-        Point lastP = null;
-        LinkedList<Point> ps = new LinkedList<>();
-        for (int j = 0; j < ints.length; j++) {
-            Point point = CaluUtil.calulate(ints, j + 1, ps);
-            point.current = ints[j];
-            if (lastP != null) {
-                if (lastP.intention3 != GBData.VALUE_NONE) {
-                    if (lastP.intention3 == point.current) {
-                        point.win3 = lastP.win3 + 9.7 * lastP.multiple3;
-                    } else {
-                        point.win3 = lastP.win3 - 10 * lastP.multiple3;
-                    }
-                } else {
-                    point.win3 = lastP.win3;
-                }
-            }
-            lastP = point;
-            ps.add(point);
-        }
-        if (lastP == null) {
-            return 0;
-        }
-        return lastP.win3;
     }
 }

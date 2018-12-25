@@ -103,7 +103,7 @@ public class MyService extends Service {
             lastP = null;
             int stopCount = 0;
             for (int j = 0; j < ints.length; j++) {
-                Point point = CaluUtil.calulate(ints, j + 1, points);
+                Point point = CaluUtil.calulate(ints, j + 1);
                 point.current = ints[j];
                 if (lastP != null) {
                     if (lastP.current == point.current && paint.size() > 0) {
