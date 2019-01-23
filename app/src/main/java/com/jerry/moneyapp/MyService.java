@@ -19,7 +19,10 @@ import android.os.IBinder;
 import android.os.Message;
 import android.widget.Toast;
 
+import com.alibaba.fastjson.JSON;
+import com.jerry.moneyapp.bean.BaseDao;
 import com.jerry.moneyapp.bean.GBData;
+import com.jerry.moneyapp.bean.GLog;
 import com.jerry.moneyapp.bean.MyLog;
 import com.jerry.moneyapp.bean.Point;
 import com.jerry.moneyapp.ui.AnalyzeActivity;
@@ -225,6 +228,21 @@ public class MyService extends Service {
                         sb.delete(0, sb.length());
                     }
                 });
+
+                MyLog myLog = new MyLog();
+                myLog.setLog(sb.toString());
+                myLog.setData(data);
+                myLog.setDeviceId(DeviceUtil.getDeviceId());
+                myLog.setWeek(Calendar.getInstance().get(Calendar.DAY_OF_WEEK));
+                myLog.save();
+
+
+                GLog gLog = new GLog();
+                gLog.setLog(sb.toString());
+                gLog.setData(JSON.toJSONString(data));
+                gLog.setDeviceId(DeviceUtil.getDeviceId());
+                gLog.setWeek(Calendar.getInstance().get(Calendar.DAY_OF_WEEK));
+                BaseDao.getTjDb().insertObject(gLog);
             } else {
                 Calendar now = Calendar.getInstance();
                 sb.append(now.getTime()).append(":").append(lastP.win).append("元").append("\n");

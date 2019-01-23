@@ -13,7 +13,6 @@ public class MyLog extends BmobObject {
     private String log;
     private String deviceId;
     private LinkedList<Integer> data;
-    private LinkedList<Point> points;
     private int week;
 
     public String getLog() {

@@ -32,15 +32,15 @@ import cn.bmob.v3.listener.FindListener;
 
 public class AnalyzeActivity extends AppCompatActivity {
 
-    public static int START = 9;
-    public static double WHOLEWIN2 = 9;
+    public static int START = 12;
+    public static double WHOLEWIN2 = 15;
     public static double WHOLEWIN3 = 6;
-    public static int LASTPOINTNUM2 = 13;
-    public static double LASTWIN2 = -10;
+    public static int LASTPOINTNUM2 = 19;
+    public static double LASTWIN2 = -4;
     public static int LASTPOINTNUM3 = 6;
-    public static double LASTWIN3 = -8;
-    public static double GIVEUPCOUNT = -42;
-    public static int STOPCOUNT = 3;
+    public static double LASTWIN3 = -21;
+    public static double GIVEUPCOUNT = -21;
+    public final static int STOPCOUNT = 3;
 
     private List<MyLog> mMyLogs = new ArrayList<>();
     private ArrayList<Record> records = new ArrayList<>();
@@ -125,15 +125,6 @@ public class AnalyzeActivity extends AppCompatActivity {
                 updateData();
             }
         });
-        EditText stopCount = findViewById(R.id.stop_count);
-        stopCount.setText(String.valueOf(STOPCOUNT));
-        stopCount.addTextChangedListener(new MyTextWatcherListener() {
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                STOPCOUNT = ParseUtil.parseInt(s.toString());
-                updateData();
-            }
-        });
         mPtrRecyclerView = findViewById(R.id.ptrRecyclerView);
         mAdapter = new BaseRecyclerAdapter<Record>(this, records) {
             @Override
@@ -193,7 +184,11 @@ public class AnalyzeActivity extends AppCompatActivity {
 
     private void getData() {
         BmobQuery<MyLog> query = new BmobQuery<>();
-        query.setSkip(0).setLimit(500).order("-updatedAt").findObjects(new FindListener<MyLog>() {
+        ArrayList<String> arrayList = new ArrayList<>();
+        arrayList.add("0");
+        arrayList.add("5");
+        arrayList.add("6");
+        query.setSkip(0).setLimit(500).order("-createdAt").addWhereContainedIn("week", arrayList).findObjects(new FindListener<MyLog>() {
             @Override
             public void done(List<MyLog> list, BmobException e) {
                 if (e != null) {
@@ -228,6 +223,7 @@ public class AnalyzeActivity extends AppCompatActivity {
             }
             Point lastP = null;
             int stopCount = 0;
+            int firstwin = 0;//0未玩，1：赢，2：输
             for (int j = 0; j < ints.length; j++) {
                 Point point = CaluUtil.calulate(ints, j + 1);
                 point.current = ints[j];
@@ -261,9 +257,15 @@ public class AnalyzeActivity extends AppCompatActivity {
                         if (lastP.intention == point.current) {
                             point.win = lastP.win + 9.7 * Math.abs(lastP.multiple);
                             stopCount = 0;
+                            if (firstwin == 0) {
+                                firstwin = 1;
+                            }
                         } else {
                             point.win = lastP.win - 10 * Math.abs(lastP.multiple);
                             stopCount++;
+                            if (firstwin == 0) {
+                                firstwin = 2;
+                            }
                         }
                     } else {
                         point.win = lastP.win;
@@ -288,8 +290,8 @@ public class AnalyzeActivity extends AppCompatActivity {
                         point.currentType = 3;
                     }
                     if (lastP != null) {
-                        if (j > START && point.award2 >= LASTWIN2 && point.award3 >= LASTWIN3
-                                && point.win2 > WHOLEWIN2 && point.win3 > WHOLEWIN3) {
+                        if (firstwin < 2 && (j > START && point.award2 >= LASTWIN2 && point.award3 >= LASTWIN3
+                                && point.win2 > WHOLEWIN2 && point.win3 > WHOLEWIN3)) {
                             if (point.currentType == 2 && point.intention2 != GBData.VALUE_NONE) {
                                 point.intention = point.intention2;
                                 point.multiple = point.multiple2;
