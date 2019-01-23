@@ -14,6 +14,7 @@ public class MyLog extends BmobObject {
     private String deviceId;
     private LinkedList<Integer> data;
     private LinkedList<Point> points;
+    private int week;
 
     public String getLog() {
         return log;
@@ -39,11 +40,11 @@ public class MyLog extends BmobObject {
         this.data = data;
     }
 
-    public LinkedList<Point> getPoints() {
-        return points;
+    public int getWeek() {
+        return week;
     }
 
-    public void setPoints(final LinkedList<Point> points) {
-        this.points = points;
+    public void setWeek(final int week) {
+        this.week = week;
     }
 }

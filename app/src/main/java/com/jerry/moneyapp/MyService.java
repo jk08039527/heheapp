@@ -220,6 +220,7 @@ public class MyService extends Service {
                         myLog.setLog(sb.toString());
                         myLog.setData(data);
                         myLog.setDeviceId(DeviceUtil.getDeviceId());
+                        myLog.setWeek(Calendar.getInstance().get(Calendar.DAY_OF_WEEK));
                         myLog.save();
                         sb.delete(0, sb.length());
                     }
