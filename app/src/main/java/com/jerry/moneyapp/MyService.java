@@ -68,7 +68,6 @@ public class MyService extends Service {
     private volatile int length;
     private boolean mBtnClickable;//点击生效
     private Callback mCallback;
-    private StringBuilder sb = new StringBuilder();
     private Point lastP;
 
     protected WeakHandler mWeakHandler = new WeakHandler(new Handler.Callback() {
@@ -202,7 +201,7 @@ public class MyService extends Service {
                         if (list.size() > 0) {
                             long lastTime = 0;
                             try {
-                                String lateDate = list.get(0).getCreatedAt();
+                                String lateDate = list.get(0).getCreateTime();
                                 lastTime = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.CHINA).parse(lateDate).getTime();
                             } catch (ParseException e1) {
                                 e1.printStackTrace();
@@ -214,20 +213,14 @@ public class MyService extends Service {
                                 }
                             }
                         }
-                        Calendar now = Calendar.getInstance();
-                        sb.append(now.getTime()).append(":").append(lastP.win).append("元").append("\n");
                         MyLog myLog = new MyLog();
-                        myLog.setLog(sb.toString());
+                        myLog.setCreateTime(DeviceUtil.getCurrentTime());
                         myLog.setData(data);
                         myLog.setDeviceId(DeviceUtil.getDeviceId());
-                        myLog.setWeek(Calendar.getInstance().get(Calendar.DAY_OF_WEEK));
+                        myLog.setWeek(Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - 1);
                         myLog.save();
-                        sb.delete(0, sb.length());
                     }
                 });
-            } else {
-                Calendar now = Calendar.getInstance();
-                sb.append(now.getTime()).append(":").append(lastP.win).append("元").append("\n");
             }
             return false;
         }

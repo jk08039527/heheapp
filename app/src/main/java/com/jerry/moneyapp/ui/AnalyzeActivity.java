@@ -32,15 +32,15 @@ import cn.bmob.v3.listener.FindListener;
 
 public class AnalyzeActivity extends AppCompatActivity {
 
-    public static int START = 9;
-    public static double WHOLEWIN2 = 9;
+    public static int START = 12;
+    public static double WHOLEWIN2 = 15;
     public static double WHOLEWIN3 = 6;
-    public static int LASTPOINTNUM2 = 13;
-    public static double LASTWIN2 = -10;
+    public static int LASTPOINTNUM2 = 19;
+    public static double LASTWIN2 = -4;
     public static int LASTPOINTNUM3 = 6;
-    public static double LASTWIN3 = -8;
-    public static double GIVEUPCOUNT = -42;
-    public static int STOPCOUNT = 3;
+    public static double LASTWIN3 = -21;
+    public static double GIVEUPCOUNT = -21;
+    public final static int STOPCOUNT = 3;
 
     private List<MyLog> mMyLogs = new ArrayList<>();
     private ArrayList<Record> records = new ArrayList<>();
@@ -125,15 +125,6 @@ public class AnalyzeActivity extends AppCompatActivity {
                 updateData();
             }
         });
-        EditText stopCount = findViewById(R.id.stop_count);
-        stopCount.setText(String.valueOf(STOPCOUNT));
-        stopCount.addTextChangedListener(new MyTextWatcherListener() {
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                STOPCOUNT = ParseUtil.parseInt(s.toString());
-                updateData();
-            }
-        });
         mPtrRecyclerView = findViewById(R.id.ptrRecyclerView);
         mAdapter = new BaseRecyclerAdapter<Record>(this, records) {
             @Override
@@ -193,16 +184,34 @@ public class AnalyzeActivity extends AppCompatActivity {
 
     private void getData() {
         BmobQuery<MyLog> query = new BmobQuery<>();
-        query.setSkip(0).setLimit(500).order("-updatedAt").findObjects(new FindListener<MyLog>() {
+        mMyLogs.clear();
+        query.setSkip(0).setLimit(500).order("-createTime").findObjects(new FindListener<MyLog>() {
             @Override
             public void done(List<MyLog> list, BmobException e) {
                 if (e != null) {
                     return;
                 }
-                mMyLogs.clear();
                 mMyLogs.addAll(list);
-                updateData();
-                mPtrRecyclerView.onRefreshComplete();
+                query.setSkip(500).setLimit(500).order("-createTime").findObjects(new FindListener<MyLog>() {
+                    @Override
+                    public void done(List<MyLog> list, BmobException e) {
+                        if (e != null) {
+                            return;
+                        }
+                        mMyLogs.addAll(list);
+                        query.setSkip(1000).setLimit(500).order("-createTime").findObjects(new FindListener<MyLog>() {
+                            @Override
+                            public void done(List<MyLog> list, BmobException e) {
+                                if (e != null) {
+                                    return;
+                                }
+                                mMyLogs.addAll(list);
+                                updateData();
+                                mPtrRecyclerView.onRefreshComplete();
+                            }
+                        });
+                    }
+                });
             }
         });
     }
@@ -313,7 +322,7 @@ public class AnalyzeActivity extends AppCompatActivity {
 
             Record record = new Record();
             record.win = lastP.win;
-            record.createTime = log.getCreatedAt();
+            record.createTime = log.getCreateTime();
             record.points = points;
             record.count = paint.size();
             records.add(record);
