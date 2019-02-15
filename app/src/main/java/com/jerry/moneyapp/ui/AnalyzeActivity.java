@@ -240,6 +240,7 @@ public class AnalyzeActivity extends AppCompatActivity {
             }
             Point lastP = null;
             int stopCount = 0;
+            int firstwin = 0;//0未玩，1：赢，2：输
             for (int j = 0; j < ints.length; j++) {
                 Point point = CaluUtil.calulate(ints, j + 1);
                 point.current = ints[j];
@@ -273,12 +274,14 @@ public class AnalyzeActivity extends AppCompatActivity {
                         if (lastP.intention == point.current) {
                             point.win = lastP.win + 9.7 * Math.abs(lastP.multiple);
                             stopCount = 0;
-                            firstWin = 1;
+                            if (firstwin == 0) {
+                                firstwin = 1;
+                            }
                         } else {
                             point.win = lastP.win - 10 * Math.abs(lastP.multiple);
                             stopCount++;
-                            if (firstWin == -1){
-                                firstWin = 0;
+                            if (firstwin == 0) {
+                                firstwin = 2;
                             }
                         }
                     } else {
@@ -304,8 +307,8 @@ public class AnalyzeActivity extends AppCompatActivity {
                         point.currentType = 3;
                     }
                     if (lastP != null) {
-                        if (j > START && point.award2 >= LASTWIN2 && point.award3 >= LASTWIN3
-                                && point.win2 > WHOLEWIN2 && point.win3 > WHOLEWIN3) {
+                        if (firstwin < 2 && (j > START && point.award2 >= LASTWIN2 && point.award3 >= LASTWIN3
+                                && point.win2 > WHOLEWIN2 && point.win3 > WHOLEWIN3)) {
                             if (point.currentType == 2 && point.intention2 != GBData.VALUE_NONE) {
                                 point.intention = point.intention2;
                                 point.multiple = point.multiple2;
