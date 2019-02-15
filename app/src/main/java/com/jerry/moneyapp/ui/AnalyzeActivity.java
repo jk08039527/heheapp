@@ -233,7 +233,6 @@ public class AnalyzeActivity extends AppCompatActivity {
             LinkedList<Integer> integers = log.getData();
             LinkedList<Integer> paint = new LinkedList<>();
             LinkedList<Point> points = new LinkedList<>();
-            int firstWin = -1;
             int[] ints = new int[integers.size()];
             for (int i = 0; i < ints.length; i++) {
                 ints[i] = integers.get(i);
@@ -290,7 +289,7 @@ public class AnalyzeActivity extends AppCompatActivity {
                 } else {
                     paint.add(1);
                 }
-                if (firstWin != 0 && point.win > GIVEUPCOUNT && stopCount < STOPCOUNT) {
+                if (firstwin < 2 && point.win > GIVEUPCOUNT && stopCount < STOPCOUNT) {
                     if (LASTPOINTNUM2 > 0 && points.size() >= LASTPOINTNUM2) {
                         point.award2 = point.win2 - points.get(points.size() - LASTPOINTNUM2).win2;
                     } else {
