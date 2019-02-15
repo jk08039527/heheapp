@@ -35,11 +35,11 @@ public class AnalyzeActivity extends AppCompatActivity {
     public static int START = 12;
     public static double WHOLEWIN2 = 15;
     public static double WHOLEWIN3 = 6;
-    public static int LASTPOINTNUM2 = 19;
-    public static double LASTWIN2 = -4;
+    public static int LASTPOINTNUM2 = 17;
+    public static double LASTWIN2 = -5;
     public static int LASTPOINTNUM3 = 6;
     public static double LASTWIN3 = -21;
-    public static double GIVEUPCOUNT = -21;
+    public static double GIVEUPCOUNT = -53;
     public final static int STOPCOUNT = 3;
 
     private List<MyLog> mMyLogs = new ArrayList<>();
@@ -227,10 +227,13 @@ public class AnalyzeActivity extends AppCompatActivity {
         int defeatCount = 0;//负场数
         int dayWinCount = 0;//负场数
         int dayDefeatCount = 0;//负场数
+        int maxDefeat = 0;
+        int defeat = 0;
         for (MyLog log : mMyLogs) {
             LinkedList<Integer> integers = log.getData();
             LinkedList<Integer> paint = new LinkedList<>();
             LinkedList<Point> points = new LinkedList<>();
+            int firstWin = -1;
             int[] ints = new int[integers.size()];
             for (int i = 0; i < ints.length; i++) {
                 ints[i] = integers.get(i);
@@ -270,9 +273,13 @@ public class AnalyzeActivity extends AppCompatActivity {
                         if (lastP.intention == point.current) {
                             point.win = lastP.win + 9.7 * Math.abs(lastP.multiple);
                             stopCount = 0;
+                            firstWin = 1;
                         } else {
                             point.win = lastP.win - 10 * Math.abs(lastP.multiple);
                             stopCount++;
+                            if (firstWin == -1){
+                                firstWin = 0;
+                            }
                         }
                     } else {
                         point.win = lastP.win;
@@ -280,7 +287,7 @@ public class AnalyzeActivity extends AppCompatActivity {
                 } else {
                     paint.add(1);
                 }
-                if (point.win > GIVEUPCOUNT && stopCount < STOPCOUNT) {
+                if (firstWin != 0 && point.win > GIVEUPCOUNT && stopCount < STOPCOUNT) {
                     if (LASTPOINTNUM2 > 0 && points.size() >= LASTPOINTNUM2) {
                         point.award2 = point.win2 - points.get(points.size() - LASTPOINTNUM2).win2;
                     } else {
