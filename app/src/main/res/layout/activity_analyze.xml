@@ -69,6 +69,11 @@
             android:id="@+id/give_up_count"
             style="@style/et"
             android:hint="输多少弃板" />
+
+        <EditText
+            android:id="@+id/give_up_countX"
+            style="@style/et"
+            android:hint="lianshu" />
     </LinearLayout>
 
     <com.jerry.moneyapp.ptrlib.widget.PtrRecyclerView

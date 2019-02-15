@@ -40,6 +40,7 @@ public class AnalyzeActivity extends AppCompatActivity {
     public static int LASTPOINTNUM3 = 6;
     public static double LASTWIN3 = -21;
     public static double GIVEUPCOUNT = -53;
+    public static double GIVEUPCOUNTX = 10;
     public final static int STOPCOUNT = 3;
 
     private List<MyLog> mMyLogs = new ArrayList<>();
@@ -122,6 +123,15 @@ public class AnalyzeActivity extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 GIVEUPCOUNT = ParseUtil.parseDouble(s.toString());
+                updateData();
+            }
+        });
+        EditText giveUpCountX = findViewById(R.id.give_up_countX);
+        giveUpCountX.setText(String.valueOf(GIVEUPCOUNTX));
+        giveUpCountX.addTextChangedListener(new MyTextWatcherListener() {
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                GIVEUPCOUNTX = ParseUtil.parseDouble(s.toString());
                 updateData();
             }
         });
@@ -233,7 +243,6 @@ public class AnalyzeActivity extends AppCompatActivity {
             LinkedList<Integer> integers = log.getData();
             LinkedList<Integer> paint = new LinkedList<>();
             LinkedList<Point> points = new LinkedList<>();
-            int firstWin = -1;
             int[] ints = new int[integers.size()];
             for (int i = 0; i < ints.length; i++) {
                 ints[i] = integers.get(i);
@@ -274,12 +283,21 @@ public class AnalyzeActivity extends AppCompatActivity {
                         if (lastP.intention == point.current) {
                             point.win = lastP.win + 9.7 * Math.abs(lastP.multiple);
                             stopCount = 0;
+                            if (point.win > GIVEUPCOUNTX) {
+                                if (defeat > maxDefeat) {
+                                    maxDefeat = defeat;
+                                }
+                                defeat = 0;
+                            }
                             if (firstwin == 0) {
                                 firstwin = 1;
                             }
                         } else {
                             point.win = lastP.win - 10 * Math.abs(lastP.multiple);
                             stopCount++;
+                            if (point.win > GIVEUPCOUNTX) {
+                                defeat++;
+                            }
                             if (firstwin == 0) {
                                 firstwin = 2;
                             }
@@ -290,7 +308,7 @@ public class AnalyzeActivity extends AppCompatActivity {
                 } else {
                     paint.add(1);
                 }
-                if (firstWin != 0 && point.win > GIVEUPCOUNT && stopCount < STOPCOUNT) {
+                if (firstwin < 2 && point.win > GIVEUPCOUNT && stopCount < STOPCOUNT) {
                     if (LASTPOINTNUM2 > 0 && points.size() >= LASTPOINTNUM2) {
                         point.award2 = point.win2 - points.get(points.size() - LASTPOINTNUM2).win2;
                     } else {
@@ -411,6 +429,7 @@ public class AnalyzeActivity extends AppCompatActivity {
                 .append("，最多输：").append(DeviceUtil.m2(oneMin))
                 .append("，峰值：").append(DeviceUtil.m2(totalMax))
                 .append("，谷值：").append(DeviceUtil.m2(totalMin))
-                .append("，标准差：").append(DeviceUtil.m2(cart)));
+                .append("，标准差：").append(DeviceUtil.m2(cart))
+                .append("，最大连输：").append(maxDefeat));
     }
 }
