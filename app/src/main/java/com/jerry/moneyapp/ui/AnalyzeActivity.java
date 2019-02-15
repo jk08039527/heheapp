@@ -227,8 +227,6 @@ public class AnalyzeActivity extends AppCompatActivity {
         int defeatCount = 0;//负场数
         int dayWinCount = 0;//负场数
         int dayDefeatCount = 0;//负场数
-        int maxDefeat = 0;
-        int defeat = 0;
         for (MyLog log : mMyLogs) {
             LinkedList<Integer> integers = log.getData();
             LinkedList<Integer> paint = new LinkedList<>();
