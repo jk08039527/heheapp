@@ -4,6 +4,12 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AppCompatActivity;
+import android.widget.EditText;
+import android.widget.TextView;
+
 import com.jerry.moneyapp.R;
 import com.jerry.moneyapp.bean.GBData;
 import com.jerry.moneyapp.bean.MyLog;
@@ -15,12 +21,6 @@ import com.jerry.moneyapp.util.CaluUtil;
 import com.jerry.moneyapp.util.DeviceUtil;
 import com.jerry.moneyapp.util.MyTextWatcherListener;
 import com.jerry.moneyapp.util.ParseUtil;
-
-import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
-import android.widget.EditText;
-import android.widget.TextView;
 
 import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.exception.BmobException;
@@ -583,38 +583,6 @@ public class AnalyzeActivity extends AppCompatActivity {
                 .append("，峰值：").append(DeviceUtil.m2(totalMax))
                 .append("，谷值：").append(DeviceUtil.m2(totalMin))
                 .append("，标准差：").append(DeviceUtil.m2(cart)));
-    }
-
-    double[] calu(int[] ints) {
-        Point lastP = null;
-        LinkedList<Point> ps = new LinkedList<>();
-        for (int j = 0; j < ints.length; j++) {
-            Point point = CaluUtil.calulate(ints, j + 1, ps);
-            point.current = ints[j];
-            if (lastP != null) {
-                if (lastP.intention2 != GBData.VALUE_NONE) {
-                    if (lastP.intention2 == point.current) {
-                        point.win2 = lastP.win2 + 9.7 * Math.abs(lastP.multiple2);
-                    } else {
-                        point.win2 = lastP.win2 - 10 * Math.abs(lastP.multiple2);
-                    }
-                } else {
-                    point.win2 = lastP.win2;
-                }
-                if (lastP.intention3 != GBData.VALUE_NONE) {
-                    if (lastP.intention3 == point.current) {
-                        point.win3 = lastP.win3 + 9.7 * Math.abs(lastP.multiple3);
-                    } else {
-                        point.win3 = lastP.win3 - 10 * Math.abs(lastP.multiple3);
-                    }
-                } else {
-                    point.win3 = lastP.win3;
-                }
-            }
-            lastP = point;
-            ps.add(point);
-        }
-        return new double[]{lastP.win2, lastP.win3};
     }
 
     class Record {
