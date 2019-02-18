@@ -4,6 +4,12 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AppCompatActivity;
+import android.widget.EditText;
+import android.widget.TextView;
+
 import com.jerry.moneyapp.R;
 import com.jerry.moneyapp.bean.GBData;
 import com.jerry.moneyapp.bean.MyLog;
@@ -15,12 +21,6 @@ import com.jerry.moneyapp.util.CaluUtil;
 import com.jerry.moneyapp.util.DeviceUtil;
 import com.jerry.moneyapp.util.MyTextWatcherListener;
 import com.jerry.moneyapp.util.ParseUtil;
-
-import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
-import android.widget.EditText;
-import android.widget.TextView;
 
 import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.exception.BmobException;
