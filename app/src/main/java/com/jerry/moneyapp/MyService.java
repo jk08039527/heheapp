@@ -10,14 +10,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
-import com.jerry.moneyapp.bean.GBData;
-import com.jerry.moneyapp.bean.MyLog;
-import com.jerry.moneyapp.bean.Point;
-import com.jerry.moneyapp.ui.AnalyzeActivity;
-import com.jerry.moneyapp.util.CaluUtil;
-import com.jerry.moneyapp.util.DeviceUtil;
-import com.jerry.moneyapp.util.WeakHandler;
-
 import android.app.Service;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -27,6 +19,14 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.widget.Toast;
+
+import com.jerry.moneyapp.bean.GBData;
+import com.jerry.moneyapp.bean.MyLog;
+import com.jerry.moneyapp.bean.Point;
+import com.jerry.moneyapp.ui.AnalyzeActivity;
+import com.jerry.moneyapp.util.CaluUtil;
+import com.jerry.moneyapp.util.DeviceUtil;
+import com.jerry.moneyapp.util.WeakHandler;
 
 import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.exception.BmobException;
@@ -265,7 +265,7 @@ public class MyService extends Service {
 
             if (data.size() >= 69) {
                 BmobQuery<MyLog> query = new BmobQuery<>();
-                query.setLimit(1).order("-updatedAt").findObjects(new FindListener<MyLog>() {
+                query.setLimit(1).order("-createTime").findObjects(new FindListener<MyLog>() {
                     @Override
                     public void done(List<MyLog> list, BmobException e) {
                         if (e != null) {
@@ -274,7 +274,7 @@ public class MyService extends Service {
                         if (list.size() > 0) {
                             long lastTime = 0;
                             try {
-                                String lateDate = list.get(0).getCreatedAt();
+                                String lateDate = list.get(0).getCreateTime();
                                 lastTime = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.CHINA).parse(lateDate).getTime();
                             } catch (ParseException e1) {
                                 e1.printStackTrace();
@@ -286,20 +286,14 @@ public class MyService extends Service {
                                 }
                             }
                         }
-                        Calendar now = Calendar.getInstance();
-                        sb.append(now.getTime()).append(":").append(last.win).append("元").append("\n");
                         MyLog myLog = new MyLog();
-                        myLog.setLog(sb.toString());
+                        myLog.setCreateTime(DeviceUtil.getCurrentTime());
                         myLog.setData(data);
                         myLog.setDeviceId(DeviceUtil.getDeviceId());
-                        myLog.setPoints(mPoints);
+                        myLog.setWeek(Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - 1);
                         myLog.save();
-                        sb.delete(0, sb.length());
                     }
                 });
-            } else {
-                Calendar now = Calendar.getInstance();
-                sb.append(now.getTime()).append(":").append(last.win).append("元").append("\n");
             }
             return false;
         }

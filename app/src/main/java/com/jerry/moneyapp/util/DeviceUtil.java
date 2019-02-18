@@ -3,11 +3,12 @@ package com.jerry.moneyapp.util;
 import java.net.URLEncoder;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Locale;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import com.jerry.moneyapp.MyApplication;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -15,14 +16,24 @@ import android.content.res.Resources;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 
+import com.jerry.moneyapp.MyApplication;
+
 /**
  * Created by th on 16/5/17. 类说明:
  */
 public class DeviceUtil {
 
     private static DecimalFormat df = new DecimalFormat("#.0");
+    private static final SimpleDateFormat FORMAT_DATE_TIME = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss", Locale.CHINA);
 
     private DeviceUtil() {
+    }
+
+    /**
+     * 获取手机屏幕的像素宽
+     */
+    public static int getDisplayWidth() {
+        return Resources.getSystem().getDisplayMetrics().widthPixels;
     }
 
     /**
@@ -109,5 +120,9 @@ public class DeviceUtil {
      */
     public static int dip2px(double dipValue) {
         return (int) (dipValue * getDisplayDensity() + 0.5f);
+    }
+
+    public static synchronized String getCurrentTime() {
+        return FORMAT_DATE_TIME.format(Calendar.getInstance().getTime());
     }
 }

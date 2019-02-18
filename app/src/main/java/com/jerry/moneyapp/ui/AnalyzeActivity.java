@@ -262,7 +262,7 @@ public class AnalyzeActivity extends AppCompatActivity {
             }
             Record record = new Record();
             record.win = lastP.win;
-            record.createTime = log.getCreatedAt();
+            record.createTime = log.getCreateTime();
             records.add(record);
 
             win += record.win;

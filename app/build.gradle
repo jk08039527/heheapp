@@ -26,7 +26,7 @@ android {
             abiFilters 'armeabi', 'x86'
         }
         buildConfigField("String", "BUGLY_APP_ID", '"7eb0529af0"')
-        buildConfigField("String", "BMOB_APPID", '"7cdb7db7a6d99713798d4b9755d3c0f5"')
+        buildConfigField("String", "BMOB_APPID", '"5170707732fb8d36a31827b6e5932f20"')
     }
     buildTypes {
         release {
