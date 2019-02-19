@@ -95,8 +95,8 @@ public class MyService extends Service {
             execShellCmd("input tap " + 400 + " " + 400);
             LinkedList<Integer> paint = new LinkedList<>();
             LinkedList<Point> points = new LinkedList<>();
-            int[] ints = new int[data.size()];
-            for (int i = 0; i < ints.length; i++) {
+            int[] ints = new int[length];
+            for (int i = 0; i < length; i++) {
                 ints[i] = data.get(i);
             }
             lastP = null;
@@ -216,7 +216,6 @@ public class MyService extends Service {
                         MyLog myLog = new MyLog();
                         myLog.setCreateTime(DeviceUtil.getCurrentTime());
                         myLog.setData(data);
-                        myLog.setDeviceId(DeviceUtil.getDeviceId());
                         myLog.setWeek(Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - 1);
                         myLog.save();
                     }

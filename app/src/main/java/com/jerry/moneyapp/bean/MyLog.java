@@ -10,18 +10,9 @@ import cn.bmob.v3.BmobObject;
  * @Description
  */
 public class MyLog extends BmobObject {
-    private String deviceId;
     private String createTime;
     private LinkedList<Integer> data;
     private int week;
-
-    public String getDeviceId() {
-        return deviceId;
-    }
-
-    public void setDeviceId(final String deviceId) {
-        this.deviceId = deviceId;
-    }
 
     public String getCreateTime() {
         return createTime;
