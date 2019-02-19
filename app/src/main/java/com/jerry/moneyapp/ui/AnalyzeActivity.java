@@ -4,6 +4,15 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.ListView;
+import android.widget.TextView;
+
 import com.jerry.moneyapp.R;
 import com.jerry.moneyapp.bean.GBData;
 import com.jerry.moneyapp.bean.MyLog;
@@ -13,15 +22,6 @@ import com.jerry.moneyapp.util.DeviceUtil;
 import com.jerry.moneyapp.util.MyTextWatcherListener;
 import com.jerry.moneyapp.util.ParseUtil;
 import com.jerry.moneyapp.util.ViewHolder;
-
-import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.EditText;
-import android.widget.ListView;
-import android.widget.TextView;
 
 import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.exception.BmobException;
@@ -132,7 +132,7 @@ public class AnalyzeActivity extends AppCompatActivity {
         };
         listView.setAdapter(mAdapter);
         BmobQuery<MyLog> query = new BmobQuery<>();
-        query.setLimit(200).order("-updatedAt").findObjects(new FindListener<MyLog>() {
+        query.setLimit(500).order("-updatedAt").findObjects(new FindListener<MyLog>() {
             @Override
             public void done(List<MyLog> list, BmobException e) {
                 if (e != null) {
@@ -230,7 +230,6 @@ public class AnalyzeActivity extends AppCompatActivity {
                 lastP = point;
                 points.add(point);
             }
-            LinkedList<Point> fsf = log.getPoints();
             pointss.add(points);
         }
         mAdapter.notifyDataSetChanged();

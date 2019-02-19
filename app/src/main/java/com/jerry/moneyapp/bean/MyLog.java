@@ -10,18 +10,10 @@ import cn.bmob.v3.BmobObject;
  * @Description
  */
 public class MyLog extends BmobObject {
-    private String log;
     private String deviceId;
+    private String createTime;
     private LinkedList<Integer> data;
-    private LinkedList<Point> points;
-
-    public String getLog() {
-        return log;
-    }
-
-    public void setLog(final String log) {
-        this.log = log;
-    }
+    private int week;
 
     public String getDeviceId() {
         return deviceId;
@@ -29,6 +21,14 @@ public class MyLog extends BmobObject {
 
     public void setDeviceId(final String deviceId) {
         this.deviceId = deviceId;
+    }
+
+    public String getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(final String createTime) {
+        this.createTime = createTime;
     }
 
     public LinkedList<Integer> getData() {
@@ -39,11 +39,11 @@ public class MyLog extends BmobObject {
         this.data = data;
     }
 
-    public LinkedList<Point> getPoints() {
-        return points;
+    public int getWeek() {
+        return week;
     }
 
-    public void setPoints(final LinkedList<Point> points) {
-        this.points = points;
+    public void setWeek(final int week) {
+        this.week = week;
     }
 }

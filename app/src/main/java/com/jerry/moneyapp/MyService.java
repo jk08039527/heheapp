@@ -274,20 +274,14 @@ public class MyService extends Service {
                                 }
                             }
                         }
-                        Calendar now = Calendar.getInstance();
-                        sb.append(now.getTime()).append(":").append(last.win).append("元").append("\n");
                         MyLog myLog = new MyLog();
-                        myLog.setLog(sb.toString());
+                        myLog.setCreateTime(DeviceUtil.getCurrentTime());
                         myLog.setData(data);
                         myLog.setDeviceId(DeviceUtil.getDeviceId());
-                        myLog.setPoints(mPoints);
+                        myLog.setWeek(Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - 1);
                         myLog.save();
-                        sb.delete(0, sb.length());
                     }
                 });
-            } else {
-                Calendar now = Calendar.getInstance();
-                sb.append(now.getTime()).append(":").append(last.win).append("元").append("\n");
             }
             return false;
         }
