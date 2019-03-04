@@ -1,12 +1,12 @@
 package com.jerry.moneyapp;
 
-import com.tencent.bugly.Bugly;
-import com.tencent.bugly.BuglyStrategy;
-import com.tencent.tinker.loader.app.DefaultApplicationLike;
-
 import android.annotation.SuppressLint;
 import android.app.Application;
 import android.content.Intent;
+
+import com.tencent.bugly.Bugly;
+import com.tencent.bugly.BuglyStrategy;
+import com.tencent.tinker.entry.DefaultApplicationLike;
 
 import cn.bmob.v3.Bmob;
 
