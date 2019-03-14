@@ -32,12 +32,16 @@ import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.FindListener;
 
 import static com.jerry.moneyapp.bean.Param.GIVEUPCOUNT1;
+import static com.jerry.moneyapp.bean.Param.GIVEUPCOUNT2;
 import static com.jerry.moneyapp.bean.Param.LASTPOINTNUM21;
+import static com.jerry.moneyapp.bean.Param.LASTPOINTNUM22;
 import static com.jerry.moneyapp.bean.Param.LASTPOINTNUM3;
 import static com.jerry.moneyapp.bean.Param.LASTWIN21;
+import static com.jerry.moneyapp.bean.Param.LASTWIN22;
 import static com.jerry.moneyapp.bean.Param.LASTWIN3;
 import static com.jerry.moneyapp.bean.Param.START;
 import static com.jerry.moneyapp.bean.Param.WHOLEWIN21;
+import static com.jerry.moneyapp.bean.Param.WHOLEWIN22;
 import static com.jerry.moneyapp.bean.Param.WHOLEWIN3;
 
 public class AnalyzeActivity extends AppCompatActivity {
@@ -62,12 +66,21 @@ public class AnalyzeActivity extends AppCompatActivity {
                 updateData();
             }
         });
-        EditText etTotlewin2 = findViewById(R.id.et_totlewin2);
-        etTotlewin2.setText(String.valueOf(WHOLEWIN21));
-        etTotlewin2.addTextChangedListener(new MyTextWatcherListener() {
+        EditText etTotlewin21 = findViewById(R.id.et_weekend_totlewin2);
+        etTotlewin21.setText(String.valueOf(WHOLEWIN21));
+        etTotlewin21.addTextChangedListener(new MyTextWatcherListener() {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 WHOLEWIN21 = ParseUtil.parseDouble(s.toString());
+                updateData();
+            }
+        });
+        EditText etTotlewin22 = findViewById(R.id.et_weekday_totlewin2);
+        etTotlewin22.setText(String.valueOf(WHOLEWIN22));
+        etTotlewin22.addTextChangedListener(new MyTextWatcherListener() {
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                WHOLEWIN22 = ParseUtil.parseDouble(s.toString());
                 updateData();
             }
         });
@@ -80,21 +93,39 @@ public class AnalyzeActivity extends AppCompatActivity {
                 updateData();
             }
         });
-        EditText lastNum2 = findViewById(R.id.last_num2);
-        lastNum2.setText(String.valueOf(LASTPOINTNUM21));
-        lastNum2.addTextChangedListener(new MyTextWatcherListener() {
+        EditText lastNum21 = findViewById(R.id.last_weekend_num2);
+        lastNum21.setText(String.valueOf(LASTPOINTNUM21));
+        lastNum21.addTextChangedListener(new MyTextWatcherListener() {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 LASTPOINTNUM21 = ParseUtil.parseInt(s.toString());
                 updateData();
             }
         });
-        EditText lastWin2 = findViewById(R.id.last_win2);
-        lastWin2.setText(String.valueOf(LASTWIN21));
-        lastWin2.addTextChangedListener(new MyTextWatcherListener() {
+        EditText lastNum22 = findViewById(R.id.last_weekday_num2);
+        lastNum22.setText(String.valueOf(LASTPOINTNUM22));
+        lastNum22.addTextChangedListener(new MyTextWatcherListener() {
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                LASTPOINTNUM22 = ParseUtil.parseInt(s.toString());
+                updateData();
+            }
+        });
+        EditText lastWin21 = findViewById(R.id.last_weekend_win2);
+        lastWin21.setText(String.valueOf(LASTWIN21));
+        lastWin21.addTextChangedListener(new MyTextWatcherListener() {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 LASTWIN21 = ParseUtil.parseDouble(s.toString());
+                updateData();
+            }
+        });
+        EditText lastWin22 = findViewById(R.id.last_weekday_win2);
+        lastWin22.setText(String.valueOf(LASTWIN22));
+        lastWin22.addTextChangedListener(new MyTextWatcherListener() {
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                LASTWIN22 = ParseUtil.parseDouble(s.toString());
                 updateData();
             }
         });
@@ -116,12 +147,21 @@ public class AnalyzeActivity extends AppCompatActivity {
                 updateData();
             }
         });
-        EditText giveUpCount = findViewById(R.id.give_up_count);
-        giveUpCount.setText(String.valueOf(GIVEUPCOUNT1));
-        giveUpCount.addTextChangedListener(new MyTextWatcherListener() {
+        EditText giveUpCount1 = findViewById(R.id.give_up_weekend_count);
+        giveUpCount1.setText(String.valueOf(GIVEUPCOUNT1));
+        giveUpCount1.addTextChangedListener(new MyTextWatcherListener() {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 GIVEUPCOUNT1 = ParseUtil.parseDouble(s.toString());
+                updateData();
+            }
+        });
+        EditText giveUpCount2 = findViewById(R.id.give_up_weekday_count);
+        giveUpCount2.setText(String.valueOf(GIVEUPCOUNT2));
+        giveUpCount2.addTextChangedListener(new MyTextWatcherListener() {
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                GIVEUPCOUNT2 = ParseUtil.parseDouble(s.toString());
                 updateData();
             }
         });

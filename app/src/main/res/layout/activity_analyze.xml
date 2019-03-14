@@ -22,9 +22,14 @@
             android:hint="开打数" />
 
         <EditText
-            android:id="@+id/et_totlewin2"
+            android:id="@+id/et_weekend_totlewin2"
             style="@style/et"
-            android:hint="总净胜2" />
+            android:hint="总净胜2周末" />
+
+        <EditText
+            android:id="@+id/et_weekday_totlewin2"
+            style="@style/et"
+            android:hint="总净胜2工日" />
 
         <EditText
             android:id="@+id/et_totlewin3"
@@ -38,15 +43,31 @@
         android:orientation="horizontal">
 
         <EditText
-            android:id="@+id/last_num2"
+            android:id="@+id/last_weekend_num2"
             style="@style/et"
-            android:hint="近多少数" />
+            android:hint="近多少数周末" />
 
         <EditText
-            android:id="@+id/last_win2"
+            android:id="@+id/last_weekday_num2"
             style="@style/et"
-            android:hint="近净胜2" />
+            android:hint="近多少数工日" />
 
+        <EditText
+            android:id="@+id/last_weekend_win2"
+            style="@style/et"
+            android:hint="近净胜2周末" />
+
+        <EditText
+            android:id="@+id/last_weekday_win2"
+            style="@style/et"
+            android:hint="近净胜2工日" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="35dp"
+        android:orientation="horizontal">
 
         <EditText
             android:id="@+id/last_num3"
@@ -58,17 +79,16 @@
             style="@style/et"
             android:hint="近净胜3" />
 
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="35dp"
-        android:orientation="horizontal">
-
         <EditText
-            android:id="@+id/give_up_count"
+            android:id="@+id/give_up_weekend_count"
             style="@style/et"
             android:hint="输多少弃板" />
+
+        <EditText
+            android:id="@+id/give_up_weekday_count"
+            style="@style/et"
+            android:hint="输多少弃板" />
+
     </LinearLayout>
 
     <com.jerry.moneyapp.ptrlib.widget.PtrRecyclerView
