@@ -69,6 +69,8 @@ public class MyService extends Service {
     private boolean mBtnClickable;//点击生效
     private Callback mCallback;
     private Point lastP;
+    private Param weekend = new Param(Param.STATE_WEEKEND);
+    private Param weekday = new Param(Param.STATE_WEEKDAY);
 
     protected WeakHandler mWeakHandler = new WeakHandler(new Handler.Callback() {
 
@@ -101,6 +103,14 @@ public class MyService extends Service {
             }
             lastP = null;
             int stopCount = 0;
+            int firstwin = 0;//0未玩，1：赢，2：输
+            int week = Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - 1;
+            Param currentWeek;
+            if (week > 0 && week < 5) {
+                currentWeek = weekday;
+            } else {
+                currentWeek = weekend;
+            }
             for (int j = 0; j < ints.length; j++) {
                 Point point = CaluUtil.calulate(ints, j + 1);
                 point.current = ints[j];
@@ -133,8 +143,16 @@ public class MyService extends Service {
                     if (lastP.intention != GBData.VALUE_NONE) {
                         if (lastP.intention == point.current) {
                             point.win = lastP.win + 9.7 * Math.abs(lastP.multiple);
+                            stopCount = 0;
+                            if (firstwin == 0) {
+                                firstwin = 1;
+                            }
                         } else {
                             point.win = lastP.win - 10 * Math.abs(lastP.multiple);
+                            stopCount++;
+                            if (firstwin == 0) {
+                                firstwin = 2;
+                            }
                         }
                     } else {
                         point.win = lastP.win;
@@ -142,15 +160,14 @@ public class MyService extends Service {
                 } else {
                     paint.add(1);
                 }
-                point.intention = GBData.VALUE_NONE;
-                if (point.win > Param.GIVEUPCOUNT && stopCount < Param.STOPCOUNT) {
-                    if (Param.LASTPOINTNUM2 > 0 && points.size() >= Param.LASTPOINTNUM2) {
-                        point.award2 = point.win2 - points.get(points.size() - Param.LASTPOINTNUM2).win2;
+                if (firstwin < 2 && point.win > currentWeek.giveupcount && stopCount < Param.STOPCOUNT) {
+                    if (currentWeek.lastpointnum2 > 0 && points.size() >= currentWeek.lastpointnum2) {
+                        point.award2 = point.win2 - points.get(points.size() - currentWeek.lastpointnum2).win2;
                     } else {
                         point.award2 = point.win2;
                     }
-                    if (Param.LASTPOINTNUM3 > 0 && points.size() >= Param.LASTPOINTNUM3) {
-                        point.award3 = point.win3 - points.get(points.size() - Param.LASTPOINTNUM3).win3;
+                    if (currentWeek.lastpointnum3 > 0 && points.size() >= currentWeek.lastpointnum3) {
+                        point.award3 = point.win3 - points.get(points.size() - currentWeek.lastpointnum3).win3;
                     } else {
                         point.award3 = point.win3;
                     }
@@ -160,25 +177,24 @@ public class MyService extends Service {
                         point.currentType = 3;
                     }
                     if (lastP != null) {
-                        if (j > Param.START && point.award2 >= Param.LASTWIN2 && point.award3 >= Param.LASTWIN3
-                                && point.win2 > Param.LASTWIN2 && point.win3 > Param.WHOLEWIN3) {
+                        if (firstwin < 2 && (j > currentWeek.start && point.award2 >= currentWeek.lastwin2 && point.award3 >= currentWeek.lastwin3
+                            && point.win2 > currentWeek.wholewin2 && point.win3 > currentWeek.wholewin3)) {
                             if (point.currentType == 2 && point.intention2 != GBData.VALUE_NONE) {
                                 point.intention = point.intention2;
                                 point.multiple = point.multiple2;
                             } else if (point.currentType == 3 && point.intention3 != GBData.VALUE_NONE) {
                                 point.intention = point.intention3;
                                 point.multiple = point.multiple3;
+                            } else {
+                                point.intention = GBData.VALUE_NONE;
                             }
+                        } else {
+                            point.intention = GBData.VALUE_NONE;
+                        }
+                        if (point.multiple > 1 && point.win - 10 * point.multiple < currentWeek.giveupcount) {
+                            point.multiple = 1;
                         }
                     }
-                }
-                if (point.multiple > 1 && point.win - 10 * point.multiple < Param.GIVEUPCOUNT) {
-                    point.multiple = 1;
-                }
-                if (point.multiple == 0) {
-                    point.intention = 0;
-                } else if (point.multiple > 1 && point.win - 10 * point.multiple < Param.GIVEUPCOUNT) {
-                    point.multiple = 1;
                 }
                 lastP = point;
                 points.add(point);

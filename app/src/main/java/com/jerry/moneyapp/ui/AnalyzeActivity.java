@@ -16,6 +16,7 @@ import android.widget.TextView;
 import com.jerry.moneyapp.R;
 import com.jerry.moneyapp.bean.GBData;
 import com.jerry.moneyapp.bean.MyLog;
+import com.jerry.moneyapp.bean.Param;
 import com.jerry.moneyapp.bean.Point;
 import com.jerry.moneyapp.bean.Record;
 import com.jerry.moneyapp.ptrlib.widget.BaseRecyclerAdapter;
@@ -30,14 +31,13 @@ import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.FindListener;
 
-import static com.jerry.moneyapp.bean.Param.GIVEUPCOUNT;
-import static com.jerry.moneyapp.bean.Param.LASTPOINTNUM2;
+import static com.jerry.moneyapp.bean.Param.GIVEUPCOUNT1;
+import static com.jerry.moneyapp.bean.Param.LASTPOINTNUM21;
 import static com.jerry.moneyapp.bean.Param.LASTPOINTNUM3;
-import static com.jerry.moneyapp.bean.Param.LASTWIN2;
+import static com.jerry.moneyapp.bean.Param.LASTWIN21;
 import static com.jerry.moneyapp.bean.Param.LASTWIN3;
 import static com.jerry.moneyapp.bean.Param.START;
-import static com.jerry.moneyapp.bean.Param.STOPCOUNT;
-import static com.jerry.moneyapp.bean.Param.WHOLEWIN2;
+import static com.jerry.moneyapp.bean.Param.WHOLEWIN21;
 import static com.jerry.moneyapp.bean.Param.WHOLEWIN3;
 
 public class AnalyzeActivity extends AppCompatActivity {
@@ -63,11 +63,11 @@ public class AnalyzeActivity extends AppCompatActivity {
             }
         });
         EditText etTotlewin2 = findViewById(R.id.et_totlewin2);
-        etTotlewin2.setText(String.valueOf(WHOLEWIN2));
+        etTotlewin2.setText(String.valueOf(WHOLEWIN21));
         etTotlewin2.addTextChangedListener(new MyTextWatcherListener() {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                WHOLEWIN2 = ParseUtil.parseDouble(s.toString());
+                WHOLEWIN21 = ParseUtil.parseDouble(s.toString());
                 updateData();
             }
         });
@@ -81,20 +81,20 @@ public class AnalyzeActivity extends AppCompatActivity {
             }
         });
         EditText lastNum2 = findViewById(R.id.last_num2);
-        lastNum2.setText(String.valueOf(LASTPOINTNUM2));
+        lastNum2.setText(String.valueOf(LASTPOINTNUM21));
         lastNum2.addTextChangedListener(new MyTextWatcherListener() {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                LASTPOINTNUM2 = ParseUtil.parseInt(s.toString());
+                LASTPOINTNUM21 = ParseUtil.parseInt(s.toString());
                 updateData();
             }
         });
         EditText lastWin2 = findViewById(R.id.last_win2);
-        lastWin2.setText(String.valueOf(LASTWIN2));
+        lastWin2.setText(String.valueOf(LASTWIN21));
         lastWin2.addTextChangedListener(new MyTextWatcherListener() {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                LASTWIN2 = ParseUtil.parseDouble(s.toString());
+                LASTWIN21 = ParseUtil.parseDouble(s.toString());
                 updateData();
             }
         });
@@ -117,11 +117,11 @@ public class AnalyzeActivity extends AppCompatActivity {
             }
         });
         EditText giveUpCount = findViewById(R.id.give_up_count);
-        giveUpCount.setText(String.valueOf(GIVEUPCOUNT));
+        giveUpCount.setText(String.valueOf(GIVEUPCOUNT1));
         giveUpCount.addTextChangedListener(new MyTextWatcherListener() {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                GIVEUPCOUNT = ParseUtil.parseDouble(s.toString());
+                GIVEUPCOUNT1 = ParseUtil.parseDouble(s.toString());
                 updateData();
             }
         });
@@ -142,7 +142,7 @@ public class AnalyzeActivity extends AppCompatActivity {
                 if (bean.visible) {
                     DetailView detailView = new DetailView(AnalyzeActivity.this, bean.count, bean.points);
                     detailView.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup
-                            .LayoutParams.MATCH_PARENT));
+                        .LayoutParams.MATCH_PARENT));
                     content.addView(detailView);
                     content.setVisibility(View.VISIBLE);
                 } else {
@@ -205,17 +205,18 @@ public class AnalyzeActivity extends AppCompatActivity {
                             return;
                         }
                         mMyLogs.addAll(list);
-                        query.setSkip(1000).setLimit(500).addWhereContainedIn("week", week567).order("-createTime").findObjects(new FindListener<MyLog>() {
-                            @Override
-                            public void done(List<MyLog> list, BmobException e) {
-                                if (e != null) {
-                                    return;
+                        query.setSkip(1000).setLimit(500).addWhereContainedIn("week", week567).order("-createTime")
+                            .findObjects(new FindListener<MyLog>() {
+                                @Override
+                                public void done(List<MyLog> list, BmobException e) {
+                                    if (e != null) {
+                                        return;
+                                    }
+                                    mMyLogs.addAll(list);
+                                    updateData();
+                                    mPtrRecyclerView.onRefreshComplete();
                                 }
-                                mMyLogs.addAll(list);
-                                updateData();
-                                mPtrRecyclerView.onRefreshComplete();
-                            }
-                        });
+                            });
                     }
                 });
             }
@@ -233,8 +234,17 @@ public class AnalyzeActivity extends AppCompatActivity {
         int defeatCount = 0;//负场数
         int dayWinCount = 0;//负场数
         int dayDefeatCount = 0;//负场数
+        Param currentWeek;
+        Param weekend = new Param(Param.STATE_WEEKEND);
+        Param weekday = new Param(Param.STATE_WEEKDAY);
         for (MyLog log : mMyLogs) {
             LinkedList<Integer> integers = log.getData();
+            int week = log.getWeek();
+            if (week > 0 && week < 5) {
+                currentWeek = weekday;
+            } else {
+                currentWeek = weekend;
+            }
             LinkedList<Integer> paint = new LinkedList<>();
             LinkedList<Point> points = new LinkedList<>();
             int[] ints = new int[integers.size()];
@@ -293,14 +303,14 @@ public class AnalyzeActivity extends AppCompatActivity {
                 } else {
                     paint.add(1);
                 }
-                if (firstwin < 2 && point.win > GIVEUPCOUNT && stopCount < STOPCOUNT) {
-                    if (LASTPOINTNUM2 > 0 && points.size() >= LASTPOINTNUM2) {
-                        point.award2 = point.win2 - points.get(points.size() - LASTPOINTNUM2).win2;
+                if (firstwin < 2 && point.win > currentWeek.giveupcount && stopCount < Param.STOPCOUNT) {
+                    if (currentWeek.lastpointnum2 > 0 && points.size() >= currentWeek.lastpointnum2) {
+                        point.award2 = point.win2 - points.get(points.size() - currentWeek.lastpointnum2).win2;
                     } else {
                         point.award2 = point.win2;
                     }
-                    if (LASTPOINTNUM3 > 0 && points.size() >= LASTPOINTNUM3) {
-                        point.award3 = point.win3 - points.get(points.size() - LASTPOINTNUM3).win3;
+                    if (currentWeek.lastpointnum3 > 0 && points.size() >= currentWeek.lastpointnum3) {
+                        point.award3 = point.win3 - points.get(points.size() - currentWeek.lastpointnum3).win3;
                     } else {
                         point.award3 = point.win3;
                     }
@@ -310,8 +320,8 @@ public class AnalyzeActivity extends AppCompatActivity {
                         point.currentType = 3;
                     }
                     if (lastP != null) {
-                        if (firstwin < 2 && (j > START && point.award2 >= LASTWIN2 && point.award3 >= LASTWIN3
-                                && point.win2 > WHOLEWIN2 && point.win3 > WHOLEWIN3)) {
+                        if (firstwin < 2 && (j > currentWeek.start && point.award2 >= currentWeek.lastwin2 && point.award3 >= currentWeek.lastwin3
+                            && point.win2 > currentWeek.wholewin2 && point.win3 > currentWeek.wholewin3)) {
                             if (point.currentType == 2 && point.intention2 != GBData.VALUE_NONE) {
                                 point.intention = point.intention2;
                                 point.multiple = point.multiple2;
@@ -324,7 +334,7 @@ public class AnalyzeActivity extends AppCompatActivity {
                         } else {
                             point.intention = GBData.VALUE_NONE;
                         }
-                        if (point.multiple > 1 && point.win - 10 * point.multiple < GIVEUPCOUNT) {
+                        if (point.multiple > 1 && point.win - 10 * point.multiple < currentWeek.giveupcount) {
                             point.multiple = 1;
                         }
                     }
@@ -408,12 +418,12 @@ public class AnalyzeActivity extends AppCompatActivity {
             dayWinRate = (double) dayWinCount / (dayWinCount + dayDefeatCount);
         }
         text.setText(new StringBuilder("总净胜：").append(DeviceUtil.m2(win))
-                .append("，胜率：").append(DeviceUtil.m2p(winRate))
-                .append("，日胜率：").append(DeviceUtil.m2p(dayWinRate))
-                .append("，最多胜：").append(DeviceUtil.m2(oneMax))
-                .append("，最多输：").append(DeviceUtil.m2(oneMin))
-                .append("，峰值：").append(DeviceUtil.m2(totalMax))
-                .append("，谷值：").append(DeviceUtil.m2(totalMin))
-                .append("，标准差：").append(DeviceUtil.m2(cart)));
+            .append("，胜率：").append(DeviceUtil.m2p(winRate))
+            .append("，日胜率：").append(DeviceUtil.m2p(dayWinRate))
+            .append("，最多胜：").append(DeviceUtil.m2(oneMax))
+            .append("，最多输：").append(DeviceUtil.m2(oneMin))
+            .append("，峰值：").append(DeviceUtil.m2(totalMax))
+            .append("，谷值：").append(DeviceUtil.m2(totalMin))
+            .append("，标准差：").append(DeviceUtil.m2(cart)));
     }
 }
