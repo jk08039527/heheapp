@@ -3,50 +3,72 @@ package com.jerry.moneyapp;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.ArrayList;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.Locale;
 
 import android.app.Service;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Binder;
-import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
-import android.util.Log;
 import android.widget.Toast;
+
+import com.jerry.moneyapp.bean.GBData;
+import com.jerry.moneyapp.bean.MyLog;
+import com.jerry.moneyapp.bean.Param;
+import com.jerry.moneyapp.bean.Point;
+import com.jerry.moneyapp.util.CaluUtil;
+import com.jerry.moneyapp.util.DeviceUtil;
+import com.jerry.moneyapp.util.WeakHandler;
+
+import cn.bmob.v3.BmobQuery;
+import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.FindListener;
 
 public class MyService extends Service {
 
-    private static final String TAG = "MyService";
-    private static double win;//净胜
+    /**
+     * 边界
+     */
     private static final int LEFT = 12;//17
     private static final int RIGHT = 1068;//144
     private static final int TOP = 470;//610
     private static final int BOTTOM = 805;//1080
+    /**
+     * 确定按键的坐标
+     */
     public static final int ASSIABLEX = 990;//1320
     public static final int ASSIABLEY = 900;//1180
-    private static final int GUDAO = 6;
-    private static final int NOTPLAYCOUNT = 10;
 
-    private static int width;
-    private static int height;
-    private static int last = GBData.VALUE_LONG;
+    public static final int MIDDELX = 500;//1180
+    /**
+     * 空白处点击一下激活活动区的y坐标
+     */
+    public static final int ENTERY = 930;//1180
+    /**
+     * 是否需要重进的y坐标
+     */
+    public static final int JUDGEY = 1240;//1180
+
+    /**
+     * 屏幕宽高
+     */
+    private int width;
+    private int height;
 
     private int[] pointsX = new int[18];
     private int[] pointsY = new int[6];
     private LinkedList<Integer> data = new LinkedList<>();
     private volatile int length;
-    private int money;
-    private int notPlay;
     private boolean mBtnClickable;//点击生效
-    private static final int LOGCOUNT = 20;
-    private int logCount;
-    private int multiple = 1;//倍数
-    private ArrayList<Integer> paint = new ArrayList<>();
-    private StringBuilder sb = new StringBuilder();
+    private Callback mCallback;
+    private Point lastP;
 
     protected WeakHandler mWeakHandler = new WeakHandler(new Handler.Callback() {
 
@@ -55,8 +77,13 @@ public class MyService extends Service {
             if (msg.what == -1) {
                 return false;
             }
+            boolean enter = GBData.getCurrentData(pointsX, pointsY, data);
+            if (enter) {
+                execShellCmd("input tap " + MIDDELX + " " + ENTERY);
+                mWeakHandler.sendEmptyMessageDelayed(0, 2000);
+                return false;
+            }
             mWeakHandler.sendEmptyMessageDelayed(0, 12000);
-            GBData.getCurrentData(pointsX, pointsY, data);
             if (data.size() == length) {
                 return false;
             }
@@ -66,100 +93,145 @@ public class MyService extends Service {
             //点击一下空白处
             length = data.size();
             execShellCmd("input tap " + 400 + " " + 400);
-            int[] ints = new int[length];
-            for (int i = 0; i < length; i++) {
+            LinkedList<Integer> paint = new LinkedList<>();
+            LinkedList<Point> points = new LinkedList<>();
+            int[] ints = new int[data.size()];
+            for (int i = 0; i < ints.length; i++) {
                 ints[i] = data.get(i);
             }
-            if (length > 0) {
-                if (last == ints[length - 1]) {
-                    win = win + money * 0.97;
-                } else if (last != GBData.VALUE_NONE) {
-                    win = win - money;
-                    multiple = 1;
-                }
-                // 判断是否加倍
-                paint.clear();
-                int index = length - 1;
-                int tempSize = 1;
-                while (index > 0) {
-                    index--;
-                    if (ints[index] == ints[index + 1]) {
-                        tempSize++;
+            lastP = null;
+            int stopCount = 0;
+            for (int j = 0; j < ints.length; j++) {
+                Point point = CaluUtil.calulate(ints, j + 1);
+                point.current = ints[j];
+                if (lastP != null) {
+                    if (lastP.current == point.current && paint.size() > 0) {
+                        int temp = paint.getLast();
+                        paint.removeLast();
+                        paint.addLast(++temp);
                     } else {
-                        paint.add(tempSize);
-                        tempSize = 1;
-                        if (paint.size() > 2) {
-                            break;
-                        }
+                        paint.add(1);
                     }
-                }
-                if ((paint.size() > 1 && paint.get(0) > 1 && paint.get(1) > 1 && paint.get(0) + paint.get(1) > 5) || (paint.size() > 2 &&
-                        paint.get(0) > 1 && paint.get(1) > 1 && paint.get(2) > 1 && paint.get(0) + paint.get(1) + paint.get(2) > 6)) {
-                    multiple = 2;
-                } else if (paint.size() > 2 && paint.get(0) == 1 && paint.get(1) == 1 && paint.get(2) == 1) {
-                    multiple = -1;
-                }
-            } else {
-                multiple = 1;
-            }
-
-            if (data.size() >= 68) {
-                Calendar now = Calendar.getInstance();
-                sb.append(now.getTime()).append(":").append(win).append("元").append("\n");
-                MyLog myLog = new MyLog();
-                myLog.setLog(sb.toString());
-                myLog.setData(data);
-                myLog.setDeviceId(DeviceUtil.getDeviceId());
-                myLog.save();
-                sb.delete(0, sb.length());
-            }
-            logCount++;
-            // 当前是否可玩儿
-            // 3个连续则投递。最后5个中2个孤岛放弃
-            if (length > GUDAO && multiple > 0) {
-                int wanIndex = 0;
-                for (int i = length - 1; i > length - 1 - GUDAO; i--) {
-                    if (i == length - 1) {
-                        if (ints[i] != ints[i - 1]) {
-                            wanIndex++;
+                    if (lastP.intention2 != GBData.VALUE_NONE) {
+                        if (lastP.intention2 == point.current) {
+                            point.win2 = lastP.win2 + 9.7 * Math.abs(lastP.multiple2);
+                        } else {
+                            point.win2 = lastP.win2 - 10 * Math.abs(lastP.multiple2);
                         }
-                    } else if (ints[i] != ints[i - 1] && ints[i] != ints[i + 1]) {
-                        wanIndex++;
-                    }
-                }
-                Log.d(TAG, "gudao: " + wanIndex);
-                if (wanIndex >= 2 && notPlay < NOTPLAYCOUNT) {
-                    last = GBData.VALUE_NONE;
-                    Toast.makeText(MyService.this, "孤岛太多!" + wanIndex, Toast.LENGTH_SHORT).show();
-                    notPlay++;
-                    return false;
-                }
-            }
-
-            if (length > 2 && ints[length - 1] != ints[length - 2] && ints[length - 3] != ints[length - 2] && notPlay < NOTPLAYCOUNT && multiple > 0) {
-                Toast.makeText(MyService.this, "本局放弃!", Toast.LENGTH_SHORT).show();
-                last = GBData.VALUE_NONE;
-                notPlay++;
-                return false;
-            } else {
-                money = (!mBtnClickable && notPlay >= NOTPLAYCOUNT) ? 10 : 10 * Math.abs(multiple);
-                if (notPlay == 0 && length > 1 && ints[length - 1] != ints[length - 2] && multiple > 0) {
-                    money *= 2;
-                }
-                if (length > 0) {
-                    if (multiple < 0) {
-                        last = ints[length - 2];
                     } else {
-                        last = ints[length - 1];
+                        point.win2 = lastP.win2;
+                    }
+                    if (lastP.intention3 != GBData.VALUE_NONE) {
+                        if (lastP.intention3 == point.current) {
+                            point.win3 = lastP.win3 + 9.7 * Math.abs(lastP.multiple3);
+                        } else {
+                            point.win3 = lastP.win3 - 10 * Math.abs(lastP.multiple3);
+                        }
+                    } else {
+                        point.win3 = lastP.win3;
+                    }
+                    if (lastP.intention != GBData.VALUE_NONE) {
+                        if (lastP.intention == point.current) {
+                            point.win = lastP.win + 9.7 * Math.abs(lastP.multiple);
+                        } else {
+                            point.win = lastP.win - 10 * Math.abs(lastP.multiple);
+                        }
+                    } else {
+                        point.win = lastP.win;
                     }
                 } else {
-                    last = GBData.VALUE_LONG;
+                    paint.add(1);
                 }
-                exeCall();
+                point.intention = GBData.VALUE_NONE;
+                if (point.win > Param.GIVEUPCOUNT && stopCount < Param.STOPCOUNT) {
+                    if (Param.LASTPOINTNUM2 > 0 && points.size() >= Param.LASTPOINTNUM2) {
+                        point.award2 = point.win2 - points.get(points.size() - Param.LASTPOINTNUM2).win2;
+                    } else {
+                        point.award2 = point.win2;
+                    }
+                    if (Param.LASTPOINTNUM3 > 0 && points.size() >= Param.LASTPOINTNUM3) {
+                        point.award3 = point.win3 - points.get(points.size() - Param.LASTPOINTNUM3).win3;
+                    } else {
+                        point.award3 = point.win3;
+                    }
+                    if (point.award2 >= point.award3) {
+                        point.currentType = 2;
+                    } else {
+                        point.currentType = 3;
+                    }
+                    if (lastP != null) {
+                        if (j > Param.START && point.award2 >= Param.LASTWIN2 && point.award3 >= Param.LASTWIN3
+                                && point.win2 > Param.LASTWIN2 && point.win3 > Param.WHOLEWIN3) {
+                            if (point.currentType == 2 && point.intention2 != GBData.VALUE_NONE) {
+                                point.intention = point.intention2;
+                                point.multiple = point.multiple2;
+                            } else if (point.currentType == 3 && point.intention3 != GBData.VALUE_NONE) {
+                                point.intention = point.intention3;
+                                point.multiple = point.multiple3;
+                            }
+                        }
+                    }
+                }
+                if (point.multiple > 1 && point.win - 10 * point.multiple < Param.GIVEUPCOUNT) {
+                    point.multiple = 1;
+                }
+                if (point.multiple == 0) {
+                    point.intention = 0;
+                } else if (point.multiple > 1 && point.win - 10 * point.multiple < Param.GIVEUPCOUNT) {
+                    point.multiple = 1;
+                }
+                lastP = point;
+                points.add(point);
+            }
+            if (lastP == null) {
+                return false;
+            }
+            if (mBtnClickable && lastP.intention != GBData.VALUE_NONE && data.size() < 69) {
+                exeCall(lastP.intention, lastP.multiple);
+            }
+            showJingsheng();
+            if (data.size() >= 69) {
+                BmobQuery<MyLog> query = new BmobQuery<>();
+                query.setLimit(1).order("-updatedAt").findObjects(new FindListener<MyLog>() {
+                    @Override
+                    public void done(List<MyLog> list, BmobException e) {
+                        if (e != null) {
+                            return;
+                        }
+                        if (list.size() > 0) {
+                            long lastTime = 0;
+                            try {
+                                String lateDate = list.get(0).getCreateTime();
+                                lastTime = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.CHINA).parse(lateDate).getTime();
+                            } catch (ParseException e1) {
+                                e1.printStackTrace();
+                            }
+                            if (lastTime > 0) {
+                                long second = (System.currentTimeMillis() - lastTime) / 1000;
+                                if (second < 200) {
+                                    return;
+                                }
+                            }
+                        }
+                        MyLog myLog = new MyLog();
+                        myLog.setCreateTime(DeviceUtil.getCurrentTime());
+                        myLog.setData(data);
+                        myLog.setDeviceId(DeviceUtil.getDeviceId());
+                        myLog.setWeek(Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - 1);
+                        myLog.save();
+                    }
+                });
             }
             return false;
         }
     });
+
+    private String getIntentStr(int intention, int mutiple) {
+        if (intention == GBData.VALUE_NONE) {
+            return " pass";
+        }
+        return (intention == GBData.VALUE_LONG ? "  龙" : "  凤") + String.valueOf(mutiple);
+    }
 
     @Override
     public void onCreate() {
@@ -188,6 +260,15 @@ public class MyService extends Service {
         Toast.makeText(this, mBtnClickable ? "点击生效！" : "点击取消!", Toast.LENGTH_SHORT).show();
     }
 
+    public void showJingsheng() {
+        if (lastP == null) {
+            return;
+        }
+        mCallback.showText(new StringBuilder()
+                .append("模拟净胜：").append(DeviceUtil.m2(lastP.win)).append("，")
+                .append("\t下一局：").append(getIntentStr(lastP.intention, lastP.multiple)).toString());
+    }
+
     public class PlayBinder extends Binder {
 
         public MyService getPlayService() {
@@ -197,6 +278,7 @@ public class MyService extends Service {
 
     public void startExe() {
         mWeakHandler.sendEmptyMessage(0);
+        showJingsheng();
     }
 
     private void execShellCmd(String cmd) {
@@ -226,33 +308,22 @@ public class MyService extends Service {
         }
     }
 
-    private void exeCall() {
-        int clickX;
+    private void exeCall(int type, int mutiple) {
+        int clickX = type == GBData.VALUE_LONG ? (int) (width * 0.25) : (int) (width * 0.75);
         int clickY = (int) (height * 0.9);
-        if (last == GBData.VALUE_LONG) {
-            clickX = (int) (width * 0.25);
-        } else {
-            clickX = (int) (width * 0.75);
+        for (int i = 0; i < mutiple; i++) {
+            execShellCmd("input tap " + clickX + " " + clickY);
         }
-        if (mBtnClickable || notPlay >= NOTPLAYCOUNT) {
-            new CountDownTimer(500 * (money / 10 + 1), 500) {
+        mWeakHandler.postDelayed(() -> execShellCmd("input tap " + ASSIABLEX + " " + ASSIABLEY), 2000);
+    }
 
-                @Override
-                public void onTick(final long millisUntilFinished) {
-                    execShellCmd("input tap " + clickX + " " + clickY);
-                }
 
-                @Override
-                public void onFinish() {
-                    execShellCmd("input tap " + ASSIABLEX + " " + ASSIABLEY);
-                }
-            }.start();
-            notPlay = 0;
-        } else {
-            notPlay++;
-        }
-        StringBuilder sb = new StringBuilder();
-        sb.append("净胜：" + DeviceUtil.m2(win)).append("  ").append((last == GBData.VALUE_LONG ? "龙" : "凤") + money);
-        Toast.makeText(MyService.this, sb.toString(), Toast.LENGTH_SHORT).show();
+    public void setCallback(Callback callback) {
+        mCallback = callback;
+    }
+
+    public interface Callback {
+
+        void showText(String data);
     }
 }

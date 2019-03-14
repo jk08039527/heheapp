@@ -2,7 +2,7 @@
 
     <!-- Base application theme. -->
 
-    <style name="AppBaseTheme" parent="android:Theme.Light.NoTitleBar">
+    <style name="AppBaseTheme" parent="Theme.AppCompat.NoActionBar">
         <item name="android:windowBackground">@null</item>
         <item name="android:windowContentOverlay">@null</item>
         <!-- 设置activity切换动画 -->
@@ -20,4 +20,23 @@
     <!-- Application theme. -->
     <style name="AppTheme" parent="AppBaseTheme" />
 
+
+    <style name="et">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">@android:color/black</item>
+        <item name="android:textColorHint">@android:color/darker_gray</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:inputType">numberSigned|numberDecimal</item>
+    </style>
+
+    <!-- 滑动条样式 -->
+    <style name="custom_scrollbar_style">
+        <item name="android:fadeScrollbars">true</item>
+        <item name="android:scrollbarSize">4.5dp</item>
+        <item name="android:scrollbarStyle">outsideOverlay</item>
+        <item name="android:scrollbars">vertical</item>
+    </style>
 </resources>

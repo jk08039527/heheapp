@@ -3,4 +3,9 @@
     <string name="start">开始</string>
     <string name="refresh">刷新</string>
     <string name="click">点击</string>
+    <string name="analyze">分析</string>
+    <string name="pull_to_refresh_pull_label">下拉刷新…</string>
+    <string name="pull_to_refresh_release_label">放开以刷新…</string>
+    <string name="pull_to_refresh_refreshing_label">正在载入…</string>
+    <string name="pull_to_refresh_complete">更新完成</string>
 </resources>

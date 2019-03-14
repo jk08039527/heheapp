@@ -1,4 +1,4 @@
-package com.jerry.moneyapp;
+package com.jerry.moneyapp.ui;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -17,7 +17,7 @@ import android.media.projection.MediaProjection;
 import android.media.projection.MediaProjectionManager;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
@@ -27,14 +27,20 @@ import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.TextView;
 import android.widget.Toast;
 
-public class MainActivity extends FragmentActivity implements View.OnClickListener {
+import com.jerry.moneyapp.MyService;
+import com.jerry.moneyapp.R;
+import com.jerry.moneyapp.bean.GBData;
+
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, MyService.Callback {
 
     private static final String TAG = "MainActivity";
     private static final int REQUEST_MEDIA_PROJECTION = 1;
     private MediaProjectionManager mMediaProjectionManager;
     private MediaProjection mMediaProjection;
+    private TextView tvInfo;
     private WebView mWebView;
     private boolean isBind;
     private MyService myService;
@@ -43,6 +49,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         public void onServiceConnected(final ComponentName name, final IBinder service) {
             MyService.PlayBinder playBinder = (MyService.PlayBinder) service;
             myService = playBinder.getPlayService();
+            myService.setCallback(MainActivity.this);
             myService.startExe();
             isBind = true;
         }
@@ -53,7 +60,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         }
     };
 
-    @SuppressLint("ClickableViewAccessibility")
+    @SuppressLint({"ClickableViewAccessibility", "SetJavaScriptEnabled"})
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,6 +72,8 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         findViewById(R.id.btn).setOnClickListener(this);
         findViewById(R.id.btn2).setOnClickListener(this);
         findViewById(R.id.btn3).setOnClickListener(this);
+        findViewById(R.id.btn4).setOnClickListener(this);
+        tvInfo = findViewById(R.id.tvInfo);
         mWebView = findViewById(R.id.webview);
         mWebView.removeJavascriptInterface("searchBoxJavaBridge_");
         mWebView.removeJavascriptInterface("accessibilityTraversal");
@@ -111,13 +120,11 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
             }
         });
 
-        mWebView.loadUrl("http://12ab88.com/");
-        if (rootCmd()) {
-            Toast.makeText(this, "root获取", Toast.LENGTH_SHORT).show();
-        }
+        mWebView.loadUrl("http://www.3122805.com/");
+        rootCmd();
     }
 
-    public boolean rootCmd() {
+    public void rootCmd() {
         Process process = null;
         DataOutputStream os = null;
         try {
@@ -128,7 +135,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
             os.flush();
             process.waitFor();
         } catch (Exception e) {
-            return false;
+            e.printStackTrace();
         } finally {
             if (os != null) {
                 try {
@@ -141,7 +148,11 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                 process.destroy();
             }
         }
-        return true;
+    }
+
+    @Override
+    public void showText(String text) {
+        tvInfo.setText(text);
     }
 
     @Override
@@ -195,6 +206,9 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                 if (mWebView != null) {
                     mWebView.reload();
                 }
+                break;
+            case R.id.btn4:
+                startActivity(new Intent(this, AnalyzeActivity.class));
                 break;
             default:
                 break;

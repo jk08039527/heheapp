@@ -1,11 +1,12 @@
 package com.jerry.moneyapp;
 
-import com.tencent.bugly.Bugly;
-import com.tencent.bugly.BuglyStrategy;
-
 import android.annotation.SuppressLint;
 import android.app.Application;
-import android.content.Context;
+import android.content.Intent;
+
+import com.tencent.bugly.Bugly;
+import com.tencent.bugly.BuglyStrategy;
+import com.tencent.tinker.entry.DefaultApplicationLike;
 
 import cn.bmob.v3.Bmob;
 
@@ -14,25 +15,28 @@ import cn.bmob.v3.Bmob;
  *
  * @Description
  */
-public class MyApplication extends Application {
+public class MyApplication extends DefaultApplicationLike {
 
-    private static final String BUGLY_CRASHREPORT = "c8d375f68d";
-    private static final String BMOB_APPID = "7cdb7db7a6d99713798d4b9755d3c0f5";
     @SuppressLint("StaticFieldLeak")
-    private static Context sInstances;
+    private static Application mInstance;
 
-    public static Context getInstances() {
-        return sInstances;
+    public MyApplication(final Application application, final int tinkerFlags, final boolean tinkerLoadVerifyFlag, final long
+            applicationStartElapsedTime, final long applicationStartMillisTime, final Intent tinkerResultIntent) {
+        super(application, tinkerFlags, tinkerLoadVerifyFlag, applicationStartElapsedTime, applicationStartMillisTime, tinkerResultIntent);
+    }
+
+    public static Application getInstances() {
+        return mInstance;
     }
 
     @Override
     public void onCreate() {
         super.onCreate();
-        sInstances = this;
+        mInstance = getApplication();
         BuglyStrategy strategy = new BuglyStrategy();
         // 设置app渠道号.
         strategy.setAppChannel("main");
-        Bugly.init(this, BUGLY_CRASHREPORT, false, strategy);
-        Bmob.initialize(this, BMOB_APPID);
+        Bugly.init(mInstance, BuildConfig.BUGLY_APP_ID, false, strategy);
+        Bmob.initialize(mInstance, BuildConfig.BMOB_APPID);
     }
 }

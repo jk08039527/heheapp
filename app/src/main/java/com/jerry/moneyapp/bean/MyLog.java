@@ -1,4 +1,4 @@
-package com.jerry.moneyapp;
+package com.jerry.moneyapp.bean;
 
 import java.util.LinkedList;
 
@@ -10,17 +10,10 @@ import cn.bmob.v3.BmobObject;
  * @Description
  */
 public class MyLog extends BmobObject {
-    private String log;
     private String deviceId;
+    private String createTime;
     private LinkedList<Integer> data;
-
-    public String getLog() {
-        return log;
-    }
-
-    public void setLog(final String log) {
-        this.log = log;
-    }
+    private int week;
 
     public String getDeviceId() {
         return deviceId;
@@ -30,11 +23,27 @@ public class MyLog extends BmobObject {
         this.deviceId = deviceId;
     }
 
+    public String getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(final String createTime) {
+        this.createTime = createTime;
+    }
+
     public LinkedList<Integer> getData() {
         return data;
     }
 
     public void setData(LinkedList<Integer> data) {
         this.data = data;
+    }
+
+    public int getWeek() {
+        return week;
+    }
+
+    public void setWeek(final int week) {
+        this.week = week;
     }
 }

@@ -1,4 +1,4 @@
-package com.jerry.moneyapp;
+package com.jerry.moneyapp.bean;
 
 import java.nio.ByteBuffer;
 import java.util.LinkedList;
@@ -9,16 +9,16 @@ import android.media.Image;
 import android.media.ImageReader;
 import android.util.Log;
 
+import com.jerry.moneyapp.MyService;
+
 public class GBData {
 
     private static final String TAG = "GBData";
     private static final int VALUE_MAX = 235;//阈值
     private static final int MIN1 = 55;//阈值1
-    private static final int MIN2 = 65;//阈值2
     public static final int VALUE_NONE = 0;
     public static final int VALUE_FENG = 1;
     public static final int VALUE_LONG = 2;
-    private static int peaceCount;//和
     public static ImageReader reader;
 
     /**
@@ -26,17 +26,17 @@ public class GBData {
      * @param y
      * @return
      */
-    public static void getCurrentData(int[] x, int[] y, LinkedList<Integer> list) {
+    public static boolean getCurrentData(int[] x, int[] y, LinkedList<Integer> list) {
         if (reader == null) {
             Log.w(TAG, "getColor: reader is null");
-            return;
+            return false;
         }
 
         Image image = reader.acquireLatestImage();
 
         if (image == null) {
             Log.w(TAG, "getColor: image is null");
-            return;
+            return false;
         }
         int width = image.getWidth();
         int height = image.getHeight();
@@ -48,13 +48,20 @@ public class GBData {
         Bitmap bitmap = Bitmap.createBitmap(width + rowPadding / pixelStride, height, Bitmap.Config.ARGB_8888);
         bitmap.copyPixelsFromBuffer(buffer);
         image.close();
+        int enterColor = bitmap.getPixel(MyService.MIDDELX, MyService.JUDGEY);
+        int r = Color.red(enterColor);
+        int gg = Color.green(enterColor);
+        int b = Color.blue(enterColor);
+        if (r < 50 && gg < 50 && b < 50) {
+            Log.w(TAG, "not assiable!");
+            return true;
+        }
         int assiableColor = bitmap.getPixel(MyService.ASSIABLEX, MyService.ASSIABLEY);
         int g = Color.green(assiableColor);
         if (g < 240) {
             Log.w(TAG, "not assiable!");
-            return;
+            return false;
         }
-
         list.clear();
         for (int aX : x) {
             for (int aY : y) {
@@ -66,17 +73,16 @@ public class GBData {
                     list.add(VALUE_LONG);
                 } else if (red > VALUE_MAX && blue > MIN1 && blue < 200) {
                     list.add(VALUE_FENG);
-                } else if (red + blue < 100 && green > 220) {
-                    peaceCount++;
+                } else if (red + blue < 100 && green > 140) {
                     list.add(VALUE_NONE);
                 } else if (red > 215 && green > 215 && blue > 215) {
-                    return;
+                    return false;
                 } else {
-                    peaceCount = 0;
                     list.clear();
-                    return;
+                    return false;
                 }
             }
         }
+        return false;
     }
 }
