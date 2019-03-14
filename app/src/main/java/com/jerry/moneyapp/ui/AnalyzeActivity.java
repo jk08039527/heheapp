@@ -30,17 +30,17 @@ import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.FindListener;
 
-public class AnalyzeActivity extends AppCompatActivity {
+import static com.jerry.moneyapp.bean.Param.GIVEUPCOUNT;
+import static com.jerry.moneyapp.bean.Param.LASTPOINTNUM2;
+import static com.jerry.moneyapp.bean.Param.LASTPOINTNUM3;
+import static com.jerry.moneyapp.bean.Param.LASTWIN2;
+import static com.jerry.moneyapp.bean.Param.LASTWIN3;
+import static com.jerry.moneyapp.bean.Param.START;
+import static com.jerry.moneyapp.bean.Param.STOPCOUNT;
+import static com.jerry.moneyapp.bean.Param.WHOLEWIN2;
+import static com.jerry.moneyapp.bean.Param.WHOLEWIN3;
 
-    public static int START = 12;
-    public static double WHOLEWIN2 = 15;
-    public static double WHOLEWIN3 = 6;
-    public static int LASTPOINTNUM2 = 17;
-    public static double LASTWIN2 = -5;
-    public static int LASTPOINTNUM3 = 6;
-    public static double LASTWIN3 = -21;
-    public static double GIVEUPCOUNT = -53;
-    public final static int STOPCOUNT = 3;
+public class AnalyzeActivity extends AppCompatActivity {
 
     private List<MyLog> mMyLogs = new ArrayList<>();
     private ArrayList<Record> records = new ArrayList<>();
@@ -163,9 +163,7 @@ public class AnalyzeActivity extends AppCompatActivity {
                     if (content.getVisibility() == View.GONE) {
                         if (content.getChildCount() == 0) {
                             DetailView detailView = new DetailView(AnalyzeActivity.this, bean.count, bean.points);
-                            detailView.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup
-                                    .LayoutParams
-                                    .MATCH_PARENT));
+                            detailView.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
                             content.addView(detailView);
                         }
                         content.setVisibility(View.VISIBLE);
@@ -185,21 +183,29 @@ public class AnalyzeActivity extends AppCompatActivity {
     private void getData() {
         BmobQuery<MyLog> query = new BmobQuery<>();
         mMyLogs.clear();
-        query.setSkip(0).setLimit(500).order("-createTime").findObjects(new FindListener<MyLog>() {
+        ArrayList<Integer> week567 = new ArrayList<>();
+//        week567.add(0);
+        week567.add(1);
+        week567.add(2);
+        week567.add(3);
+        week567.add(4);
+//        week567.add(5);
+//        week567.add(6);
+        query.setSkip(0).setLimit(500).addWhereContainedIn("week", week567).order("-createTime").findObjects(new FindListener<MyLog>() {
             @Override
             public void done(List<MyLog> list, BmobException e) {
                 if (e != null) {
                     return;
                 }
                 mMyLogs.addAll(list);
-                query.setSkip(500).setLimit(500).order("-createTime").findObjects(new FindListener<MyLog>() {
+                query.setSkip(500).setLimit(500).addWhereContainedIn("week", week567).order("-createTime").findObjects(new FindListener<MyLog>() {
                     @Override
                     public void done(List<MyLog> list, BmobException e) {
                         if (e != null) {
                             return;
                         }
                         mMyLogs.addAll(list);
-                        query.setSkip(1000).setLimit(500).order("-createTime").findObjects(new FindListener<MyLog>() {
+                        query.setSkip(1000).setLimit(500).addWhereContainedIn("week", week567).order("-createTime").findObjects(new FindListener<MyLog>() {
                             @Override
                             public void done(List<MyLog> list, BmobException e) {
                                 if (e != null) {

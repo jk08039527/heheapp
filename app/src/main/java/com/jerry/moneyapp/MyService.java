@@ -21,8 +21,8 @@ import android.widget.Toast;
 
 import com.jerry.moneyapp.bean.GBData;
 import com.jerry.moneyapp.bean.MyLog;
+import com.jerry.moneyapp.bean.Param;
 import com.jerry.moneyapp.bean.Point;
-import com.jerry.moneyapp.ui.AnalyzeActivity;
 import com.jerry.moneyapp.util.CaluUtil;
 import com.jerry.moneyapp.util.DeviceUtil;
 import com.jerry.moneyapp.util.WeakHandler;
@@ -143,14 +143,14 @@ public class MyService extends Service {
                     paint.add(1);
                 }
                 point.intention = GBData.VALUE_NONE;
-                if (point.win > AnalyzeActivity.GIVEUPCOUNT && stopCount < AnalyzeActivity.STOPCOUNT) {
-                    if (AnalyzeActivity.LASTPOINTNUM2 > 0 && points.size() >= AnalyzeActivity.LASTPOINTNUM2) {
-                        point.award2 = point.win2 - points.get(points.size() - AnalyzeActivity.LASTPOINTNUM2).win2;
+                if (point.win > Param.GIVEUPCOUNT && stopCount < Param.STOPCOUNT) {
+                    if (Param.LASTPOINTNUM2 > 0 && points.size() >= Param.LASTPOINTNUM2) {
+                        point.award2 = point.win2 - points.get(points.size() - Param.LASTPOINTNUM2).win2;
                     } else {
                         point.award2 = point.win2;
                     }
-                    if (AnalyzeActivity.LASTPOINTNUM3 > 0 && points.size() >= AnalyzeActivity.LASTPOINTNUM3) {
-                        point.award3 = point.win3 - points.get(points.size() - AnalyzeActivity.LASTPOINTNUM3).win3;
+                    if (Param.LASTPOINTNUM3 > 0 && points.size() >= Param.LASTPOINTNUM3) {
+                        point.award3 = point.win3 - points.get(points.size() - Param.LASTPOINTNUM3).win3;
                     } else {
                         point.award3 = point.win3;
                     }
@@ -160,8 +160,8 @@ public class MyService extends Service {
                         point.currentType = 3;
                     }
                     if (lastP != null) {
-                        if (j > AnalyzeActivity.START && point.award2 >= AnalyzeActivity.LASTWIN2 && point.award3 >= AnalyzeActivity.LASTWIN3
-                                && point.win2 > AnalyzeActivity.WHOLEWIN2 && point.win3 > AnalyzeActivity.WHOLEWIN3) {
+                        if (j > Param.START && point.award2 >= Param.LASTWIN2 && point.award3 >= Param.LASTWIN3
+                                && point.win2 > Param.LASTWIN2 && point.win3 > Param.WHOLEWIN3) {
                             if (point.currentType == 2 && point.intention2 != GBData.VALUE_NONE) {
                                 point.intention = point.intention2;
                                 point.multiple = point.multiple2;
@@ -172,12 +172,12 @@ public class MyService extends Service {
                         }
                     }
                 }
-                if (point.multiple > 1 && point.win - 10 * point.multiple < AnalyzeActivity.GIVEUPCOUNT) {
+                if (point.multiple > 1 && point.win - 10 * point.multiple < Param.GIVEUPCOUNT) {
                     point.multiple = 1;
                 }
                 if (point.multiple == 0) {
                     point.intention = 0;
-                } else if (point.multiple > 1 && point.win - 10 * point.multiple < AnalyzeActivity.GIVEUPCOUNT) {
+                } else if (point.multiple > 1 && point.win - 10 * point.multiple < Param.GIVEUPCOUNT) {
                     point.multiple = 1;
                 }
                 lastP = point;
