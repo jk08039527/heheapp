@@ -46,11 +46,6 @@ public class MyService extends Service {
     public static final int ASSIABLEX = 990;//1320
     public static final int ASSIABLEY = 900;//1180
 
-    /**
-     * 重进一次
-     */
-    public static final int OUTX = 100;
-    public static final int OUTY = 1080;
     public static final int MIDDELX = 500;//1180
     /**
      * 空白处点击一下激活活动区的y坐标
@@ -66,10 +61,6 @@ public class MyService extends Service {
      */
     private int width;
     private int height;
-    /**
-     * 界面卡死
-     */
-    private int indexOut;
 
     private int[] pointsX = new int[18];
     private int[] pointsY = new int[6];
@@ -87,14 +78,6 @@ public class MyService extends Service {
         public boolean handleMessage(Message msg) {
             if (msg.what == -1) {
                 return false;
-            } else if (msg.what == 1) {
-                execShellCmd("input tap " + MIDDELX + " " + OUTY);
-                mWeakHandler.sendEmptyMessageDelayed(2, 5000);
-                return false;
-            } else if (msg.what == 2) {
-                execShellCmd("input tap " + OUTX + " " + OUTY);
-                mWeakHandler.sendEmptyMessage(0);
-                return false;
             }
             boolean enter = GBData.getCurrentData(pointsX, pointsY, data);
             if (enter) {
@@ -104,17 +87,11 @@ public class MyService extends Service {
             }
             mWeakHandler.sendEmptyMessageDelayed(0, 12000);
             if (data.size() == length) {
-                indexOut++;
-                if (indexOut > 7) {
-                    execShellCmd("input tap " + OUTX + " " + OUTY);
-                    mWeakHandler.sendEmptyMessageDelayed(1, 800);
-                }
                 return false;
             }
             if (data.size() == 0 && length < 68) {
                 return false;
             }
-            indexOut = 0;
             //点击一下空白处
             length = data.size();
             execShellCmd("input tap " + 400 + " " + 400);

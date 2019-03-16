@@ -8,4 +8,6 @@
     <string name="pull_to_refresh_release_label">放开以刷新…</string>
     <string name="pull_to_refresh_refreshing_label">正在载入…</string>
     <string name="pull_to_refresh_complete">更新完成</string>
+    <string name="cancel">取消</string>
+    <string name="confirm">确定</string>
 </resources>

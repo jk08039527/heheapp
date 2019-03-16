@@ -224,13 +224,13 @@ public class AnalyzeActivity extends AppCompatActivity {
         BmobQuery<MyLog> query = new BmobQuery<>();
         mMyLogs.clear();
         ArrayList<Integer> week567 = new ArrayList<>();
-//        week567.add(0);
+        week567.add(0);
         week567.add(1);
         week567.add(2);
         week567.add(3);
         week567.add(4);
-//        week567.add(5);
-//        week567.add(6);
+        week567.add(5);
+        week567.add(6);
         query.setSkip(0).setLimit(500).addWhereContainedIn("week", week567).order("-createTime").findObjects(new FindListener<MyLog>() {
             @Override
             public void done(List<MyLog> list, BmobException e) {

@@ -8,4 +8,7 @@
     <color name="blue_primary">#4ca6ff</color>
     <color name="white">#ffffff</color>
     <color name="black">#000000</color>
+    <color name="gray_bg_pressed">#dfdfdf</color>
+    <color name="second_text_color">#666</color>
+    <color name="up_color">#dd2200</color>
 </resources>

@@ -18,10 +18,13 @@ import android.media.projection.MediaProjectionManager;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
 import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.View.OnLongClickListener;
 import android.webkit.URLUtil;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
@@ -31,12 +34,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.jerry.moneyapp.MyService;
+import com.jerry.moneyapp.MyService.Callback;
 import com.jerry.moneyapp.R;
 import com.jerry.moneyapp.bean.GBData;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener, MyService.Callback {
+public class MainActivity extends AppCompatActivity implements OnClickListener, Callback, OnLongClickListener {
 
     private static final String TAG = "MainActivity";
+    private static String URL = "http://www.3122ee.com/";
     private static final int REQUEST_MEDIA_PROJECTION = 1;
     private MediaProjectionManager mMediaProjectionManager;
     private MediaProjection mMediaProjection;
@@ -72,6 +77,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         findViewById(R.id.btn).setOnClickListener(this);
         findViewById(R.id.btn2).setOnClickListener(this);
         findViewById(R.id.btn3).setOnClickListener(this);
+        findViewById(R.id.btn3).setOnLongClickListener(this);
         findViewById(R.id.btn4).setOnClickListener(this);
         tvInfo = findViewById(R.id.tvInfo);
         mWebView = findViewById(R.id.webview);
@@ -120,7 +126,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         });
 
-        mWebView.loadUrl("http://www.3122805.com/");
+        mWebView.loadUrl(URL);
         rootCmd();
     }
 
@@ -180,9 +186,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         final ImageReader imageReader = ImageReader.newInstance(size.x, size.y, PixelFormat.RGBA_8888, 1);
         mMediaProjection.createVirtualDisplay("ScreenCapture",
-                size.x, size.y, metrics.densityDpi,
-                DisplayManager.VIRTUAL_DISPLAY_FLAG_AUTO_MIRROR,
-                imageReader.getSurface(), null, null);
+            size.x, size.y, metrics.densityDpi,
+            DisplayManager.VIRTUAL_DISPLAY_FLAG_AUTO_MIRROR,
+            imageReader.getSurface(), null, null);
         GBData.reader = imageReader;
     }
 
@@ -190,7 +196,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn:
-                if (isBind){
+                if (isBind) {
                     myService.setBtnClickable();
                 } else {
                     Toast.makeText(this, "先点击开始", Toast.LENGTH_SHORT).show();
@@ -216,6 +222,27 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     @Override
+    public boolean onLongClick(View v) {
+        switch (v.getId()) {
+            case R.id.btn3:
+                NoticeDialog noticeDialog = new NoticeDialog(this);
+                noticeDialog.setPositiveListener(view -> {
+                    String url = noticeDialog.getEditText();
+                    if (TextUtils.isEmpty(url)){
+                        return;
+                    }
+                    URL = url;
+                    mWebView.loadUrl(URL);
+                });
+                noticeDialog.show();
+                break;
+            default:
+                break;
+        }
+        return false;
+    }
+
+    @Override
     public void onBackPressed() {
         if (mWebView != null && mWebView.canGoBack()) {
             mWebView.goBack();
@@ -231,5 +258,4 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         unbindService(mServiceConnection);
         super.onDestroy();
     }
-
 }
