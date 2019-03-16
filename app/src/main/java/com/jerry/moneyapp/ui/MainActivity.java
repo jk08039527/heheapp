@@ -226,6 +226,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
         switch (v.getId()) {
             case R.id.btn3:
                 NoticeDialog noticeDialog = new NoticeDialog(this);
+                noticeDialog.setEditText(URL);
                 noticeDialog.setPositiveListener(view -> {
                     String url = noticeDialog.getEditText();
                     if (TextUtils.isEmpty(url)){

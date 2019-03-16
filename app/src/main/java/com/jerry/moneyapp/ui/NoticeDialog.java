@@ -15,6 +15,7 @@ import com.jerry.moneyapp.R;
  */
 public class NoticeDialog extends Dialog {
 
+    private String mUrl;
     private EditText mEditText;
     private View.OnClickListener mPositiveListener;
 
@@ -28,6 +29,7 @@ public class NoticeDialog extends Dialog {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.dialog_notice);
         mEditText = findViewById(R.id.et_url);
+        mEditText.setText(mUrl);
         findViewById(R.id.confirm_tv).setOnClickListener(v -> {
             dismiss();
             if (mPositiveListener != null) {
@@ -43,5 +45,9 @@ public class NoticeDialog extends Dialog {
 
     public String getEditText() {
         return mEditText.getText().toString();
+    }
+
+    public void setEditText(String url) {
+        mUrl = url;
     }
 }
