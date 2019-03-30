@@ -155,7 +155,6 @@ public class AnalyzeActivity extends AppCompatActivity {
     }
 
     private void updateData() {
-        CaluUtil.mMap.clear();
         records.clear();
         double win = 0;
         double oneMax = -99999;
@@ -168,20 +167,14 @@ public class AnalyzeActivity extends AppCompatActivity {
         int dayDefeatCount = 0;//负场数
         for (MyLog log : mMyLogs) {
             LinkedList<Integer> integers = log.getData();
-            int[] ints = new int[integers.size()];
-            for (int i = 0; i < ints.length; i++) {
-                ints[i] = integers.get(i);
-            }
-            CaluUtil.analyze(ints);
-        }
-        for (MyLog log : mMyLogs) {
-            LinkedList<Integer> integers = log.getData();
             LinkedList<Integer> paint = new LinkedList<>();
             LinkedList<Point> points = new LinkedList<>();
             int[] ints = new int[integers.size()];
             for (int i = 0; i < ints.length; i++) {
                 ints[i] = integers.get(i);
             }
+            CaluUtil.mMap.clear();
+            CaluUtil.analyze(ints);
             Point lastP = null;
             for (int j = 0; j < ints.length; j++) {
                 Point point = CaluUtil.calulate(ints, j + 1);

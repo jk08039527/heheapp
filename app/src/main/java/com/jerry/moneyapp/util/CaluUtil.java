@@ -28,7 +28,7 @@ public class CaluUtil {
             AnalyzeBean analyzeBean = mMap.get(list.toString());
             if (analyzeBean != null && analyzeBean.total > 0) {
                 double rate = (double) analyzeBean.same / analyzeBean.total;
-                if (rate > 0.508) {
+                if (rate > 0.508 && rate < 0.6) {
                     point.intention = point.current;
                 } else if (rate < 0.492 && rate > 0.4) {
                     point.intention = point.current == GBData.VALUE_FENG ? GBData.VALUE_LONG : GBData.VALUE_FENG;
