@@ -7,13 +7,11 @@ package com.jerry.moneyapp.bean;
  */
 public class Param {
 
-    public final static int STOPCOUNT = 3;
-
-    public static int START = 12;
-    public static double WHOLEWIN2 = 15;
-    public static double WHOLEWIN3 = 6;
-    public static int LASTPOINTNUM2 = 17;
-    public static double LASTWIN2 = -5;
-    public static int LASTPOINTNUM3 = 6;
-    public static double LASTWIN3 = -21;
+    public static int START = 9;
+    public static double WHOLEWIN2 = 0;
+    public static double WHOLEWIN3 = 0;
+    public static int LASTPOINTNUM2 = 2;
+    public static double LASTWIN2 = 0;
+    public static int LASTPOINTNUM3 = 0;
+    public static double LASTWIN3 = 0;
 }

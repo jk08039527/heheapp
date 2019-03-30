@@ -279,35 +279,33 @@ public class AnalyzeActivity extends AppCompatActivity {
                 } else {
                     paint.add(1);
                 }
-                if (stopCount < Param.STOPCOUNT) {
-                    if (Param.LASTPOINTNUM2 > 0 && points.size() >= Param.LASTPOINTNUM2) {
-                        point.award2 = point.win2 - points.get(points.size() - Param.LASTPOINTNUM2).win2;
-                    } else {
-                        point.award2 = point.win2;
-                    }
-                    if (Param.LASTPOINTNUM3 > 0 && points.size() >= Param.LASTPOINTNUM3) {
-                        point.award3 = point.win3 - points.get(points.size() - Param.LASTPOINTNUM3).win3;
-                    } else {
-                        point.award3 = point.win3;
-                    }
-                    if (point.award2 >= point.award3) {
-                        point.currentType = 2;
-                    } else {
-                        point.currentType = 3;
-                    }
-                    if (lastP != null) {
-                        if (j > Param.START && point.award2 >= Param.LASTWIN2 && point.award3 >= Param.LASTWIN3
-                            && point.win2 > Param.WHOLEWIN2 && point.win3 > Param.WHOLEWIN3) {
-                            if (point.currentType == 2 && point.intention2 != GBData.VALUE_NONE) {
-                                point.intention = point.intention2;
-                            } else if (point.currentType == 3 && point.intention3 != GBData.VALUE_NONE) {
-                                point.intention = point.intention3;
-                            } else {
-                                point.intention = GBData.VALUE_NONE;
-                            }
+                if (Param.LASTPOINTNUM2 > 0 && points.size() >= Param.LASTPOINTNUM2) {
+                    point.award2 = point.win2 - points.get(points.size() - Param.LASTPOINTNUM2).win2;
+                } else {
+                    point.award2 = point.win2;
+                }
+                if (Param.LASTPOINTNUM3 > 0 && points.size() >= Param.LASTPOINTNUM3) {
+                    point.award3 = point.win3 - points.get(points.size() - Param.LASTPOINTNUM3).win3;
+                } else {
+                    point.award3 = point.win3;
+                }
+                if (point.award2 >= point.award3) {
+                    point.currentType = 2;
+                } else {
+                    point.currentType = 3;
+                }
+                if (lastP != null) {
+                    if (j > Param.START && point.award2 >= Param.LASTWIN2 && point.award3 >= Param.LASTWIN3
+                        && point.win2 > Param.WHOLEWIN2 && point.win3 > Param.WHOLEWIN3) {
+                        if (point.currentType == 2 && point.intention2 != GBData.VALUE_NONE) {
+                            point.intention = point.intention2;
+                        } else if (point.currentType == 3 && point.intention3 != GBData.VALUE_NONE) {
+                            point.intention = point.intention3;
                         } else {
                             point.intention = GBData.VALUE_NONE;
                         }
+                    } else {
+                        point.intention = GBData.VALUE_NONE;
                     }
                 }
                 lastP = point;

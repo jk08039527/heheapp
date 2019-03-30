@@ -100,9 +100,6 @@ public class MyService extends Service {
                 ints[i] = data.get(i);
             }
             lastP = null;
-            int stopCount = 0;
-            int firstwin = 0;//0未玩，1：赢，2：输
-            int week = Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - 1;
             for (int j = 0; j < ints.length; j++) {
                 Point point = CaluUtil.calulate(ints, j + 1);
                 point.current = ints[j];
@@ -125,7 +122,7 @@ public class MyService extends Service {
                     }
                     if (lastP.intention3 != GBData.VALUE_NONE) {
                         if (lastP.intention3 == point.current) {
-                            point.win3 = lastP.win3 + 9.7 ;
+                            point.win3 = lastP.win3 + 9.7;
                         } else {
                             point.win3 = lastP.win3 - 10;
                         }
@@ -135,16 +132,8 @@ public class MyService extends Service {
                     if (lastP.intention != GBData.VALUE_NONE) {
                         if (lastP.intention == point.current) {
                             point.win = lastP.win + 9.7;
-                            stopCount = 0;
-                            if (firstwin == 0) {
-                                firstwin = 1;
-                            }
                         } else {
                             point.win = lastP.win - 10;
-                            stopCount++;
-                            if (firstwin == 0) {
-                                firstwin = 2;
-                            }
                         }
                     } else {
                         point.win = lastP.win;
@@ -152,35 +141,33 @@ public class MyService extends Service {
                 } else {
                     paint.add(1);
                 }
-                if (firstwin < 2 && stopCount < Param.STOPCOUNT) {
-                    if (Param.LASTPOINTNUM2 > 0 && points.size() >= Param.LASTPOINTNUM2) {
-                        point.award2 = point.win2 - points.get(points.size() - Param.LASTPOINTNUM2).win2;
-                    } else {
-                        point.award2 = point.win2;
-                    }
-                    if (Param.LASTPOINTNUM3 > 0 && points.size() >= Param.LASTPOINTNUM3) {
-                        point.award3 = point.win3 - points.get(points.size() - Param.LASTPOINTNUM3).win3;
-                    } else {
-                        point.award3 = point.win3;
-                    }
-                    if (point.award2 >= point.award3) {
-                        point.currentType = 2;
-                    } else {
-                        point.currentType = 3;
-                    }
-                    if (lastP != null) {
-                        if (firstwin < 2 && (j > Param.START && point.award2 >= Param.LASTWIN2 && point.award3 >= Param.LASTWIN3
-                            && point.win2 > Param.WHOLEWIN2 && point.win3 > Param.WHOLEWIN3)) {
-                            if (point.currentType == 2 && point.intention2 != GBData.VALUE_NONE) {
-                                point.intention = point.intention2;
-                            } else if (point.currentType == 3 && point.intention3 != GBData.VALUE_NONE) {
-                                point.intention = point.intention3;
-                            } else {
-                                point.intention = GBData.VALUE_NONE;
-                            }
+                if (Param.LASTPOINTNUM2 > 0 && points.size() >= Param.LASTPOINTNUM2) {
+                    point.award2 = point.win2 - points.get(points.size() - Param.LASTPOINTNUM2).win2;
+                } else {
+                    point.award2 = point.win2;
+                }
+                if (Param.LASTPOINTNUM3 > 0 && points.size() >= Param.LASTPOINTNUM3) {
+                    point.award3 = point.win3 - points.get(points.size() - Param.LASTPOINTNUM3).win3;
+                } else {
+                    point.award3 = point.win3;
+                }
+                if (point.award2 >= point.award3) {
+                    point.currentType = 2;
+                } else {
+                    point.currentType = 3;
+                }
+                if (lastP != null) {
+                    if (j > Param.START && point.award2 >= Param.LASTWIN2 && point.award3 >= Param.LASTWIN3
+                        && point.win2 > Param.WHOLEWIN2 && point.win3 > Param.WHOLEWIN3) {
+                        if (point.currentType == 2 && point.intention2 != GBData.VALUE_NONE) {
+                            point.intention = point.intention2;
+                        } else if (point.currentType == 3 && point.intention3 != GBData.VALUE_NONE) {
+                            point.intention = point.intention3;
                         } else {
                             point.intention = GBData.VALUE_NONE;
                         }
+                    } else {
+                        point.intention = GBData.VALUE_NONE;
                     }
                 }
                 lastP = point;
