@@ -196,6 +196,7 @@ public class AnalyzeActivity extends AppCompatActivity {
                 }
             }
             Point lastP = null;
+            CaluUtil.analyze(ints);
             for (int j = 0; j < ints.length; j++) {
                 Point point = CaluUtil.calulate(ints, j + 1);
                 if (lastP != null) {

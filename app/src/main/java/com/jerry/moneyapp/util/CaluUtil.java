@@ -16,6 +16,7 @@ public class CaluUtil {
     public static Point calulate(int[] ints, int position) {
         Point point = new Point();
         point.current = ints[position - 1];
+        int hengCurrent = 0;
         if (position > Param.START) {
             int zongCount = 1;
             int hengCount = 1;
@@ -28,25 +29,32 @@ public class CaluUtil {
                 zongCount++;
             }
             if (position > 6) {
-                int tempp = ints[position - 6];
+                hengCurrent = ints[position - 6];
                 temp = position - 12;
                 while (temp > 0) {
-                    if (tempp != ints[temp]) {
+                    if (hengCurrent != ints[temp]) {
                         break;
                     }
                     temp = temp - 6;
                     hengCount++;
                 }
             }
-            double v = Param.K1 * zongCount + Param.K2 * hengCount + Param.K3;
-            if (position > 6) {
-                if (v > 0) {
-                    point.intention = ints[position - 1];
-                } else if (v < 0) {
-                    point.intention = ints[position - 6];
+            if (hengCurrent == point.current) {
+                if (zongCount + hengCount < 6) {
+                    point.intention = point.current;
+                }
+            } else {
+                if (zongCount > 1 && zongCount < 5 && hengCount == 1) {
+                    point.intention = point.current;
+                } else if (hengCount > 3 && hengCount < 5 && zongCount == 1) {
+                    point.intention = hengCurrent;
                 }
             }
         }
         return point;
+    }
+
+    public static void analyze(int[] ints) {
+
     }
 }
