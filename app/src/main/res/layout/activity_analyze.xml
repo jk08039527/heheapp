@@ -22,73 +22,14 @@
             android:hint="开打数" />
 
         <EditText
-            android:id="@+id/et_weekend_totlewin2"
+            android:id="@+id/et_k1"
             style="@style/et"
-            android:hint="总净胜2周末" />
+            android:hint="纵行" />
 
         <EditText
-            android:id="@+id/et_weekday_totlewin2"
+            android:id="@+id/et_k2"
             style="@style/et"
-            android:hint="总净胜2工日" />
-
-        <EditText
-            android:id="@+id/et_totlewin3"
-            style="@style/et"
-            android:hint="总净胜3" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="35dp"
-        android:orientation="horizontal">
-
-        <EditText
-            android:id="@+id/last_weekend_num2"
-            style="@style/et"
-            android:hint="近多少数周末" />
-
-        <EditText
-            android:id="@+id/last_weekday_num2"
-            style="@style/et"
-            android:hint="近多少数工日" />
-
-        <EditText
-            android:id="@+id/last_weekend_win2"
-            style="@style/et"
-            android:hint="近净胜2周末" />
-
-        <EditText
-            android:id="@+id/last_weekday_win2"
-            style="@style/et"
-            android:hint="近净胜2工日" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="35dp"
-        android:orientation="horizontal">
-
-        <EditText
-            android:id="@+id/last_num3"
-            style="@style/et"
-            android:hint="近多少数" />
-
-        <EditText
-            android:id="@+id/last_win3"
-            style="@style/et"
-            android:hint="近净胜3" />
-
-        <EditText
-            android:id="@+id/give_up_weekend_count"
-            style="@style/et"
-            android:hint="输多少弃板" />
-
-        <EditText
-            android:id="@+id/give_up_weekday_count"
-            style="@style/et"
-            android:hint="输多少弃板" />
-
+            android:hint="横行" />
     </LinearLayout>
 
     <com.jerry.moneyapp.ptrlib.widget.PtrRecyclerView

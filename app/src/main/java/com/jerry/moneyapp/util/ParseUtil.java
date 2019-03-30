@@ -26,8 +26,8 @@ public class ParseUtil {
         }
         try {
             return Integer.parseInt(s);
-        } catch (NumberFormatException ignored) {
-            ignored.printStackTrace();
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
             return defaultInt;
         }
 

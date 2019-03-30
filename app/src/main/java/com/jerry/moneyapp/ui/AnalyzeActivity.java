@@ -16,7 +16,6 @@ import android.widget.TextView;
 import com.jerry.moneyapp.R;
 import com.jerry.moneyapp.bean.GBData;
 import com.jerry.moneyapp.bean.MyLog;
-import com.jerry.moneyapp.bean.Param;
 import com.jerry.moneyapp.bean.Point;
 import com.jerry.moneyapp.bean.Record;
 import com.jerry.moneyapp.ptrlib.widget.BaseRecyclerAdapter;
@@ -31,18 +30,9 @@ import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.FindListener;
 
-import static com.jerry.moneyapp.bean.Param.GIVEUPCOUNT1;
-import static com.jerry.moneyapp.bean.Param.GIVEUPCOUNT2;
-import static com.jerry.moneyapp.bean.Param.LASTPOINTNUM21;
-import static com.jerry.moneyapp.bean.Param.LASTPOINTNUM22;
-import static com.jerry.moneyapp.bean.Param.LASTPOINTNUM3;
-import static com.jerry.moneyapp.bean.Param.LASTWIN21;
-import static com.jerry.moneyapp.bean.Param.LASTWIN22;
-import static com.jerry.moneyapp.bean.Param.LASTWIN3;
+import static com.jerry.moneyapp.bean.Param.K1;
+import static com.jerry.moneyapp.bean.Param.K2;
 import static com.jerry.moneyapp.bean.Param.START;
-import static com.jerry.moneyapp.bean.Param.WHOLEWIN21;
-import static com.jerry.moneyapp.bean.Param.WHOLEWIN22;
-import static com.jerry.moneyapp.bean.Param.WHOLEWIN3;
 
 public class AnalyzeActivity extends AppCompatActivity {
 
@@ -66,109 +56,28 @@ public class AnalyzeActivity extends AppCompatActivity {
                 updateData();
             }
         });
-        EditText etTotlewin21 = findViewById(R.id.et_weekend_totlewin2);
-        etTotlewin21.setText(String.valueOf(WHOLEWIN21));
-        etTotlewin21.addTextChangedListener(new MyTextWatcherListener() {
+        EditText etK1 = findViewById(R.id.et_k1);
+        etK1.setText(String.valueOf(K1));
+        etK1.addTextChangedListener(new MyTextWatcherListener() {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                WHOLEWIN21 = ParseUtil.parseDouble(s.toString());
+                K1 = ParseUtil.parseDouble(s.toString());
                 updateData();
             }
         });
-        EditText etTotlewin22 = findViewById(R.id.et_weekday_totlewin2);
-        etTotlewin22.setText(String.valueOf(WHOLEWIN22));
-        etTotlewin22.addTextChangedListener(new MyTextWatcherListener() {
+        EditText etK2 = findViewById(R.id.et_k2);
+        etK2.setText(String.valueOf(K2));
+        etK2.addTextChangedListener(new MyTextWatcherListener() {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                WHOLEWIN22 = ParseUtil.parseDouble(s.toString());
-                updateData();
-            }
-        });
-        EditText etTotlewin3 = findViewById(R.id.et_totlewin3);
-        etTotlewin3.setText(String.valueOf(WHOLEWIN3));
-        etTotlewin3.addTextChangedListener(new MyTextWatcherListener() {
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                WHOLEWIN3 = ParseUtil.parseDouble(s.toString());
-                updateData();
-            }
-        });
-        EditText lastNum21 = findViewById(R.id.last_weekend_num2);
-        lastNum21.setText(String.valueOf(LASTPOINTNUM21));
-        lastNum21.addTextChangedListener(new MyTextWatcherListener() {
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                LASTPOINTNUM21 = ParseUtil.parseInt(s.toString());
-                updateData();
-            }
-        });
-        EditText lastNum22 = findViewById(R.id.last_weekday_num2);
-        lastNum22.setText(String.valueOf(LASTPOINTNUM22));
-        lastNum22.addTextChangedListener(new MyTextWatcherListener() {
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                LASTPOINTNUM22 = ParseUtil.parseInt(s.toString());
-                updateData();
-            }
-        });
-        EditText lastWin21 = findViewById(R.id.last_weekend_win2);
-        lastWin21.setText(String.valueOf(LASTWIN21));
-        lastWin21.addTextChangedListener(new MyTextWatcherListener() {
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                LASTWIN21 = ParseUtil.parseDouble(s.toString());
-                updateData();
-            }
-        });
-        EditText lastWin22 = findViewById(R.id.last_weekday_win2);
-        lastWin22.setText(String.valueOf(LASTWIN22));
-        lastWin22.addTextChangedListener(new MyTextWatcherListener() {
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                LASTWIN22 = ParseUtil.parseDouble(s.toString());
-                updateData();
-            }
-        });
-        EditText lastNum3 = findViewById(R.id.last_num3);
-        lastNum3.setText(String.valueOf(LASTPOINTNUM3));
-        lastNum3.addTextChangedListener(new MyTextWatcherListener() {
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                LASTPOINTNUM3 = ParseUtil.parseInt(s.toString());
-                updateData();
-            }
-        });
-        EditText lastWin3 = findViewById(R.id.last_win3);
-        lastWin3.setText(String.valueOf(LASTWIN3));
-        lastWin3.addTextChangedListener(new MyTextWatcherListener() {
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                LASTWIN3 = ParseUtil.parseDouble(s.toString());
-                updateData();
-            }
-        });
-        EditText giveUpCount1 = findViewById(R.id.give_up_weekend_count);
-        giveUpCount1.setText(String.valueOf(GIVEUPCOUNT1));
-        giveUpCount1.addTextChangedListener(new MyTextWatcherListener() {
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                GIVEUPCOUNT1 = ParseUtil.parseDouble(s.toString());
-                updateData();
-            }
-        });
-        EditText giveUpCount2 = findViewById(R.id.give_up_weekday_count);
-        giveUpCount2.setText(String.valueOf(GIVEUPCOUNT2));
-        giveUpCount2.addTextChangedListener(new MyTextWatcherListener() {
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                GIVEUPCOUNT2 = ParseUtil.parseDouble(s.toString());
+                K2 = ParseUtil.parseDouble(s.toString());
                 updateData();
             }
         });
         mPtrRecyclerView = findViewById(R.id.ptrRecyclerView);
         mAdapter = new BaseRecyclerAdapter<Record>(this, records) {
             @Override
-            public int getItemLayoutId(final int viewType) {
+            public int getItemLayoutId(int viewType) {
                 return R.layout.item_text;
             }
 
@@ -203,7 +112,8 @@ public class AnalyzeActivity extends AppCompatActivity {
                     if (content.getVisibility() == View.GONE) {
                         if (content.getChildCount() == 0) {
                             DetailView detailView = new DetailView(AnalyzeActivity.this, bean.count, bean.points);
-                            detailView.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+                            detailView.setLayoutParams(
+                                new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
                             content.addView(detailView);
                         }
                         content.setVisibility(View.VISIBLE);
@@ -274,17 +184,8 @@ public class AnalyzeActivity extends AppCompatActivity {
         int defeatCount = 0;//负场数
         int dayWinCount = 0;//负场数
         int dayDefeatCount = 0;//负场数
-        Param currentWeek;
-        Param weekend = new Param(Param.STATE_WEEKEND);
-        Param weekday = new Param(Param.STATE_WEEKDAY);
         for (MyLog log : mMyLogs) {
             LinkedList<Integer> integers = log.getData();
-            int week = log.getWeek();
-            if (week > 0 && week < 5) {
-                currentWeek = weekday;
-            } else {
-                currentWeek = weekend;
-            }
             LinkedList<Integer> paint = new LinkedList<>();
             LinkedList<Point> points = new LinkedList<>();
             int[] ints = new int[integers.size()];
@@ -292,11 +193,8 @@ public class AnalyzeActivity extends AppCompatActivity {
                 ints[i] = integers.get(i);
             }
             Point lastP = null;
-            int stopCount = 0;
-            int firstwin = 0;//0未玩，1：赢，2：输
             for (int j = 0; j < ints.length; j++) {
                 Point point = CaluUtil.calulate(ints, j + 1);
-                point.current = ints[j];
                 if (lastP != null) {
                     if (lastP.current == point.current && paint.size() > 0) {
                         int temp = paint.getLast();
@@ -305,79 +203,19 @@ public class AnalyzeActivity extends AppCompatActivity {
                     } else {
                         paint.add(1);
                     }
-                    if (lastP.intention2 != GBData.VALUE_NONE) {
-                        if (lastP.intention2 == point.current) {
-                            point.win2 = lastP.win2 + 9.7 * Math.abs(lastP.multiple2);
-                        } else {
-                            point.win2 = lastP.win2 - 10 * Math.abs(lastP.multiple2);
-                        }
-                    } else {
-                        point.win2 = lastP.win2;
-                    }
-                    if (lastP.intention3 != GBData.VALUE_NONE) {
-                        if (lastP.intention3 == point.current) {
-                            point.win3 = lastP.win3 + 9.7 * Math.abs(lastP.multiple3);
-                        } else {
-                            point.win3 = lastP.win3 - 10 * Math.abs(lastP.multiple3);
-                        }
-                    } else {
-                        point.win3 = lastP.win3;
-                    }
                     if (lastP.intention != GBData.VALUE_NONE) {
                         if (lastP.intention == point.current) {
-                            point.win = lastP.win + 9.7 * Math.abs(lastP.multiple);
-                            stopCount = 0;
-                            if (firstwin == 0) {
-                                firstwin = 1;
-                            }
+                            point.win = lastP.win + 9.7;
+                            winCount++;
                         } else {
-                            point.win = lastP.win - 10 * Math.abs(lastP.multiple);
-                            stopCount++;
-                            if (firstwin == 0) {
-                                firstwin = 2;
-                            }
+                            point.win = lastP.win - 10;
+                            defeatCount++;
                         }
                     } else {
                         point.win = lastP.win;
                     }
                 } else {
                     paint.add(1);
-                }
-                if (firstwin < 2 && point.win > currentWeek.giveupcount && stopCount < Param.STOPCOUNT) {
-                    if (currentWeek.lastpointnum2 > 0 && points.size() >= currentWeek.lastpointnum2) {
-                        point.award2 = point.win2 - points.get(points.size() - currentWeek.lastpointnum2).win2;
-                    } else {
-                        point.award2 = point.win2;
-                    }
-                    if (currentWeek.lastpointnum3 > 0 && points.size() >= currentWeek.lastpointnum3) {
-                        point.award3 = point.win3 - points.get(points.size() - currentWeek.lastpointnum3).win3;
-                    } else {
-                        point.award3 = point.win3;
-                    }
-                    if (point.award2 >= point.award3) {
-                        point.currentType = 2;
-                    } else {
-                        point.currentType = 3;
-                    }
-                    if (lastP != null) {
-                        if (firstwin < 2 && (j > currentWeek.start && point.award2 >= currentWeek.lastwin2 && point.award3 >= currentWeek.lastwin3
-                            && point.win2 > currentWeek.wholewin2 && point.win3 > currentWeek.wholewin3)) {
-                            if (point.currentType == 2 && point.intention2 != GBData.VALUE_NONE) {
-                                point.intention = point.intention2;
-                                point.multiple = point.multiple2;
-                            } else if (point.currentType == 3 && point.intention3 != GBData.VALUE_NONE) {
-                                point.intention = point.intention3;
-                                point.multiple = point.multiple3;
-                            } else {
-                                point.intention = GBData.VALUE_NONE;
-                            }
-                        } else {
-                            point.intention = GBData.VALUE_NONE;
-                        }
-                        if (point.multiple > 1 && point.win - 10 * point.multiple < currentWeek.giveupcount) {
-                            point.multiple = 1;
-                        }
-                    }
                 }
                 lastP = point;
                 points.add(point);
@@ -391,11 +229,6 @@ public class AnalyzeActivity extends AppCompatActivity {
             records.add(record);
 
             win += record.win;
-            if (record.win > 0) {
-                winCount++;
-            } else if (record.win < 0) {
-                defeatCount++;
-            }
             if (record.win > oneMax) {
                 oneMax = record.win;
             }
