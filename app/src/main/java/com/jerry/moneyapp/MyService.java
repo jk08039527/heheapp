@@ -69,8 +69,6 @@ public class MyService extends Service {
     private boolean mBtnClickable;//点击生效
     private Callback mCallback;
     private Point lastP;
-    private Param weekend = new Param(Param.STATE_WEEKEND);
-    private Param weekday = new Param(Param.STATE_WEEKDAY);
 
     protected WeakHandler mWeakHandler = new WeakHandler(new Handler.Callback() {
 
@@ -105,12 +103,6 @@ public class MyService extends Service {
             int stopCount = 0;
             int firstwin = 0;//0未玩，1：赢，2：输
             int week = Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - 1;
-            Param currentWeek;
-            if (week > 0 && week < 5) {
-                currentWeek = weekday;
-            } else {
-                currentWeek = weekend;
-            }
             for (int j = 0; j < ints.length; j++) {
                 Point point = CaluUtil.calulate(ints, j + 1);
                 point.current = ints[j];
@@ -124,31 +116,31 @@ public class MyService extends Service {
                     }
                     if (lastP.intention2 != GBData.VALUE_NONE) {
                         if (lastP.intention2 == point.current) {
-                            point.win2 = lastP.win2 + 9.7 * Math.abs(lastP.multiple2);
+                            point.win2 = lastP.win2 + 9.7;
                         } else {
-                            point.win2 = lastP.win2 - 10 * Math.abs(lastP.multiple2);
+                            point.win2 = lastP.win2 - 10;
                         }
                     } else {
                         point.win2 = lastP.win2;
                     }
                     if (lastP.intention3 != GBData.VALUE_NONE) {
                         if (lastP.intention3 == point.current) {
-                            point.win3 = lastP.win3 + 9.7 * Math.abs(lastP.multiple3);
+                            point.win3 = lastP.win3 + 9.7 ;
                         } else {
-                            point.win3 = lastP.win3 - 10 * Math.abs(lastP.multiple3);
+                            point.win3 = lastP.win3 - 10;
                         }
                     } else {
                         point.win3 = lastP.win3;
                     }
                     if (lastP.intention != GBData.VALUE_NONE) {
                         if (lastP.intention == point.current) {
-                            point.win = lastP.win + 9.7 * Math.abs(lastP.multiple);
+                            point.win = lastP.win + 9.7;
                             stopCount = 0;
                             if (firstwin == 0) {
                                 firstwin = 1;
                             }
                         } else {
-                            point.win = lastP.win - 10 * Math.abs(lastP.multiple);
+                            point.win = lastP.win - 10;
                             stopCount++;
                             if (firstwin == 0) {
                                 firstwin = 2;
@@ -160,14 +152,14 @@ public class MyService extends Service {
                 } else {
                     paint.add(1);
                 }
-                if (firstwin < 2 && point.win > currentWeek.giveupcount && stopCount < Param.STOPCOUNT) {
-                    if (currentWeek.lastpointnum2 > 0 && points.size() >= currentWeek.lastpointnum2) {
-                        point.award2 = point.win2 - points.get(points.size() - currentWeek.lastpointnum2).win2;
+                if (firstwin < 2 && stopCount < Param.STOPCOUNT) {
+                    if (Param.LASTPOINTNUM2 > 0 && points.size() >= Param.LASTPOINTNUM2) {
+                        point.award2 = point.win2 - points.get(points.size() - Param.LASTPOINTNUM2).win2;
                     } else {
                         point.award2 = point.win2;
                     }
-                    if (currentWeek.lastpointnum3 > 0 && points.size() >= currentWeek.lastpointnum3) {
-                        point.award3 = point.win3 - points.get(points.size() - currentWeek.lastpointnum3).win3;
+                    if (Param.LASTPOINTNUM3 > 0 && points.size() >= Param.LASTPOINTNUM3) {
+                        point.award3 = point.win3 - points.get(points.size() - Param.LASTPOINTNUM3).win3;
                     } else {
                         point.award3 = point.win3;
                     }
@@ -177,22 +169,17 @@ public class MyService extends Service {
                         point.currentType = 3;
                     }
                     if (lastP != null) {
-                        if (firstwin < 2 && (j > currentWeek.start && point.award2 >= currentWeek.lastwin2 && point.award3 >= currentWeek.lastwin3
-                            && point.win2 > currentWeek.wholewin2 && point.win3 > currentWeek.wholewin3)) {
+                        if (firstwin < 2 && (j > Param.START && point.award2 >= Param.LASTWIN2 && point.award3 >= Param.LASTWIN3
+                            && point.win2 > Param.WHOLEWIN2 && point.win3 > Param.WHOLEWIN3)) {
                             if (point.currentType == 2 && point.intention2 != GBData.VALUE_NONE) {
                                 point.intention = point.intention2;
-                                point.multiple = point.multiple2;
                             } else if (point.currentType == 3 && point.intention3 != GBData.VALUE_NONE) {
                                 point.intention = point.intention3;
-                                point.multiple = point.multiple3;
                             } else {
                                 point.intention = GBData.VALUE_NONE;
                             }
                         } else {
                             point.intention = GBData.VALUE_NONE;
-                        }
-                        if (point.multiple > 1 && point.win - 10 * point.multiple < currentWeek.giveupcount) {
-                            point.multiple = 1;
                         }
                     }
                 }
@@ -203,7 +190,7 @@ public class MyService extends Service {
                 return false;
             }
             if (mBtnClickable && lastP.intention != GBData.VALUE_NONE && data.size() < 69) {
-                exeCall(lastP.intention, lastP.multiple);
+                exeCall(lastP.intention);
             }
             showJingsheng();
             if (data.size() >= 69) {
@@ -242,11 +229,11 @@ public class MyService extends Service {
         }
     });
 
-    private String getIntentStr(int intention, int mutiple) {
+    private String getIntentStr(int intention) {
         if (intention == GBData.VALUE_NONE) {
             return " pass";
         }
-        return (intention == GBData.VALUE_LONG ? "  龙" : "  凤") + String.valueOf(mutiple);
+        return (intention == GBData.VALUE_LONG ? "  龙" : "  凤");
     }
 
     @Override
@@ -282,7 +269,7 @@ public class MyService extends Service {
         }
         mCallback.showText(new StringBuilder()
             .append("模拟净胜：").append(DeviceUtil.m2(lastP.win)).append("，")
-            .append("\t下一局：").append(getIntentStr(lastP.intention, lastP.multiple)).toString());
+            .append("\t下一局：").append(getIntentStr(lastP.intention)).toString());
     }
 
     public class PlayBinder extends Binder {
@@ -324,12 +311,10 @@ public class MyService extends Service {
         }
     }
 
-    private void exeCall(int type, int mutiple) {
+    private void exeCall(int type) {
         int clickX = type == GBData.VALUE_LONG ? (int) (width * 0.25) : (int) (width * 0.75);
         int clickY = (int) (height * 0.9);
-        for (int i = 0; i < mutiple; i++) {
-            execShellCmd("input tap " + clickX + " " + clickY);
-        }
+        execShellCmd("input tap " + clickX + " " + clickY);
         mWeakHandler.postDelayed(() -> execShellCmd("input tap " + ASSIABLEX + " " + ASSIABLEY), 2000);
     }
 

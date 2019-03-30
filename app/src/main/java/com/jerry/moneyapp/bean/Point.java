@@ -13,9 +13,6 @@ public class Point implements Serializable {
     public int intention;
     public int intention2;
     public int intention3;
-    public int multiple;
-    public int multiple2 = 1;
-    public int multiple3 = 1;
     public int gudao2;
     public int gudao3;
     public double win;

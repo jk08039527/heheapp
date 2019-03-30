@@ -16,6 +16,7 @@ public class CaluUtil {
     private static final int GUDAOCOUNT3 = 4;
     private static final int GUDAOLINIT2 = 2;
     private static final int GUDAOLINIT3 = 3;
+
     /**
      * @param ints 原始数据
      * @return 第一个参数表示投什么，第二个参数表示投多少
@@ -43,34 +44,19 @@ public class CaluUtil {
                 }
                 index--;
             }
-            boolean good = false;
-            if (paint.size() > 1 && paint.get(0) > 1 && paint.get(1) > 1 && paint.get(0) + paint.get(1) > 5) {
-                point.multiple2 = 2;
-                point.multiple3 = 2;
-                good = true;
-            } else if (paint.size() > 2 && paint.get(0) > 1 && paint.get(2) > 1 && paint.get(0) + paint.get(2) > 4) {
-                point.multiple2 = 2;
-                point.multiple3 = 2;
-                good = true;
-            } else if (paint.size() > 2 && paint.get(0) == 1 && paint.get(1) == 1 && paint.get(2) == 1) {
-                point.multiple2 = -1;
-                point.multiple3 = -1;
-            }
-            if (!good) {
-                int paintSize = paint.size();
-                if (paintSize > 1 && paint.get(0) == 1) {
-                    if (paintSize > 2 && paint.get(1) > 1) {
-                        point.multiple2 = 2;
-                    } else if (paintSize == 2) {
-                        point.multiple2 = 2;
-                    }
+            if (paint.size() > 2 && paint.get(0) == 1 && paint.get(1) == 1 && paint.get(2) == 1) {
+                point.intention2 = ints[position - 2];
+                point.intention3 = ints[position - 2];
+            } else {
+                if (point.gudao2 >= GUDAOLINIT2) {
+                    point.intention2 = GBData.VALUE_NONE;
+                } else {
+                    point.intention2 = ints[position - 1];
                 }
-                if (paintSize > 2 && paint.get(0) == 1 && paint.get(1) == 1) {
-                    if (paintSize > 3 && paint.get(2) > 1) {
-                        point.multiple3 = 2;
-                    } else if (paintSize == 3) {
-                        point.multiple3 = 2;
-                    }
+                if (point.gudao3 >= GUDAOLINIT3) {
+                    point.intention3 = GBData.VALUE_NONE;
+                } else {
+                    point.intention3 = ints[position - 1];
                 }
             }
             // 记录当前数到第几个
@@ -93,16 +79,6 @@ public class CaluUtil {
                 gd += paint.get(gdIndex);
                 gdIndex++;
             }
-            if (point.multiple2 > 0) {
-                if (point.gudao2 >= GUDAOLINIT2) {
-                    point.intention2 = GBData.VALUE_NONE;
-                } else {
-                    point.intention2 = ints[position - 1];
-                }
-            } else {
-                point.intention2 = ints[position - 2];
-                point.multiple2 = -point.multiple2;
-            }
             // 记录当前数到第几个
             gd = 0;
             // 记录当前索引
@@ -114,16 +90,6 @@ public class CaluUtil {
                 }
                 gd += paint.get(gdIndex);
                 gdIndex++;
-            }
-            if (point.multiple3 > 0) {
-                if (point.gudao3 >= GUDAOLINIT3) {
-                    point.intention3 = GBData.VALUE_NONE;
-                } else {
-                    point.intention3 = ints[position - 1];
-                }
-            } else {
-                point.intention3 = ints[position - 2];
-                point.multiple3 = -point.multiple3;
             }
         } else {
             point.intention2 = GBData.VALUE_NONE;
