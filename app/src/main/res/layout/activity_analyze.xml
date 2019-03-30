@@ -20,16 +20,6 @@
             android:id="@+id/et_start"
             style="@style/et"
             android:hint="开打数" />
-
-        <EditText
-            android:id="@+id/et_k1"
-            style="@style/et"
-            android:hint="纵行" />
-
-        <EditText
-            android:id="@+id/et_k2"
-            style="@style/et"
-            android:hint="横行" />
     </LinearLayout>
 
     <com.jerry.moneyapp.ptrlib.widget.PtrRecyclerView

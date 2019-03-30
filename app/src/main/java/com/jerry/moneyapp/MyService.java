@@ -92,7 +92,6 @@ public class MyService extends Service {
             //点击一下空白处
             length = data.size();
             execShellCmd("input tap " + 400 + " " + 400);
-            LinkedList<Integer> paint = new LinkedList<>();
             LinkedList<Point> points = new LinkedList<>();
             int[] ints = new int[data.size()];
             for (int i = 0; i < ints.length; i++) {
@@ -101,17 +100,16 @@ public class MyService extends Service {
             lastP = null;
             for (int j = 0; j < ints.length; j++) {
                 Point point = CaluUtil.calulate(ints, j + 1);
-                point.current = ints[j];
                 if (lastP != null) {
-                    if (lastP.current == point.current && paint.size() > 0) {
-                        int temp = paint.getLast();
-                        paint.removeLast();
-                        paint.addLast(++temp);
+                    if (lastP.intention != GBData.VALUE_NONE) {
+                        if (lastP.intention == point.current) {
+                            point.win = lastP.win + 9.7;
+                        } else {
+                            point.win = lastP.win - 10;
+                        }
                     } else {
-                        paint.add(1);
+                        point.win = lastP.win;
                     }
-                } else {
-                    paint.add(1);
                 }
                 lastP = point;
                 points.add(point);

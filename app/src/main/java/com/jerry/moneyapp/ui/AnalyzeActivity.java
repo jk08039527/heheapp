@@ -31,8 +31,6 @@ import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.FindListener;
 
-import static com.jerry.moneyapp.bean.Param.K1;
-import static com.jerry.moneyapp.bean.Param.K2;
 import static com.jerry.moneyapp.bean.Param.START;
 
 public class AnalyzeActivity extends AppCompatActivity {
@@ -54,24 +52,6 @@ public class AnalyzeActivity extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 START = ParseUtil.parseInt(s.toString());
-                updateData();
-            }
-        });
-        EditText etK1 = findViewById(R.id.et_k1);
-        etK1.setText(String.valueOf(K1));
-        etK1.addTextChangedListener(new MyTextWatcherListener() {
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                K1 = ParseUtil.parseDouble(s.toString());
-                updateData();
-            }
-        });
-        EditText etK2 = findViewById(R.id.et_k2);
-        etK2.setText(String.valueOf(K2));
-        etK2.addTextChangedListener(new MyTextWatcherListener() {
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                K2 = ParseUtil.parseDouble(s.toString());
                 updateData();
             }
         });
