@@ -7,6 +7,7 @@ import java.util.List;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -174,6 +175,7 @@ public class AnalyzeActivity extends AppCompatActivity {
     }
 
     private void updateData() {
+        CaluUtil.mMap.clear();
         records.clear();
         double win = 0;
         double oneMax = -99999;
@@ -186,17 +188,21 @@ public class AnalyzeActivity extends AppCompatActivity {
         int dayDefeatCount = 0;//负场数
         for (MyLog log : mMyLogs) {
             LinkedList<Integer> integers = log.getData();
+            int[] ints = new int[integers.size()];
+            for (int i = 0; i < ints.length; i++) {
+                ints[i] = integers.get(i);
+            }
+            CaluUtil.analyze(ints);
+        }
+        for (MyLog log : mMyLogs) {
+            LinkedList<Integer> integers = log.getData();
             LinkedList<Integer> paint = new LinkedList<>();
             LinkedList<Point> points = new LinkedList<>();
             int[] ints = new int[integers.size()];
             for (int i = 0; i < ints.length; i++) {
                 ints[i] = integers.get(i);
-                if (ints[i] == 2) {
-                    ints[i] = -1;
-                }
             }
             Point lastP = null;
-            CaluUtil.analyze(ints);
             for (int j = 0; j < ints.length; j++) {
                 Point point = CaluUtil.calulate(ints, j + 1);
                 if (lastP != null) {
@@ -248,6 +254,7 @@ public class AnalyzeActivity extends AppCompatActivity {
                 }
             }
         }
+        Log.d("dd", CaluUtil.mMap.toString());
 
         double dayWin = 0;
         for (int i = records.size() - 1; i >= 0; i--) {
