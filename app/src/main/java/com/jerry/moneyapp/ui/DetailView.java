@@ -33,6 +33,7 @@ public class DetailView extends View {
     private int longC;
     private int victoryC;
     private int defeatC;
+    public static int state = 2;
 
     public DetailView(Context context, int count, LinkedList<Point> points) {
         super(context);
@@ -53,33 +54,58 @@ public class DetailView extends View {
         if (points == null || count == 0) {
             return;
         }
-        final int radias = DeviceUtil.getDisplayWidth() / (count + 3) / 2;
+        final int radias = DeviceUtil.getDisplayWidth() / (state == 1 ? ((count + 3) / 2) : 60);
         final int inRaias = 8;
         final int distance = radias * 2 + 2;
         float x = radias;
         float y = radias;
         Point last = null;
-        for (int i = 0; i < points.size(); i++) {
-            Point temp = points.get(i);
-            if (last != null) {
-                if (last.current == temp.current) {
-                    y += distance;
-                } else {
-                    x += distance;
-                    y = radias;
+        if (state == 1) {
+            for (int i = 0; i < points.size(); i++) {
+                Point temp = points.get(i);
+                if (last != null) {
+                    if (last.current == temp.current) {
+                        y += distance;
+                    } else {
+                        x += distance;
+                        y = radias;
+                    }
                 }
-            }
-            mPaint.setColor(temp.current == GBData.VALUE_FENG ? fengC : longC);
-            canvas.drawCircle(x, y, radias, mPaint);
-            if (last != null && last.intention != GBData.VALUE_NONE) {
-                if (last.intention == temp.current) {
-                    mPaint.setColor(victoryC);
-                } else {
-                    mPaint.setColor(defeatC);
+                mPaint.setColor(temp.current == GBData.VALUE_FENG ? fengC : longC);
+                canvas.drawCircle(x, y, radias, mPaint);
+                if (last != null && last.intention != GBData.VALUE_NONE) {
+                    if (last.intention == temp.current) {
+                        mPaint.setColor(victoryC);
+                    } else {
+                        mPaint.setColor(defeatC);
+                    }
+                    canvas.drawCircle(x, y, inRaias, mPaint);
                 }
-                canvas.drawCircle(x, y, inRaias, mPaint);
+                last = temp;
             }
-            last = temp;
+        } else {
+            for (int i = 0; i < points.size(); i++) {
+                Point temp = points.get(i);
+                if (last != null) {
+                    if (i % 6 == 0) {
+                        x += distance;
+                        y = radias;
+                    } else {
+                        y += distance;
+                    }
+                }
+                mPaint.setColor(temp.current == GBData.VALUE_FENG ? fengC : longC);
+                canvas.drawCircle(x, y, radias, mPaint);
+                if (last != null && last.intention != GBData.VALUE_NONE) {
+                    if (last.intention == temp.current) {
+                        mPaint.setColor(victoryC);
+                    } else {
+                        mPaint.setColor(defeatC);
+                    }
+                    canvas.drawCircle(x, y, inRaias, mPaint);
+                }
+                last = temp;
+            }
         }
     }
 }

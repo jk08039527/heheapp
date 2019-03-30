@@ -191,6 +191,9 @@ public class AnalyzeActivity extends AppCompatActivity {
             int[] ints = new int[integers.size()];
             for (int i = 0; i < ints.length; i++) {
                 ints[i] = integers.get(i);
+                if (ints[i] == 2) {
+                    ints[i] = -1;
+                }
             }
             Point lastP = null;
             for (int j = 0; j < ints.length; j++) {
