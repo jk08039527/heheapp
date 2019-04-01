@@ -6,6 +6,9 @@ import com.jerry.moneyapp.bean.GBData;
 import com.jerry.moneyapp.bean.Param;
 import com.jerry.moneyapp.bean.Point;
 
+import static com.jerry.moneyapp.bean.Param.RMAX;
+import static com.jerry.moneyapp.bean.Param.RMIN;
+
 /**
  * Created by wzl on 2018/10/1.
  *
@@ -24,13 +27,13 @@ public class CaluUtil {
             for (int i = position - Param.START; i < position; i++) {
                 list.append(ints[i]).append(",");
             }
-            list.deleteCharAt(list.length() - 1);
+            list.append(position % 6);
             AnalyzeBean analyzeBean = mMap.get(list.toString());
             if (analyzeBean != null && analyzeBean.total > 0) {
                 double rate = (double) analyzeBean.same / analyzeBean.total;
-                if (rate > 0.508) {
+                if (rate > RMAX / 100) {
                     point.intention = point.current;
-                } else if (rate < 0.492 && rate > 0.4) {
+                } else if (rate < RMIN / 100) {
                     point.intention = point.current == GBData.VALUE_FENG ? GBData.VALUE_LONG : GBData.VALUE_FENG;
                 }
             }
@@ -48,7 +51,7 @@ public class CaluUtil {
         for (int i = 0; i < Param.START; i++) {
             list.append(ints[i]).append(",");
         }
-        list.deleteCharAt(list.length() - 1);
+        list.append(Param.START % 6);
         int last = ints[Param.START - 1];
 
         for (int i = Param.START + 1; i < ints.length; i++) {
@@ -62,8 +65,8 @@ public class CaluUtil {
             analyzeBean.total++;
             mMap.put(list.toString(), analyzeBean);
             last = ints[i];
-            list.delete(0, 2);
-            list.append(",").append(ints[i]);
+            list.delete(list.length() - 1, list.length()).delete(0, 2)
+                .append(ints[i]).append(",").append((i + 1) % 6);
         }
     }
 

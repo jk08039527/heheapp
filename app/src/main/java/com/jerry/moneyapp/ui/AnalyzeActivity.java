@@ -31,6 +31,8 @@ import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.FindListener;
 
+import static com.jerry.moneyapp.bean.Param.RMAX;
+import static com.jerry.moneyapp.bean.Param.RMIN;
 import static com.jerry.moneyapp.bean.Param.START;
 
 public class AnalyzeActivity extends AppCompatActivity {
@@ -52,6 +54,24 @@ public class AnalyzeActivity extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 START = ParseUtil.parseInt(s.toString());
+                updateData();
+            }
+        });
+        EditText etRmax = findViewById(R.id.et_rmax);
+        etRmax.setText(String.valueOf(RMAX));
+        etRmax.addTextChangedListener(new MyTextWatcherListener() {
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                RMAX = ParseUtil.parseDouble(s.toString());
+                updateData();
+            }
+        });
+        EditText etRmin = findViewById(R.id.et_rmin);
+        etRmin.setText(String.valueOf(RMIN));
+        etRmin.addTextChangedListener(new MyTextWatcherListener() {
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                RMIN = ParseUtil.parseDouble(s.toString());
                 updateData();
             }
         });

@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:textColor="@android:color/black" />
+        android:textColor="@android:color/black"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -19,12 +19,20 @@
         <EditText
             android:id="@+id/et_start"
             style="@style/et"
-            android:hint="开打数" />
+            android:hint="开打数"/>
+        <EditText
+            android:id="@+id/et_rmax"
+            style="@style/et"
+            android:hint="大比率"/>
+        <EditText
+            android:id="@+id/et_rmin"
+            style="@style/et"
+            android:hint="大比率"/>
     </LinearLayout>
 
     <com.jerry.moneyapp.ptrlib.widget.PtrRecyclerView
         android:id="@+id/ptrRecyclerView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"/>
 
 </LinearLayout>
