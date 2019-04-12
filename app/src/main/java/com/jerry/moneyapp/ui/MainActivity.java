@@ -41,7 +41,7 @@ import com.jerry.moneyapp.bean.GBData;
 public class MainActivity extends AppCompatActivity implements OnClickListener, Callback, OnLongClickListener {
 
     private static final String TAG = "MainActivity";
-    private static String URL = "http://www.3122u.com/";
+    private static String URL = "http://www.3122805.com/";
     private static final int REQUEST_MEDIA_PROJECTION = 1;
     private MediaProjectionManager mMediaProjectionManager;
     private MediaProjection mMediaProjection;

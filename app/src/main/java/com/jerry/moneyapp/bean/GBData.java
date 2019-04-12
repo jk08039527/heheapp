@@ -48,7 +48,7 @@ public class GBData {
         Bitmap bitmap = Bitmap.createBitmap(width + rowPadding / pixelStride, height, Bitmap.Config.ARGB_8888);
         bitmap.copyPixelsFromBuffer(buffer);
         image.close();
-        int enterColor = bitmap.getPixel(MyService.MIDDELX, MyService.JUDGEY);
+        int enterColor = bitmap.getPixel(MyService.RIGHT / 2, MyService.JUDGEY);
         int r = Color.red(enterColor);
         int gg = Color.green(enterColor);
         int b = Color.blue(enterColor);
@@ -58,7 +58,7 @@ public class GBData {
         }
         int assiableColor = bitmap.getPixel(MyService.ASSIABLEX, MyService.ASSIABLEY);
         int g = Color.green(assiableColor);
-        if (g < 240) {
+        if (g < 200) {
             Log.w(TAG, "not assiable!");
             return false;
         }
@@ -69,18 +69,19 @@ public class GBData {
                 int red = Color.red(color);
                 int green = Color.green(color);
                 int blue = Color.blue(color);
-                if (blue > VALUE_MAX && red > MIN1 && red < 200) {
-                    list.add(VALUE_LONG);
-                } else if (red > VALUE_MAX && blue > MIN1 && blue < 200) {
-                    list.add(VALUE_FENG);
-                } else if (red + blue < 100 && green > 140) {
-                    list.add(VALUE_NONE);
-                } else if (red > 215 && green > 215 && blue > 215) {
-                    return false;
-                } else {
-                    list.clear();
-                    return false;
-                }
+                Log.d(TAG, red + "," + green + "," + blue);
+//                if (blue > VALUE_MAX && red > MIN1 && red < 200) {
+//                    list.add(VALUE_LONG);
+//                } else if (red > VALUE_MAX && blue > MIN1 && blue < 200) {
+//                    list.add(VALUE_FENG);
+//                } else if (red + blue < 100 && green > 140) {
+//                    list.add(VALUE_NONE);
+//                } else if (red > 215 && green > 215 && blue > 215) {
+//                    return false;
+//                } else {
+//                    list.clear();
+//                    return false;
+//                }
             }
         }
         return false;

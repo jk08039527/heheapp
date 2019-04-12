@@ -7,7 +7,8 @@ package com.jerry.moneyapp.bean;
  */
 public class Param {
 
-    public static int START = 10;
-    public static double RMAX = 50.8;
-    public static double RMIN = 49.2;
+    public static int START = 9;
+    public static double RMAX = 56;
+    public static double RMIN = 46;
+    public static double STOPCOUNT = 80;
 }

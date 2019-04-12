@@ -35,25 +35,19 @@ public class MyService extends Service {
     /**
      * 边界
      */
-    private static final int LEFT = 12;//17
-    private static final int RIGHT = 1068;//144
-    private static final int TOP = 470;//610
-    private static final int BOTTOM = 805;//1080
+    public static final int LEFT = 14;
+    public static final int RIGHT = 1068;
+    public static final int TOP = 475;
+    public static final int BOTTOM = 810;
     /**
      * 确定按键的坐标
      */
-    public static final int ASSIABLEX = 990;//1320
-    public static final int ASSIABLEY = 900;//1180
-
-    public static final int MIDDELX = 500;//1180
-    /**
-     * 空白处点击一下激活活动区的y坐标
-     */
-    public static final int ENTERY = 930;//1180
+    public static final int ASSIABLEX = 990;
+    public static final int ASSIABLEY = 900;
     /**
      * 是否需要重进的y坐标
      */
-    public static final int JUDGEY = 1240;//1180
+    public static final int JUDGEY = 1300;
 
     /**
      * 屏幕宽高
@@ -78,7 +72,7 @@ public class MyService extends Service {
             }
             boolean enter = GBData.getCurrentData(pointsX, pointsY, data);
             if (enter) {
-                execShellCmd("input tap " + MIDDELX + " " + ENTERY);
+                execShellCmd("input tap " + RIGHT / 2 + " " + ASSIABLEY);
                 mWeakHandler.sendEmptyMessageDelayed(0, 2000);
                 return false;
             }
@@ -91,7 +85,7 @@ public class MyService extends Service {
             }
             //点击一下空白处
             length = data.size();
-            execShellCmd("input tap " + 400 + " " + 400);
+            execShellCmd("input tap " + RIGHT / 2 + " " + ASSIABLEY);
             LinkedList<Point> points = new LinkedList<>();
             int[] ints = new int[data.size()];
             for (int i = 0; i < ints.length; i++) {

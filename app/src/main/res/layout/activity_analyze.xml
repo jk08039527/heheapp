@@ -28,6 +28,11 @@
             android:id="@+id/et_rmin"
             style="@style/et"
             android:hint="大比率"/>
+
+        <EditText
+            android:id="@+id/et_stop"
+            style="@style/et"
+            android:hint="Stop"/>
     </LinearLayout>
 
     <com.jerry.moneyapp.ptrlib.widget.PtrRecyclerView

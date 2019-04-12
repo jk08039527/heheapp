@@ -34,6 +34,7 @@ import cn.bmob.v3.listener.FindListener;
 import static com.jerry.moneyapp.bean.Param.RMAX;
 import static com.jerry.moneyapp.bean.Param.RMIN;
 import static com.jerry.moneyapp.bean.Param.START;
+import static com.jerry.moneyapp.bean.Param.STOPCOUNT;
 
 public class AnalyzeActivity extends AppCompatActivity {
 
@@ -72,6 +73,15 @@ public class AnalyzeActivity extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 RMIN = ParseUtil.parseDouble(s.toString());
+                updateData();
+            }
+        });
+        EditText etK = findViewById(R.id.et_stop);
+        etK.setText(String.valueOf(STOPCOUNT));
+        etK.addTextChangedListener(new MyTextWatcherListener() {
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                STOPCOUNT = ParseUtil.parseDouble(s.toString());
                 updateData();
             }
         });
@@ -142,34 +152,46 @@ public class AnalyzeActivity extends AppCompatActivity {
         week567.add(4);
         week567.add(5);
         week567.add(6);
-        query.setSkip(0).setLimit(500).addWhereContainedIn("week", week567).order("-createTime").findObjects(new FindListener<MyLog>() {
+        int base = 10;
+        query.setSkip(base).setLimit(500).addWhereContainedIn("week", week567).order("-createTime").findObjects(new FindListener<MyLog>() {
             @Override
             public void done(List<MyLog> list, BmobException e) {
                 if (e != null) {
                     return;
                 }
                 mMyLogs.addAll(list);
-                query.setSkip(500).setLimit(500).addWhereContainedIn("week", week567).order("-createTime").findObjects(new FindListener<MyLog>() {
-                    @Override
-                    public void done(List<MyLog> list, BmobException e) {
-                        if (e != null) {
-                            return;
-                        }
-                        mMyLogs.addAll(list);
-                        query.setSkip(1000).setLimit(500).addWhereContainedIn("week", week567).order("-createTime")
-                            .findObjects(new FindListener<MyLog>() {
-                                @Override
-                                public void done(List<MyLog> list, BmobException e) {
-                                    if (e != null) {
-                                        return;
+                query.setSkip(base + 500).setLimit(500).addWhereContainedIn("week", week567).order("-createTime")
+                    .findObjects(new FindListener<MyLog>() {
+                        @Override
+                        public void done(List<MyLog> list, BmobException e) {
+                            if (e != null) {
+                                return;
+                            }
+                            mMyLogs.addAll(list);
+                            query.setSkip(base + 1000).setLimit(500).addWhereContainedIn("week", week567).order("-createTime")
+                                .findObjects(new FindListener<MyLog>() {
+                                    @Override
+                                    public void done(List<MyLog> list, BmobException e) {
+                                        if (e != null) {
+                                            return;
+                                        }
+                                        mMyLogs.addAll(list);
+                                        query.setSkip(base + 1500).setLimit(500).addWhereContainedIn("week", week567).order("-createTime")
+                                            .findObjects(new FindListener<MyLog>() {
+                                                @Override
+                                                public void done(List<MyLog> list, BmobException e) {
+                                                    if (e != null) {
+                                                        return;
+                                                    }
+                                                    mMyLogs.addAll(list);
+                                                    updateData();
+                                                    mPtrRecyclerView.onRefreshComplete();
+                                                }
+                                            });
                                     }
-                                    mMyLogs.addAll(list);
-                                    updateData();
-                                    mPtrRecyclerView.onRefreshComplete();
-                                }
-                            });
-                    }
-                });
+                                });
+                        }
+                    });
             }
         });
     }
@@ -186,21 +208,18 @@ public class AnalyzeActivity extends AppCompatActivity {
         int defeatCount = 0;//负场数
         int dayWinCount = 0;//负场数
         int dayDefeatCount = 0;//负场数
-        for (MyLog log : mMyLogs) {
-            LinkedList<Integer> integers = log.getData();
-            int[] ints = new int[integers.size()];
-            for (int i = 0; i < ints.length; i++) {
-                ints[i] = integers.get(i);
-            }
-            CaluUtil.analyze(ints);
-        }
-        for (MyLog log : mMyLogs) {
+        for (int k = mMyLogs.size() - 1; k >= 0; k--) {
+            MyLog log = mMyLogs.get(k);
             LinkedList<Integer> integers = log.getData();
             LinkedList<Integer> paint = new LinkedList<>();
             LinkedList<Point> points = new LinkedList<>();
             int[] ints = new int[integers.size()];
             for (int i = 0; i < ints.length; i++) {
                 ints[i] = integers.get(i);
+            }
+            if (k > 500) {
+                CaluUtil.analyze(ints);
+                continue;
             }
             Point lastP = null;
             for (int j = 0; j < ints.length; j++) {
@@ -213,7 +232,7 @@ public class AnalyzeActivity extends AppCompatActivity {
                     } else {
                         paint.add(1);
                     }
-                    if (lastP.intention != GBData.VALUE_NONE) {
+                    if (lastP.win > -STOPCOUNT && lastP.intention != GBData.VALUE_NONE && point.current != GBData.VALUE_NONE) {
                         if (lastP.intention == point.current) {
                             point.win = lastP.win + 9.7;
                             winCount++;
@@ -253,6 +272,7 @@ public class AnalyzeActivity extends AppCompatActivity {
                     totalMin = point.win;
                 }
             }
+            CaluUtil.analyze(ints);
         }
         Log.d("dd", CaluUtil.mMap.toString());
 
