@@ -130,6 +130,9 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
         rootCmd();
     }
 
+    /**
+     * 获取root权限
+     */
     public void rootCmd() {
         Process process = null;
         DataOutputStream os = null;
@@ -178,15 +181,14 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
     }
 
     private void setUpVirtualDisplay() {
-        Point size = new Point();
-        DisplayMetrics metrics = new DisplayMetrics();
-        Display defaultDisplay = getWindow().getWindowManager().getDefaultDisplay();
-        defaultDisplay.getSize(size);
-        defaultDisplay.getMetrics(metrics);
+        DisplayMetrics dm = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getRealMetrics(dm);
+        MyService.width = dm.widthPixels;
+        MyService.height = dm.heightPixels;
 
-        final ImageReader imageReader = ImageReader.newInstance(size.x, size.y, PixelFormat.RGBA_8888, 1);
+        final ImageReader imageReader = ImageReader.newInstance(dm.widthPixels, dm.heightPixels, PixelFormat.RGBA_8888, 1);
         mMediaProjection.createVirtualDisplay("ScreenCapture",
-            size.x, size.y, metrics.densityDpi,
+            dm.widthPixels, dm.heightPixels, dm.densityDpi,
             DisplayManager.VIRTUAL_DISPLAY_FLAG_AUTO_MIRROR,
             imageReader.getSurface(), null, null);
         GBData.reader = imageReader;
@@ -229,7 +231,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
                 noticeDialog.setEditText(URL);
                 noticeDialog.setPositiveListener(view -> {
                     String url = noticeDialog.getEditText();
-                    if (TextUtils.isEmpty(url)){
+                    if (TextUtils.isEmpty(url)) {
                         return;
                     }
                     URL = url;

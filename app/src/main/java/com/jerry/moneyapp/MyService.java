@@ -12,7 +12,6 @@ import java.util.Locale;
 
 import android.app.Service;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
@@ -35,10 +34,10 @@ public class MyService extends Service {
     /**
      * 边界
      */
-    public static final int LEFT = 14;
-    public static final int RIGHT = 1068;
-    public static final int TOP = 475;
-    public static final int BOTTOM = 810;
+    public static int LEFT = 14;
+    public static int RIGHT = 1068;
+    public static int TOP = 475;
+    public static int BOTTOM = 810;
     /**
      * 确定按键的坐标
      */
@@ -52,8 +51,8 @@ public class MyService extends Service {
     /**
      * 屏幕宽高
      */
-    private int width;
-    private int height;
+    public static int width;
+    public static int height;
 
     private int[] pointsX = new int[18];
     private int[] pointsY = new int[6];
@@ -70,7 +69,7 @@ public class MyService extends Service {
             if (msg.what == -1) {
                 return false;
             }
-            boolean enter = GBData.getCurrentData(pointsX, pointsY, data);
+            boolean enter = GBData.initPix(pointsX, pointsY, data);
             if (enter) {
                 execShellCmd("input tap " + RIGHT / 2 + " " + ASSIABLEY);
                 mWeakHandler.sendEmptyMessageDelayed(0, 2000);
@@ -159,23 +158,6 @@ public class MyService extends Service {
     }
 
     @Override
-    public void onCreate() {
-        super.onCreate();
-        width = Resources.getSystem().getDisplayMetrics().widthPixels;
-        height = Resources.getSystem().getDisplayMetrics().heightPixels;
-        double eachX = (RIGHT - LEFT) / 18d;
-        double eachY = (BOTTOM - TOP) / 6d;
-        double initX = LEFT + eachX * 0.85d;
-        double initY = TOP + eachY / 2d;
-        for (int i = 0; i < pointsX.length; i++) {
-            pointsX[i] = (int) (initX + i * eachX);
-        }
-        for (int i = 0; i < pointsY.length; i++) {
-            pointsY[i] = (int) (initY + i * eachY);
-        }
-    }
-
-    @Override
     public IBinder onBind(Intent intent) {
         return new PlayBinder();
     }
@@ -203,6 +185,18 @@ public class MyService extends Service {
 
     public void startExe() {
         mWeakHandler.sendEmptyMessage(0);
+        if (GBData.initPix()) {
+            double eachX = (RIGHT - LEFT) / 18d;
+            double eachY = (BOTTOM - TOP) / 6d;
+            double initX = LEFT + eachX * 0.85d;
+            double initY = TOP + eachY / 2d;
+            for (int i = 0; i < pointsX.length; i++) {
+                pointsX[i] = (int) (initX + i * eachX);
+            }
+            for (int i = 0; i < pointsY.length; i++) {
+                pointsY[i] = (int) (initY + i * eachY);
+            }
+        }
         showJingsheng();
     }
 
