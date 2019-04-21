@@ -15,7 +15,7 @@ import com.jerry.moneyapp.bean.Logg;
 /** 
  * DAO for table "LOGG".
 */
-public class LoggDao extends AbstractDao<Logg, Void> {
+public class LoggDao extends AbstractDao<Logg, String> {
 
     public static final String TABLENAME = "LOGG";
 
@@ -25,7 +25,7 @@ public class LoggDao extends AbstractDao<Logg, Void> {
      */
     public static class Properties {
         public final static Property DeviceId = new Property(0, String.class, "deviceId", false, "DEVICE_ID");
-        public final static Property CreateTime = new Property(1, String.class, "createTime", false, "CREATE_TIME");
+        public final static Property CreateTime = new Property(1, String.class, "createTime", true, "CREATE_TIME");
         public final static Property Data = new Property(2, String.class, "data", false, "DATA");
         public final static Property Week = new Property(3, int.class, "week", false, "WEEK");
     }
@@ -44,7 +44,7 @@ public class LoggDao extends AbstractDao<Logg, Void> {
         String constraint = ifNotExists? "IF NOT EXISTS ": "";
         db.execSQL("CREATE TABLE " + constraint + "\"LOGG\" (" + //
                 "\"DEVICE_ID\" TEXT," + // 0: deviceId
-                "\"CREATE_TIME\" TEXT," + // 1: createTime
+                "\"CREATE_TIME\" TEXT PRIMARY KEY NOT NULL ," + // 1: createTime
                 "\"DATA\" TEXT," + // 2: data
                 "\"WEEK\" INTEGER NOT NULL );"); // 3: week
     }
@@ -98,8 +98,8 @@ public class LoggDao extends AbstractDao<Logg, Void> {
     }
 
     @Override
-    public Void readKey(Cursor cursor, int offset) {
-        return null;
+    public String readKey(Cursor cursor, int offset) {
+        return cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1);
     }    
 
     @Override
@@ -122,20 +122,22 @@ public class LoggDao extends AbstractDao<Logg, Void> {
      }
     
     @Override
-    protected final Void updateKeyAfterInsert(Logg entity, long rowId) {
-        // Unsupported or missing PK type
-        return null;
+    protected final String updateKeyAfterInsert(Logg entity, long rowId) {
+        return entity.getCreateTime();
     }
     
     @Override
-    public Void getKey(Logg entity) {
-        return null;
+    public String getKey(Logg entity) {
+        if(entity != null) {
+            return entity.getCreateTime();
+        } else {
+            return null;
+        }
     }
 
     @Override
     public boolean hasKey(Logg entity) {
-        // TODO
-        return false;
+        return entity.getCreateTime() != null;
     }
 
     @Override

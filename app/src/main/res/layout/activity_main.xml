@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:text="@string/click"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toLeftOf="@+id/btn2" />
+        app:layout_constraintRight_toLeftOf="@+id/btn2"/>
 
     <Button
         android:id="@+id/btn2"
@@ -19,7 +19,7 @@
         android:layout_height="wrap_content"
         android:text="@string/start"
         app:layout_constraintLeft_toRightOf="@+id/btn"
-        app:layout_constraintRight_toLeftOf="@+id/btn3" />
+        app:layout_constraintRight_toLeftOf="@+id/btn3"/>
 
     <Button
         android:id="@+id/btn3"
@@ -27,7 +27,7 @@
         android:layout_height="wrap_content"
         android:text="@string/refresh"
         app:layout_constraintLeft_toRightOf="@+id/btn2"
-        app:layout_constraintRight_toLeftOf="@+id/btn4" />
+        app:layout_constraintRight_toLeftOf="@+id/btn4"/>
 
     <Button
         android:id="@+id/btn4"
@@ -35,14 +35,16 @@
         android:layout_height="wrap_content"
         android:text="@string/analyze"
         app:layout_constraintLeft_toRightOf="@+id/btn3"
-        app:layout_constraintRight_toRightOf="parent" />
+        app:layout_constraintRight_toRightOf="parent"/>
 
     <WebView
         android:id="@+id/webview"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btn" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btn"/>
 
     <TextView
         android:id="@+id/tvInfo"
@@ -52,6 +54,6 @@
         android:textSize="10sp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btn" />
+        app:layout_constraintTop_toBottomOf="@+id/btn"/>
 
 </android.support.constraint.ConstraintLayout>

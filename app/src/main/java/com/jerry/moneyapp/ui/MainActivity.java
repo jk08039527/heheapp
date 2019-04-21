@@ -3,6 +3,7 @@ package com.jerry.moneyapp.ui;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import android.annotation.SuppressLint;
@@ -32,11 +33,14 @@ import android.webkit.WebViewClient;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.alibaba.fastjson.JSON;
 import com.jerry.moneyapp.MyService;
 import com.jerry.moneyapp.R;
 import com.jerry.moneyapp.bean.BaseDao;
 import com.jerry.moneyapp.bean.GBData;
+import com.jerry.moneyapp.bean.Logg;
 import com.jerry.moneyapp.bean.MyLog;
+import com.jerry.moneyapp.util.DeviceUtil;
 import com.jerry.moneyapp.util.PreferenceHelp;
 
 import cn.bmob.v3.BmobQuery;
@@ -131,61 +135,74 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         mWebView.loadUrl("http://www.3122805.com/");
         rootCmd();
-        if (PreferenceHelp.getBoolean(PreferenceHelp.FIRST_INSTALL, true)) {
-            PreferenceHelp.putBoolean(PreferenceHelp.FIRST_INSTALL, false);
-            BmobQuery<MyLog> query = new BmobQuery<>();
-            ArrayList mMyLogs = new ArrayList();
-            query.setSkip(0).setLimit(500).order("-createTime").findObjects(new FindListener<MyLog>() {
-                @Override
-                public void done(List<MyLog> list, BmobException e) {
-                    if (e != null) {
-                        return;
-                    }
-                    mMyLogs.addAll(list);
-                    query.setSkip(500).setLimit(500).order("-createTime").findObjects(new FindListener<MyLog>() {
-                        @Override
-                        public void done(List<MyLog> list, BmobException e) {
-                            if (e != null) {
-                                return;
-                            }
-                            mMyLogs.addAll(list);
-                            query.setSkip(1000).setLimit(500).order("-createTime").findObjects(new FindListener<MyLog>() {
-                                @Override
-                                public void done(List<MyLog> list, BmobException e) {
-                                    if (e != null) {
-                                        return;
-                                    }
-                                    mMyLogs.addAll(list);
-                                    query.setSkip(1500).setLimit(500).order("-createTime").findObjects(new FindListener<MyLog>() {
-                                        @Override
-                                        public void done(List<MyLog> list, BmobException e) {
-                                            if (e != null) {
-                                                return;
-                                            }
-                                            mMyLogs.addAll(list);
-                                            query.setSkip(2000).setLimit(500).order("-createTime").findObjects(new FindListener<MyLog>() {
-                                                @Override
-                                                public void done(List<MyLog> list, BmobException e) {
-                                                    if (e != null) {
-                                                        return;
-                                                    }
-                                                    mMyLogs.addAll(list);
-                                                    save(mMyLogs);
-                                                }
-                                            });
-                                        }
-                                    });
-                                }
-                            });
-                        }
-                    });
-                }
-            });
+        if (PreferenceHelp.getBoolean(PreferenceHelp.FIRST_INSTALL,true)){
+            init();
+            PreferenceHelp.putBoolean(PreferenceHelp.FIRST_INSTALL,false);
         }
     }
 
-    private void save(final ArrayList mMyLogs) {
-        BaseDao.getTjDb().insertMultObject(mMyLogs);
+    private void init() {
+        BmobQuery<MyLog> query = new BmobQuery<>();
+        ArrayList<MyLog> mMyLogs = new ArrayList<>();
+        query.setSkip(0).setLimit(500).order("-createTime").findObjects(new FindListener<MyLog>() {
+            @Override
+            public void done(List<MyLog> list, BmobException e) {
+                if (e != null) {
+                    return;
+                }
+                mMyLogs.addAll(list);
+                query.setSkip(500).setLimit(500).order("-createTime").findObjects(new FindListener<MyLog>() {
+                    @Override
+                    public void done(List<MyLog> list, BmobException e) {
+                        if (e != null) {
+                            return;
+                        }
+                        mMyLogs.addAll(list);
+                        query.setSkip(1000).setLimit(500).order("-createTime").findObjects(new FindListener<MyLog>() {
+                            @Override
+                            public void done(List<MyLog> list, BmobException e) {
+                                if (e != null) {
+                                    return;
+                                }
+                                mMyLogs.addAll(list);
+                                query.setSkip(1500).setLimit(500).order("-createTime").findObjects(new FindListener<MyLog>() {
+                                    @Override
+                                    public void done(List<MyLog> list, BmobException e) {
+                                        if (e != null) {
+                                            return;
+                                        }
+                                        mMyLogs.addAll(list);
+                                        query.setSkip(2000).setLimit(500).order("-createTime").findObjects(new FindListener<MyLog>() {
+                                            @Override
+                                            public void done(List<MyLog> list, BmobException e) {
+                                                if (e != null) {
+                                                    return;
+                                                }
+                                                mMyLogs.addAll(list);
+                                                save(mMyLogs);
+                                            }
+                                        });
+                                    }
+                                });
+                            }
+                        });
+                    }
+                });
+            }
+        });
+    }
+
+    private void save(final ArrayList<MyLog> mMyLogs) {
+        ArrayList<Logg> loggs = new ArrayList<>();
+        for (MyLog mMyLog : mMyLogs) {
+            Logg logg = new Logg();
+            logg.setData(JSON.toJSONString(mMyLog.getData()));
+            logg.setCreateTime(mMyLog.getCreateTime());
+            logg.setDeviceId(mMyLog.getDeviceId());
+            logg.setWeek(mMyLog.getWeek());
+            loggs.add(logg);
+        }
+        BaseDao.getTjDb().insertMultObject(loggs);
     }
 
     public void rootCmd() {

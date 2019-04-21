@@ -2,6 +2,7 @@ package com.jerry.moneyapp.bean;
 
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Generated;
+import org.greenrobot.greendao.annotation.Id;
 
 /**
  * Created by wzl on 2018/8/25.
@@ -11,6 +12,7 @@ import org.greenrobot.greendao.annotation.Generated;
 @Entity
 public class Logg{
     private String deviceId;
+    @Id
     private String createTime;
     private String data;
     private int week;
