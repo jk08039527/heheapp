@@ -2,6 +2,8 @@ package com.jerry.moneyapp.ui;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -32,7 +34,14 @@ import android.widget.Toast;
 
 import com.jerry.moneyapp.MyService;
 import com.jerry.moneyapp.R;
+import com.jerry.moneyapp.bean.BaseDao;
 import com.jerry.moneyapp.bean.GBData;
+import com.jerry.moneyapp.bean.MyLog;
+import com.jerry.moneyapp.util.PreferenceHelp;
+
+import cn.bmob.v3.BmobQuery;
+import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.FindListener;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, MyService.Callback {
 
@@ -122,6 +131,61 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         mWebView.loadUrl("http://www.3122805.com/");
         rootCmd();
+        if (PreferenceHelp.getBoolean(PreferenceHelp.FIRST_INSTALL, true)) {
+            PreferenceHelp.putBoolean(PreferenceHelp.FIRST_INSTALL, false);
+            BmobQuery<MyLog> query = new BmobQuery<>();
+            ArrayList mMyLogs = new ArrayList();
+            query.setSkip(0).setLimit(500).order("-createTime").findObjects(new FindListener<MyLog>() {
+                @Override
+                public void done(List<MyLog> list, BmobException e) {
+                    if (e != null) {
+                        return;
+                    }
+                    mMyLogs.addAll(list);
+                    query.setSkip(500).setLimit(500).order("-createTime").findObjects(new FindListener<MyLog>() {
+                        @Override
+                        public void done(List<MyLog> list, BmobException e) {
+                            if (e != null) {
+                                return;
+                            }
+                            mMyLogs.addAll(list);
+                            query.setSkip(1000).setLimit(500).order("-createTime").findObjects(new FindListener<MyLog>() {
+                                @Override
+                                public void done(List<MyLog> list, BmobException e) {
+                                    if (e != null) {
+                                        return;
+                                    }
+                                    mMyLogs.addAll(list);
+                                    query.setSkip(1500).setLimit(500).order("-createTime").findObjects(new FindListener<MyLog>() {
+                                        @Override
+                                        public void done(List<MyLog> list, BmobException e) {
+                                            if (e != null) {
+                                                return;
+                                            }
+                                            mMyLogs.addAll(list);
+                                            query.setSkip(2000).setLimit(500).order("-createTime").findObjects(new FindListener<MyLog>() {
+                                                @Override
+                                                public void done(List<MyLog> list, BmobException e) {
+                                                    if (e != null) {
+                                                        return;
+                                                    }
+                                                    mMyLogs.addAll(list);
+                                                    save(mMyLogs);
+                                                }
+                                            });
+                                        }
+                                    });
+                                }
+                            });
+                        }
+                    });
+                }
+            });
+        }
+    }
+
+    private void save(final ArrayList mMyLogs) {
+        BaseDao.getTjDb().insertMultObject(mMyLogs);
     }
 
     public void rootCmd() {
@@ -180,9 +244,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         final ImageReader imageReader = ImageReader.newInstance(size.x, size.y, PixelFormat.RGBA_8888, 1);
         mMediaProjection.createVirtualDisplay("ScreenCapture",
-                size.x, size.y, metrics.densityDpi,
-                DisplayManager.VIRTUAL_DISPLAY_FLAG_AUTO_MIRROR,
-                imageReader.getSurface(), null, null);
+            size.x, size.y, metrics.densityDpi,
+            DisplayManager.VIRTUAL_DISPLAY_FLAG_AUTO_MIRROR,
+            imageReader.getSurface(), null, null);
         GBData.reader = imageReader;
     }
 
@@ -190,7 +254,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn:
-                if (isBind){
+                if (isBind) {
                     myService.setBtnClickable();
                 } else {
                     Toast.makeText(this, "先点击开始", Toast.LENGTH_SHORT).show();

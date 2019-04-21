@@ -3,12 +3,8 @@ package com.jerry.moneyapp;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
 
 import android.app.Service;
 import android.content.Intent;
@@ -19,17 +15,16 @@ import android.os.IBinder;
 import android.os.Message;
 import android.widget.Toast;
 
+import com.alibaba.fastjson.JSON;
+import com.jerry.moneyapp.bean.BaseDao;
 import com.jerry.moneyapp.bean.GBData;
+import com.jerry.moneyapp.bean.Logg;
 import com.jerry.moneyapp.bean.MyLog;
 import com.jerry.moneyapp.bean.Param;
 import com.jerry.moneyapp.bean.Point;
 import com.jerry.moneyapp.util.CaluUtil;
 import com.jerry.moneyapp.util.DeviceUtil;
 import com.jerry.moneyapp.util.WeakHandler;
-
-import cn.bmob.v3.BmobQuery;
-import cn.bmob.v3.exception.BmobException;
-import cn.bmob.v3.listener.FindListener;
 
 public class MyService extends Service {
 
@@ -191,36 +186,19 @@ public class MyService extends Service {
             }
             showJingsheng();
             if (data.size() >= 69) {
-                BmobQuery<MyLog> query = new BmobQuery<>();
-                query.setLimit(1).order("-updatedAt").findObjects(new FindListener<MyLog>() {
-                    @Override
-                    public void done(List<MyLog> list, BmobException e) {
-                        if (e != null) {
-                            return;
-                        }
-                        if (list.size() > 0) {
-                            long lastTime = 0;
-                            try {
-                                String lateDate = list.get(0).getCreateTime();
-                                lastTime = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.CHINA).parse(lateDate).getTime();
-                            } catch (ParseException e1) {
-                                e1.printStackTrace();
-                            }
-                            if (lastTime > 0) {
-                                long second = (System.currentTimeMillis() - lastTime) / 1000;
-                                if (second < 200) {
-                                    return;
-                                }
-                            }
-                        }
-                        MyLog myLog = new MyLog();
-                        myLog.setCreateTime(DeviceUtil.getCurrentTime());
-                        myLog.setData(data);
-                        myLog.setDeviceId(DeviceUtil.getDeviceId());
-                        myLog.setWeek(Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - 1);
-                        myLog.save();
-                    }
-                });
+                Logg logg = new Logg();
+                logg.setCreateTime(DeviceUtil.getCurrentTime());
+                logg.setDeviceId(DeviceUtil.getDeviceId());
+                logg.setData(JSON.toJSONString(data));
+                logg.setWeek(Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - 1);
+                if (BaseDao.getTjDb().insertObject(logg)) {
+                    MyLog myLog = new MyLog();
+                    myLog.setCreateTime(DeviceUtil.getCurrentTime());
+                    myLog.setData(data);
+                    myLog.setDeviceId(DeviceUtil.getDeviceId());
+                    myLog.setWeek(Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - 1);
+                    myLog.save();
+                }
             }
             return false;
         }

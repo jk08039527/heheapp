@@ -24,7 +24,7 @@ import com.jerry.moneyapp.MyApplication;
 public class DeviceUtil {
 
     private static DecimalFormat df = new DecimalFormat("#.0");
-    private static final SimpleDateFormat FORMAT_DATE_TIME = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss", Locale.CHINA);
+    private static final SimpleDateFormat FORMAT_DATE_TIME = new SimpleDateFormat("yyyy/MM/dd HH:mm", Locale.CHINA);
 
     private DeviceUtil() {
     }
