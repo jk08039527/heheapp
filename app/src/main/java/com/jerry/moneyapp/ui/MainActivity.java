@@ -41,6 +41,7 @@ import com.jerry.moneyapp.bean.BaseDao;
 import com.jerry.moneyapp.bean.GBData;
 import com.jerry.moneyapp.bean.Logg;
 import com.jerry.moneyapp.bean.MyLog;
+import com.jerry.moneyapp.util.CaluUtil;
 import com.jerry.moneyapp.util.PreferenceHelp;
 import com.jerry.moneyapp.util.asyctask.AsycTask;
 
@@ -141,6 +142,8 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
         if (PreferenceHelp.getBoolean(PreferenceHelp.FIRST_INSTALL, true)) {
             init();
             PreferenceHelp.putBoolean(PreferenceHelp.FIRST_INSTALL, false);
+        } else {
+            CaluUtil.initMap();
         }
     }
 
@@ -208,7 +211,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
             }
             return BaseDao.getTjDb().insertMultObject(loggs);
         }).whenDone(result -> {
-
+            CaluUtil.initMap();
         }).execute();
     }
 

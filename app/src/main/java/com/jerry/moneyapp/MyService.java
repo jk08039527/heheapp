@@ -122,6 +122,7 @@ public class MyService extends Service {
                     myLog.setDeviceId(DeviceUtil.getDeviceId());
                     myLog.setWeek(Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - 1);
                     myLog.save();
+                    CaluUtil.addMap(ints);
                 }
             }
             return false;

@@ -173,7 +173,7 @@ public class AnalyzeActivity extends AppCompatActivity {
             for (int i = 0; i < ints.length; i++) {
                 ints[i] = integers.get(i);
             }
-            if (k > 500) {
+            if (k > 1000) {
                 CaluUtil.analyze(ints);
                 continue;
             }
