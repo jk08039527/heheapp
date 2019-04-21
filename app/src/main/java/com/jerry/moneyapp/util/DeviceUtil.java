@@ -1,5 +1,7 @@
 package com.jerry.moneyapp.util;
 
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.net.URLEncoder;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -27,6 +29,32 @@ public class DeviceUtil {
     private static final SimpleDateFormat FORMAT_DATE_TIME = new SimpleDateFormat("yyyy/MM/dd HH:mm", Locale.CHINA);
 
     private DeviceUtil() {
+    }
+
+    /**
+     * 获取泛型类的type
+     *
+     * @param raw  泛型类的class, 如BaseResponse4Object.class
+     * @param args 泛型实参的class, LotteryBean.class
+     * @return 泛型类的type
+     */
+    public static ParameterizedType type(final Class raw, final Type... args) {
+        return new ParameterizedType() {
+            @Override
+            public Type[] getActualTypeArguments() {
+                return args;
+            }
+
+            @Override
+            public Type getOwnerType() {
+                return null;
+            }
+
+            @Override
+            public Type getRawType() {
+                return raw;
+            }
+        };
     }
 
     /**

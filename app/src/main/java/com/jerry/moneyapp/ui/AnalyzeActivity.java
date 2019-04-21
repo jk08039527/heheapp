@@ -14,9 +14,11 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
+import com.alibaba.fastjson.JSON;
 import com.jerry.moneyapp.R;
+import com.jerry.moneyapp.bean.BaseDao;
 import com.jerry.moneyapp.bean.GBData;
-import com.jerry.moneyapp.bean.MyLog;
+import com.jerry.moneyapp.bean.Logg;
 import com.jerry.moneyapp.bean.Point;
 import com.jerry.moneyapp.bean.Record;
 import com.jerry.moneyapp.ptrlib.widget.BaseRecyclerAdapter;
@@ -26,10 +28,7 @@ import com.jerry.moneyapp.util.CaluUtil;
 import com.jerry.moneyapp.util.DeviceUtil;
 import com.jerry.moneyapp.util.MyTextWatcherListener;
 import com.jerry.moneyapp.util.ParseUtil;
-
-import cn.bmob.v3.BmobQuery;
-import cn.bmob.v3.exception.BmobException;
-import cn.bmob.v3.listener.FindListener;
+import com.jerry.moneyapp.util.asyctask.AsycTask;
 
 import static com.jerry.moneyapp.bean.Param.RMAX;
 import static com.jerry.moneyapp.bean.Param.RMIN;
@@ -38,7 +37,7 @@ import static com.jerry.moneyapp.bean.Param.STOPCOUNT;
 
 public class AnalyzeActivity extends AppCompatActivity {
 
-    private List<MyLog> mMyLogs = new ArrayList<>();
+    private List<Logg> mMyLogs = new ArrayList<>();
     private ArrayList<Record> records = new ArrayList<>();
     private BaseRecyclerAdapter<Record> mAdapter;
     private TextView text;
@@ -142,63 +141,20 @@ public class AnalyzeActivity extends AppCompatActivity {
     }
 
     private void getData() {
-        BmobQuery<MyLog> query = new BmobQuery<>();
         mMyLogs.clear();
-        ArrayList<Integer> week567 = new ArrayList<>();
-        week567.add(0);
-        week567.add(1);
-        week567.add(2);
-        week567.add(3);
-        week567.add(4);
-        week567.add(5);
-        week567.add(6);
-        int base = 10;
-        query.setSkip(base).setLimit(500).addWhereContainedIn("week", week567).order("-createTime").findObjects(new FindListener<MyLog>() {
-            @Override
-            public void done(List<MyLog> list, BmobException e) {
-                if (e != null) {
-                    return;
-                }
-                mMyLogs.addAll(list);
-                query.setSkip(base + 500).setLimit(500).addWhereContainedIn("week", week567).order("-createTime")
-                    .findObjects(new FindListener<MyLog>() {
-                        @Override
-                        public void done(List<MyLog> list, BmobException e) {
-                            if (e != null) {
-                                return;
-                            }
-                            mMyLogs.addAll(list);
-                            query.setSkip(base + 1000).setLimit(500).addWhereContainedIn("week", week567).order("-createTime")
-                                .findObjects(new FindListener<MyLog>() {
-                                    @Override
-                                    public void done(List<MyLog> list, BmobException e) {
-                                        if (e != null) {
-                                            return;
-                                        }
-                                        mMyLogs.addAll(list);
-                                        query.setSkip(base + 1500).setLimit(500).addWhereContainedIn("week", week567).order("-createTime")
-                                            .findObjects(new FindListener<MyLog>() {
-                                                @Override
-                                                public void done(List<MyLog> list, BmobException e) {
-                                                    if (e != null) {
-                                                        return;
-                                                    }
-                                                    mMyLogs.addAll(list);
-                                                    updateData();
-                                                    mPtrRecyclerView.onRefreshComplete();
-                                                }
-                                            });
-                                    }
-                                });
-                        }
-                    });
-            }
-        });
+        AsycTask.with(this).assign(() -> {
+            List<Logg> loggs = BaseDao.getTjDb().queryAll(Logg.class);
+            mMyLogs.addAll(loggs);
+            return true;
+        }).whenDone(result -> {
+            updateData();
+            mPtrRecyclerView.onRefreshComplete();
+        }).execute();
     }
 
     private void updateData() {
         CaluUtil.mMap.clear();
-        records.clear();
+        List<Record> tempR = new ArrayList<>();
         double win = 0;
         double oneMax = -99999;
         double oneMin = 99999;
@@ -209,8 +165,8 @@ public class AnalyzeActivity extends AppCompatActivity {
         int dayWinCount = 0;//负场数
         int dayDefeatCount = 0;//负场数
         for (int k = mMyLogs.size() - 1; k >= 0; k--) {
-            MyLog log = mMyLogs.get(k);
-            LinkedList<Integer> integers = log.getData();
+            Logg log = mMyLogs.get(k);
+            LinkedList<Integer> integers = JSON.parseObject(log.getData(), DeviceUtil.type(LinkedList.class, Integer.class));
             LinkedList<Integer> paint = new LinkedList<>();
             LinkedList<Point> points = new LinkedList<>();
             int[] ints = new int[integers.size()];
@@ -255,7 +211,7 @@ public class AnalyzeActivity extends AppCompatActivity {
             record.createTime = log.getCreateTime();
             record.points = points;
             record.count = paint.size();
-            records.add(record);
+            tempR.add(record);
 
             win += record.win;
             if (record.win > oneMax) {
@@ -275,6 +231,10 @@ public class AnalyzeActivity extends AppCompatActivity {
             CaluUtil.analyze(ints);
         }
         Log.d("dd", CaluUtil.mMap.toString());
+        records.clear();
+        for (int i = tempR.size() - 1; i >= 0; i--) {
+            records.add(tempR.get(i));
+        }
 
         double dayWin = 0;
         for (int i = records.size() - 1; i >= 0; i--) {

@@ -3,7 +3,6 @@ package com.jerry.moneyapp.ui;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 import android.annotation.SuppressLint;
@@ -13,7 +12,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.graphics.PixelFormat;
-import android.graphics.Point;
 import android.hardware.display.DisplayManager;
 import android.media.ImageReader;
 import android.media.projection.MediaProjection;
@@ -24,7 +22,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.Display;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
@@ -44,8 +41,8 @@ import com.jerry.moneyapp.bean.BaseDao;
 import com.jerry.moneyapp.bean.GBData;
 import com.jerry.moneyapp.bean.Logg;
 import com.jerry.moneyapp.bean.MyLog;
-import com.jerry.moneyapp.util.DeviceUtil;
 import com.jerry.moneyapp.util.PreferenceHelp;
+import com.jerry.moneyapp.util.asyctask.AsycTask;
 
 import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.exception.BmobException;
@@ -141,9 +138,9 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
 
         mWebView.loadUrl(URL);
         rootCmd();
-        if (PreferenceHelp.getBoolean(PreferenceHelp.FIRST_INSTALL,true)){
+        if (PreferenceHelp.getBoolean(PreferenceHelp.FIRST_INSTALL, true)) {
             init();
-            PreferenceHelp.putBoolean(PreferenceHelp.FIRST_INSTALL,false);
+            PreferenceHelp.putBoolean(PreferenceHelp.FIRST_INSTALL, false);
         }
     }
 
@@ -199,16 +196,20 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
     }
 
     private void save(final ArrayList<MyLog> mMyLogs) {
-        ArrayList<Logg> loggs = new ArrayList<>();
-        for (MyLog mMyLog : mMyLogs) {
-            Logg logg = new Logg();
-            logg.setData(JSON.toJSONString(mMyLog.getData()));
-            logg.setCreateTime(mMyLog.getCreateTime());
-            logg.setDeviceId(mMyLog.getDeviceId());
-            logg.setWeek(mMyLog.getWeek());
-            loggs.add(logg);
-        }
-        BaseDao.getTjDb().insertMultObject(loggs);
+        AsycTask.with(this).assign(() -> {
+            ArrayList<Logg> loggs = new ArrayList<>();
+            for (MyLog mMyLog : mMyLogs) {
+                Logg logg = new Logg();
+                logg.setData(JSON.toJSONString(mMyLog.getData()));
+                logg.setCreateTime(mMyLog.getCreateTime());
+                logg.setDeviceId(mMyLog.getDeviceId());
+                logg.setWeek(mMyLog.getWeek());
+                loggs.add(logg);
+            }
+            return BaseDao.getTjDb().insertMultObject(loggs);
+        }).whenDone(result -> {
+
+        }).execute();
     }
 
     /**
