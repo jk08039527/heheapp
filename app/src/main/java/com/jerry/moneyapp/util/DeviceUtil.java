@@ -73,7 +73,7 @@ public class DeviceUtil {
     private static Pattern chinesePattern = Pattern.compile("^[\\u4E00-\\u9FA5\\uF900-\\uFA2D]+$");
 
 
-    public static boolean isChinese(String string) {
+    private static boolean isChinese(String string) {
         if (TextUtils.isEmpty(string)) {
             return false;
         }
@@ -86,7 +86,7 @@ public class DeviceUtil {
         return false;
     }
 
-    public static String changeToUrlEncode(String str) {
+    private static String changeToUrlEncode(String str) {
         if (TextUtils.isEmpty(str)) {
             return "";
         }
@@ -111,7 +111,7 @@ public class DeviceUtil {
     /**
      * 获取屏幕密度
      */
-    public static float getDisplayDensity() {
+    private static float getDisplayDensity() {
         return Resources.getSystem().getDisplayMetrics().density;
     }
 

@@ -2,10 +2,13 @@ package com.jerry.moneyapp;
 
 import android.annotation.SuppressLint;
 import android.app.Application;
+import android.content.Context;
 import android.content.Intent;
+import android.support.multidex.MultiDex;
 
 import com.tencent.bugly.Bugly;
 import com.tencent.bugly.BuglyStrategy;
+import com.tencent.bugly.beta.Beta;
 import com.tencent.tinker.entry.DefaultApplicationLike;
 
 import cn.bmob.v3.Bmob;
@@ -27,6 +30,13 @@ public class MyApplication extends DefaultApplicationLike {
 
     public static Application getInstances() {
         return mInstance;
+    }
+
+    @Override
+    public void onBaseContextAttached(Context base) {
+        super.onBaseContextAttached(base);
+        MultiDex.install(base);
+        Beta.installTinker(this);
     }
 
     @Override

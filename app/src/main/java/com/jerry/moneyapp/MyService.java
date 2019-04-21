@@ -8,7 +8,6 @@ import java.util.LinkedList;
 
 import android.app.Service;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
@@ -20,7 +19,6 @@ import com.jerry.moneyapp.bean.BaseDao;
 import com.jerry.moneyapp.bean.GBData;
 import com.jerry.moneyapp.bean.Logg;
 import com.jerry.moneyapp.bean.MyLog;
-import com.jerry.moneyapp.bean.Param;
 import com.jerry.moneyapp.bean.Point;
 import com.jerry.moneyapp.util.CaluUtil;
 import com.jerry.moneyapp.util.DeviceUtil;
@@ -31,31 +29,25 @@ public class MyService extends Service {
     /**
      * 边界
      */
-    private static final int LEFT = 12;//17
-    private static final int RIGHT = 1068;//144
-    private static final int TOP = 470;//610
-    private static final int BOTTOM = 805;//1080
+    public static int LEFT = 14;
+    public static int RIGHT = 1068;
+    public static int TOP = 475;
+    public static int BOTTOM = 810;
     /**
      * 确定按键的坐标
      */
-    public static final int ASSIABLEX = 990;//1320
-    public static final int ASSIABLEY = 900;//1180
-
-    public static final int MIDDELX = 500;//1180
-    /**
-     * 空白处点击一下激活活动区的y坐标
-     */
-    public static final int ENTERY = 930;//1180
+    public static final int ASSIABLEX = 990;
+    public static final int ASSIABLEY = 900;
     /**
      * 是否需要重进的y坐标
      */
-    public static final int JUDGEY = 1240;//1180
+    public static final int JUDGEY = 1300;
 
     /**
      * 屏幕宽高
      */
-    private int width;
-    private int height;
+    public static int width;
+    public static int height;
 
     private int[] pointsX = new int[18];
     private int[] pointsY = new int[6];
@@ -72,9 +64,9 @@ public class MyService extends Service {
             if (msg.what == -1) {
                 return false;
             }
-            boolean enter = GBData.getCurrentData(pointsX, pointsY, data);
+            boolean enter = GBData.initPix(pointsX, pointsY, data);
             if (enter) {
-                execShellCmd("input tap " + MIDDELX + " " + ENTERY);
+                execShellCmd("input tap " + RIGHT / 2 + " " + ASSIABLEY);
                 mWeakHandler.sendEmptyMessageDelayed(0, 2000);
                 return false;
             }
@@ -87,93 +79,25 @@ public class MyService extends Service {
             }
             //点击一下空白处
             length = data.size();
-            execShellCmd("input tap " + 400 + " " + 400);
-            LinkedList<Integer> paint = new LinkedList<>();
+            execShellCmd("input tap " + RIGHT / 2 + " " + ASSIABLEY);
             LinkedList<Point> points = new LinkedList<>();
             int[] ints = new int[data.size()];
             for (int i = 0; i < ints.length; i++) {
                 ints[i] = data.get(i);
             }
             lastP = null;
-            int stopCount = 0;
             for (int j = 0; j < ints.length; j++) {
                 Point point = CaluUtil.calulate(ints, j + 1);
-                point.current = ints[j];
                 if (lastP != null) {
-                    if (lastP.current == point.current && paint.size() > 0) {
-                        int temp = paint.getLast();
-                        paint.removeLast();
-                        paint.addLast(++temp);
-                    } else {
-                        paint.add(1);
-                    }
-                    if (lastP.intention2 != GBData.VALUE_NONE) {
-                        if (lastP.intention2 == point.current) {
-                            point.win2 = lastP.win2 + 9.7 * Math.abs(lastP.multiple2);
-                        } else {
-                            point.win2 = lastP.win2 - 10 * Math.abs(lastP.multiple2);
-                        }
-                    } else {
-                        point.win2 = lastP.win2;
-                    }
-                    if (lastP.intention3 != GBData.VALUE_NONE) {
-                        if (lastP.intention3 == point.current) {
-                            point.win3 = lastP.win3 + 9.7 * Math.abs(lastP.multiple3);
-                        } else {
-                            point.win3 = lastP.win3 - 10 * Math.abs(lastP.multiple3);
-                        }
-                    } else {
-                        point.win3 = lastP.win3;
-                    }
                     if (lastP.intention != GBData.VALUE_NONE) {
                         if (lastP.intention == point.current) {
-                            point.win = lastP.win + 9.7 * Math.abs(lastP.multiple);
+                            point.win = lastP.win + 9.7;
                         } else {
-                            point.win = lastP.win - 10 * Math.abs(lastP.multiple);
+                            point.win = lastP.win - 10;
                         }
                     } else {
                         point.win = lastP.win;
                     }
-                } else {
-                    paint.add(1);
-                }
-                point.intention = GBData.VALUE_NONE;
-                if (point.win > Param.GIVEUPCOUNT && stopCount < Param.STOPCOUNT) {
-                    if (Param.LASTPOINTNUM2 > 0 && points.size() >= Param.LASTPOINTNUM2) {
-                        point.award2 = point.win2 - points.get(points.size() - Param.LASTPOINTNUM2).win2;
-                    } else {
-                        point.award2 = point.win2;
-                    }
-                    if (Param.LASTPOINTNUM3 > 0 && points.size() >= Param.LASTPOINTNUM3) {
-                        point.award3 = point.win3 - points.get(points.size() - Param.LASTPOINTNUM3).win3;
-                    } else {
-                        point.award3 = point.win3;
-                    }
-                    if (point.award2 >= point.award3) {
-                        point.currentType = 2;
-                    } else {
-                        point.currentType = 3;
-                    }
-                    if (lastP != null) {
-                        if (j > Param.START && point.award2 >= Param.LASTWIN2 && point.award3 >= Param.LASTWIN3
-                                && point.win2 > Param.LASTWIN2 && point.win3 > Param.WHOLEWIN3) {
-                            if (point.currentType == 2 && point.intention2 != GBData.VALUE_NONE) {
-                                point.intention = point.intention2;
-                                point.multiple = point.multiple2;
-                            } else if (point.currentType == 3 && point.intention3 != GBData.VALUE_NONE) {
-                                point.intention = point.intention3;
-                                point.multiple = point.multiple3;
-                            }
-                        }
-                    }
-                }
-                if (point.multiple > 1 && point.win - 10 * point.multiple < Param.GIVEUPCOUNT) {
-                    point.multiple = 1;
-                }
-                if (point.multiple == 0) {
-                    point.intention = 0;
-                } else if (point.multiple > 1 && point.win - 10 * point.multiple < Param.GIVEUPCOUNT) {
-                    point.multiple = 1;
                 }
                 lastP = point;
                 points.add(point);
@@ -182,7 +106,7 @@ public class MyService extends Service {
                 return false;
             }
             if (mBtnClickable && lastP.intention != GBData.VALUE_NONE && data.size() < 69) {
-                exeCall(lastP.intention, lastP.multiple);
+                exeCall(lastP.intention);
             }
             showJingsheng();
             if (data.size() >= 69) {
@@ -204,28 +128,11 @@ public class MyService extends Service {
         }
     });
 
-    private String getIntentStr(int intention, int mutiple) {
+    private String getIntentStr(int intention) {
         if (intention == GBData.VALUE_NONE) {
             return " pass";
         }
-        return (intention == GBData.VALUE_LONG ? "  龙" : "  凤") + String.valueOf(mutiple);
-    }
-
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        width = Resources.getSystem().getDisplayMetrics().widthPixels;
-        height = Resources.getSystem().getDisplayMetrics().heightPixels;
-        double eachX = (RIGHT - LEFT) / 18d;
-        double eachY = (BOTTOM - TOP) / 6d;
-        double initX = LEFT + eachX * 0.85d;
-        double initY = TOP + eachY / 2d;
-        for (int i = 0; i < pointsX.length; i++) {
-            pointsX[i] = (int) (initX + i * eachX);
-        }
-        for (int i = 0; i < pointsY.length; i++) {
-            pointsY[i] = (int) (initY + i * eachY);
-        }
+        return (intention == GBData.VALUE_LONG ? "  龙" : "  凤");
     }
 
     @Override
@@ -243,8 +150,8 @@ public class MyService extends Service {
             return;
         }
         mCallback.showText(new StringBuilder()
-                .append("模拟净胜：").append(DeviceUtil.m2(lastP.win)).append("，")
-                .append("\t下一局：").append(getIntentStr(lastP.intention, lastP.multiple)).toString());
+            .append("模拟净胜：").append(DeviceUtil.m2(lastP.win)).append("，")
+            .append("\t下一局：").append(getIntentStr(lastP.intention)).toString());
     }
 
     public class PlayBinder extends Binder {
@@ -256,6 +163,18 @@ public class MyService extends Service {
 
     public void startExe() {
         mWeakHandler.sendEmptyMessage(0);
+        if (GBData.initPix()) {
+            double eachX = (RIGHT - LEFT) / 18d;
+            double eachY = (BOTTOM - TOP) / 6d;
+            double initX = LEFT + eachX * 0.85d;
+            double initY = TOP + eachY / 2d;
+            for (int i = 0; i < pointsX.length; i++) {
+                pointsX[i] = (int) (initX + i * eachX);
+            }
+            for (int i = 0; i < pointsY.length; i++) {
+                pointsY[i] = (int) (initY + i * eachY);
+            }
+        }
         showJingsheng();
     }
 
@@ -286,12 +205,10 @@ public class MyService extends Service {
         }
     }
 
-    private void exeCall(int type, int mutiple) {
+    private void exeCall(int type) {
         int clickX = type == GBData.VALUE_LONG ? (int) (width * 0.25) : (int) (width * 0.75);
         int clickY = (int) (height * 0.9);
-        for (int i = 0; i < mutiple; i++) {
-            execShellCmd("input tap " + clickX + " " + clickY);
-        }
+        execShellCmd("input tap " + clickX + " " + clickY);
         mWeakHandler.postDelayed(() -> execShellCmd("input tap " + ASSIABLEX + " " + ASSIABLEY), 2000);
     }
 
