@@ -1,15 +1,16 @@
 package com.jerry.moneyapp.util;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-
 import com.alibaba.fastjson.JSON;
 import com.jerry.moneyapp.bean.BaseDao;
 import com.jerry.moneyapp.bean.GBData;
 import com.jerry.moneyapp.bean.Logg;
 import com.jerry.moneyapp.bean.Param;
 import com.jerry.moneyapp.bean.Point;
+import com.jerry.moneyapp.greendao.gen.LoggDao;
+
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 
 import static com.jerry.moneyapp.bean.Param.RMAX;
 import static com.jerry.moneyapp.bean.Param.RMIN;
@@ -23,7 +24,7 @@ public class CaluUtil {
 
 
     public static void initMap() {
-        List<Logg> loggs = BaseDao.getTjDb().queryAll(Logg.class);
+        List<Logg> loggs = BaseDao.getTjDb().queryAll(Logg.class, LoggDao.Properties.CreateTime);
         for (Logg log : loggs) {
             LinkedList<Integer> integers = JSON.parseObject(log.getData(), DeviceUtil.type(LinkedList.class, Integer.class));
             LinkedList<Integer> paint = new LinkedList<>();

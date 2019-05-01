@@ -1,9 +1,5 @@
 package com.jerry.moneyapp.ui;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -21,6 +17,7 @@ import com.jerry.moneyapp.bean.GBData;
 import com.jerry.moneyapp.bean.Logg;
 import com.jerry.moneyapp.bean.Point;
 import com.jerry.moneyapp.bean.Record;
+import com.jerry.moneyapp.greendao.gen.LoggDao;
 import com.jerry.moneyapp.ptrlib.widget.BaseRecyclerAdapter;
 import com.jerry.moneyapp.ptrlib.widget.PtrRecyclerView;
 import com.jerry.moneyapp.ptrlib.widget.RecyclerViewHolder;
@@ -29,6 +26,10 @@ import com.jerry.moneyapp.util.DeviceUtil;
 import com.jerry.moneyapp.util.MyTextWatcherListener;
 import com.jerry.moneyapp.util.ParseUtil;
 import com.jerry.moneyapp.util.asyctask.AsycTask;
+
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 import static com.jerry.moneyapp.bean.Param.RMAX;
 import static com.jerry.moneyapp.bean.Param.RMIN;
@@ -143,7 +144,7 @@ public class AnalyzeActivity extends AppCompatActivity {
     private void getData() {
         mMyLogs.clear();
         AsycTask.with(this).assign(() -> {
-            List<Logg> loggs = BaseDao.getTjDb().queryAll(Logg.class);
+            List<Logg> loggs = BaseDao.getTjDb().queryAll(Logg.class, LoggDao.Properties.CreateTime);
             mMyLogs.addAll(loggs);
             return true;
         }).whenDone(result -> {

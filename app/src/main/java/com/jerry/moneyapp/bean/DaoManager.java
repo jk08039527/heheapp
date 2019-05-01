@@ -1,14 +1,15 @@
 package com.jerry.moneyapp.bean;
 
-import java.util.List;
-
-import org.greenrobot.greendao.query.QueryBuilder;
-
 import com.jerry.moneyapp.BuildConfig;
 import com.jerry.moneyapp.MyApplication;
 import com.jerry.moneyapp.greendao.gen.DaoMaster;
 import com.jerry.moneyapp.greendao.gen.DaoSession;
 import com.jerry.moneyapp.util.LogUtils;
+
+import org.greenrobot.greendao.Property;
+import org.greenrobot.greendao.query.QueryBuilder;
+
+import java.util.List;
 
 /**
  * Created by wzl on 2018/9/26. 进行数据库的管理 1.创建数据库 2.创建数据库表 3.对数据库进行增删查改 4.对数据库进行升级
@@ -112,10 +113,12 @@ public class DaoManager {
     /**
      * 查询所有对象
      */
-    public <T> List<T> queryAll(Class<T> object) {
+    public <T> List<T> queryAll(Class<T> object, Property property) {
         List<T> objects = null;
         try {
-            objects = (List<T>) mDaoSession.getDao(object).loadAll();
+            QueryBuilder<?> builder = mDaoSession.getDao(object).queryBuilder()
+                    .orderDesc(property);
+            objects = (List<T>) builder.list();
         } catch (Throwable e) {
             deleteAll(object);
             LogUtils.e(e.toString());
