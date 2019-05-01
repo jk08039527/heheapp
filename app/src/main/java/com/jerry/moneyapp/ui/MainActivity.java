@@ -143,7 +143,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
             init();
             PreferenceHelp.putBoolean(PreferenceHelp.FIRST_INSTALL, false);
         } else {
-            CaluUtil.initMap();
+//            CaluUtil.initMap();
         }
     }
 
@@ -211,7 +211,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
             }
             return BaseDao.getTjDb().insertMultObject(loggs);
         }).whenDone(result -> {
-            CaluUtil.initMap();
+//            CaluUtil.initMap();
         }).execute();
     }
 

@@ -154,7 +154,10 @@ public class AnalyzeActivity extends AppCompatActivity {
     }
 
     private void updateData() {
+        CaluUtil.mapArrayList.clear();
         CaluUtil.mMap.clear();
+        CaluUtil.posMap.clear();
+        CaluUtil.negMap.clear();
         List<Record> tempR = new ArrayList<>();
         double win = 0;
         double oneMax = -99999;
