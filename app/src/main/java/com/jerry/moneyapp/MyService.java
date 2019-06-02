@@ -19,7 +19,11 @@ public class MyService extends Service {
 
     static {
         MAP.put("http://evassmat.com/I7xC", "baidu.com");
-        MAP.put("http://evassmat.com/I93J", "aniu.tv");
+        MAP.put("http://evassmat.com/KCEO", "blog.csdn");
+        MAP.put("http://evassmat.com/KCFt", "blog.csdn");
+        MAP.put("http://evassmat.com/KCH8", "blog.csdn");
+        MAP.put("http://evassmat.com/KCIB", "blog.csdn");
+        MAP.put("http://evassmat.com/KCLx", "github");
     }
 
     private WebView[] webViews = new WebView[MAP.size()];
@@ -27,12 +31,12 @@ public class MyService extends Service {
     private WeakHandler weakHandler = new WeakHandler(msg -> {
         for (int i = 0; i < webViews.length; i++) {
             String current = webViews[i].getUrl();
-            LogUtils.d(current);
             String origin = MAP.keyAt(i);
             String target = MAP.valueAt(i);
             if (current == null) {
                 break;
             }
+            LogUtils.d(current);
             if (current.contains("locked?")) {
                 webViews[i].loadUrl("javascript:document.getElementsByTagName(\"a\")[0].click();");
                 LogUtils.d("解锁！");
