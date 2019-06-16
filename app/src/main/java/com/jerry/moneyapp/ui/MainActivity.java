@@ -1,5 +1,7 @@
 package com.jerry.moneyapp.ui;
 
+import java.util.Set;
+
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,8 +16,6 @@ import com.jerry.moneyapp.MyService;
 import com.jerry.moneyapp.R;
 import com.jerry.moneyapp.util.LogUtils;
 import com.jerry.moneyapp.util.WeakHandler;
-
-import java.util.Set;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -37,11 +37,16 @@ public class MainActivity extends AppCompatActivity {
             if (current == null) {
                 break;
             }
-            if (current.contains("locked?")) { webViews[i].loadUrl("javascript:document.getElementsByTagName(\"a\")[0].click();");
+            LogUtils.d(current);
+            if (current.contains("locked?")) {
+                webViews[i].loadUrl("javascript:document.getElementsByTagName(\"a\")[0].click();");
+                LogUtils.d("解锁！");
             } else if (target != null && current.contains(target)) {
                 webViews[i].loadUrl(origin);
+                LogUtils.d("返回！");
             } else {
                 webViews[i].loadUrl("javascript:document.getElementsByClassName(\"mwButton\")[0].click();");
+                LogUtils.d("进入target！");
             }
         }
         this.weakHandler.sendEmptyMessageDelayed(0, 5000);
